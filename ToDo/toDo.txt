@@ -1,0 +1,5 @@
+Our framework is not perfect. In this file, we will collect everything that we will add in the future.
+1. Add a custom command in the domain-specific language to handle the alert pop-up window that appears after some time. We can use this from the documentation: https://playwright.dev/docs/dialogs
+2. We need to find a way to verify broken images or links. We can use this from the official documentation because we should use vanilla JS for this : https://playwright.dev/docs/evaluating.
+3. Add example for using the following methods from domain-specific language: dropDown_ByDoubleClick(), getAllTexts().
+4. Implement 'Cucumber' and give examples of usage.

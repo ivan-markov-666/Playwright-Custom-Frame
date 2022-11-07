@@ -1,0 +1,17 @@
+{
+  "name": "playwrightcustomframe",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {},
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@playwright/test": "^1.27.1"
+  },
+  "dependencies": {
+    "@faker-js/faker": "^7.6.0",
+    "grep": "^0.1.0"
+  }
+}

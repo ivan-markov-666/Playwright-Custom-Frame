@@ -1,0 +1,14 @@
+{
+    "testData": {
+            "gender": "Male",
+            "dateOfBirth": "22 May 2002",
+            "verifyDateOfBirth": "22 May,2002",
+            "department": "Computer Science",
+            "hobbies": "Sports",
+            "uploadFile": "test-image.jpg",
+            "uploadPath": "./uploads/",
+            "state":"Uttar Pradesh",
+            "city":"Agra"
+    }
+}
+

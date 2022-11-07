@@ -1,0 +1,8 @@
+# Dependency directory
+node_modules/
+# Local Report
+/test-results/
+/playwright-report/
+/playwright/.cache/
+/playwright/.system/
+/.system/
