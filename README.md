@@ -106,7 +106,7 @@ Playwright Trace Viewer for VScode: https://marketplace.visualstudio.com/items?i
 PlayWright/Cypress Step Definition Generator: https://marketplace.visualstudio.com/items?itemName=RajUppadhyay.playwritecypress-steps-definition-generator  
 
 ### To Do:
-The frame is not perfect. That's why there is a to-do list located in "{root}/ToDo/toDo.txt".  
+The frame is not perfect. That's why there is a to-do list located in "{root}/toDo/toDo.txt".  
 
 # Contribute
 You can use the framework for free and make changes to it. I hope the frame will save configuration time and develop the custom commands.
