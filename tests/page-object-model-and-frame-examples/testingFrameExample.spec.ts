@@ -9,12 +9,10 @@ import { test, Page } from "@playwright/test";
 //02. Create the "describe" block.
 test.describe("test", async () => {
   let page: Page;
+  //03. Create the "beforeAll" block.
   test.beforeAll(async ({ browser }) => {
     page = await browser.newPage();
   });
-
-  //03. Create the "beforeAll" block.
-  test.beforeAll(async () => {});
 
   //04. Create the "beforeRach" block.
   test.beforeEach(async () => {});
