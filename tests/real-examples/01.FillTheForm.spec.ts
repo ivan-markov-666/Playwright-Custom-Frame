@@ -1,7 +1,7 @@
 /**
  * @description       That is a spec (test) class. This class executes the test/s.
  *                    That is the worst practice we can use for the spec (test) class.
- *                      - As you can see - we are not using hooks like 'beforeAll', 'beforeEach', etc.
+ *                      - As you can see - we are using the 'beforeAll' hook because we need to assign value to the 'page' inside. Otherwise, other hooks like 'beforeEach', 'afterEach', etc., are not used.
  *                      - We are not using page object model optimisation.
  *                      - We do not confirm (verify) that the test steps are performed correctly.
  *                      - The tested data is hardcoded directly in the test. The data is not declared outside of the test. No dynamic data - only static data.
