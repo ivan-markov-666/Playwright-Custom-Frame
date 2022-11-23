@@ -20,6 +20,11 @@ Please follow the steps to set up the project:
 > npm install  
 6. To start the Playwright test runner, execute the following command in the root folder of the project:  
 > npx playwright test {testName.spec.ts}
+- If you are using VSCode IDE, you can install the following extension For easy execution of the tests (locally):
+-- https://marketplace.visualstudio.com/items?itemName=ortoni.ortoni
+-- https://marketplace.visualstudio.com/items?itemName=mskelton.playwright-test-snippets
+- If you see some error related to the browser, maybe you need to execute the following command in the terminal into the root folder of the project:
+> npx playwright install    
 7. If there is a new version of Playwright, you can update it by normal behaviour.  
 8. Read the readme.md file to understand how to use the framework.  
 9. Enjoy and automate with pleasure!  
