@@ -44,11 +44,11 @@ export class dsl {
         ts.informLog(
           ts.methodMessages_informMessage(
             config.beginInformMessage +
-              "The screen size was set to: '" +
-              widthSize +
-              "' width and '" +
-              heightSize +
-              "' height."
+            "The screen size was set to: '" +
+            widthSize +
+            "' width and '" +
+            heightSize +
+            "' height."
           )
         );
       }
@@ -56,30 +56,30 @@ export class dsl {
       else if (widthSize <= 0 || heightSize <= 0) {
         ts.errorLog(
           "You entered a negative value. Please enter a positive integer value." +
-            ts.methodMessages_errorMessage2(
-              this.screenSize.name,
-              __filename.split(__dirname + "/").pop()
-            )
+          ts.methodMessages_errorMessage2(
+            this.screenSize.name,
+            __filename.split(__dirname + "/").pop()
+          )
         );
       }
       // If the numbers are not an integer.
       else if (!Number.isInteger(widthSize) || !Number.isInteger(heightSize)) {
         ts.errorLog(
           "You need to enter an integer value." +
-            ts.methodMessages_errorMessage2(
-              this.screenSize.name,
-              __filename.split(__dirname + "/").pop()
-            )
+          ts.methodMessages_errorMessage2(
+            this.screenSize.name,
+            __filename.split(__dirname + "/").pop()
+          )
         );
       }
       // Everything else...
       else {
         ts.errorLog(
           "You entered an invalid value. Please provide a positive integer number for two parameters." +
-            ts.methodMessages_errorMessage2(
-              this.screenSize.name,
-              __filename.split(__dirname + "/").pop()
-            )
+          ts.methodMessages_errorMessage2(
+            this.screenSize.name,
+            __filename.split(__dirname + "/").pop()
+          )
         );
       }
     } catch (error) {
@@ -115,8 +115,8 @@ export class dsl {
       ts.informLog(
         ts.methodMessages_informMessage(
           config.beginInformMessage +
-            "The user was redirected to the URL address: " +
-            url
+          "The user was redirected to the URL address: " +
+          url
         )
       );
     } catch (error) {
@@ -153,8 +153,8 @@ export class dsl {
       ts.informLog(
         ts.methodMessages_informMessage(
           config.beginInformMessage +
-            "The use was redirected to the previous URL address: " +
-            verifyUrl
+          "The use was redirected to the previous URL address: " +
+          verifyUrl
         )
       );
     } catch (error) {
@@ -191,8 +191,8 @@ export class dsl {
       ts.informLog(
         ts.methodMessages_informMessage(
           config.beginInformMessage +
-            "The use was redirected to the forward URL address: " +
-            verifyUrl
+          "The use was redirected to the forward URL address: " +
+          verifyUrl
         )
       );
     } catch (error) {
@@ -250,7 +250,7 @@ export class dsl {
       ts.informLog(
         ts.methodMessages_informMessage(
           config.beginInformMessage +
-            "The automation test switched the focus to the second browser tab."
+          "The automation test switched the focus to the second browser tab."
         )
       );
       // Return the switched browser focus as an object.
@@ -315,10 +315,10 @@ export class dsl {
       else {
         ts.errorLog(
           "You have entered a not supported data type. Please provide a locator (string) or element (object)." +
-            ts.methodMessages_errorMessage2(
-              this.element.name,
-              __filename.split(__dirname + "/").pop()
-            )
+          ts.methodMessages_errorMessage2(
+            this.element.name,
+            __filename.split(__dirname + "/").pop()
+          )
         );
       }
       // Focus on the element.
@@ -357,9 +357,9 @@ export class dsl {
         ts.informLog(
           ts.methodMessages_informMessage(
             config.beginInformMessage +
-              "The element was selected. Timeout was set to: " +
-              timeoutPeriod +
-              " milliseconds."
+            "The element was selected. Timeout was set to: " +
+            timeoutPeriod +
+            " milliseconds."
           )
         );
       }
@@ -427,9 +427,9 @@ export class dsl {
       ts.informLog(
         ts.methodMessages_informMessage(
           config.beginInformMessage +
-            "The automated test reads the attribute value from the used element. The attribute value is: '" +
-            (await attributeValue) +
-            "'."
+          "The automated test reads the attribute value from the used element. The attribute value is: '" +
+          (await attributeValue) +
+          "'."
         )
       );
 
@@ -498,10 +498,10 @@ export class dsl {
       else {
         ts.errorLog(
           "You have entered a not supported data type. Please provide a locator (string) or element (object)." +
-            ts.methodMessages_errorMessage2(
-              this.getInnerText.name,
-              __filename.split(__dirname + "/").pop()
-            )
+          ts.methodMessages_errorMessage2(
+            this.getInnerText.name,
+            __filename.split(__dirname + "/").pop()
+          )
         );
       }
       // Call this method, to verify that the element is present and it is ready for usage.
@@ -518,9 +518,9 @@ export class dsl {
       ts.informLog(
         ts.methodMessages_informMessage(
           config.beginInformMessage +
-            "The automated test reads the element text value. The element text value is: '" +
-            (await elementTextValue) +
-            "'."
+          "The automated test reads the element text value. The element text value is: '" +
+          (await elementTextValue) +
+          "'."
         )
       );
 
@@ -589,10 +589,10 @@ export class dsl {
       else {
         ts.errorLog(
           "You have entered a not supported data type. Please provide a locator (string) or element (object)." +
-            ts.methodMessages_errorMessage2(
-              this.getText.name,
-              __filename.split(__dirname + "/").pop()
-            )
+          ts.methodMessages_errorMessage2(
+            this.getText.name,
+            __filename.split(__dirname + "/").pop()
+          )
         );
       }
       // Call this method, to verify that the element is present and it is ready for usage.
@@ -610,9 +610,9 @@ export class dsl {
       ts.informLog(
         ts.methodMessages_informMessage(
           config.beginInformMessage +
-            "The automated test reads the element text value. The element text value is: '" +
-            elementTextValue +
-            "'."
+          "The automated test reads the element text value. The element text value is: '" +
+          elementTextValue +
+          "'."
         )
       );
 
@@ -683,10 +683,10 @@ export class dsl {
       else {
         ts.errorLog(
           "You have entered a not supported data type. Please provide a locator (string) or element (object)." +
-            ts.methodMessages_errorMessage2(
-              this.getAllTexts.name,
-              __filename.split(__dirname + "/").pop()
-            )
+          ts.methodMessages_errorMessage2(
+            this.getAllTexts.name,
+            __filename.split(__dirname + "/").pop()
+          )
         );
       }
       // Call this method, to verify that the element is present and it is ready for usage.
@@ -708,9 +708,9 @@ export class dsl {
         ts.informLog(
           ts.methodMessages_informMessage(
             config.beginInformMessage +
-              "The automated test reads the element text value. The element text value is: '" +
-              elementTextValue +
-              "'."
+            "The automated test reads the element text value. The element text value is: '" +
+            elementTextValue +
+            "'."
           )
         );
 
@@ -721,10 +721,10 @@ export class dsl {
       else {
         ts.errorLog(
           "It seems that you call value that doesn't exist. The list size is '" +
-            (await listLenght) +
-            "'. Please provide number between 0 and " +
-            (await listLenght) +
-            "."
+          (await listLenght) +
+          "'. Please provide number between 0 and " +
+          (await listLenght) +
+          "."
         );
       }
     } catch (error) {
@@ -777,10 +777,10 @@ export class dsl {
       else {
         ts.errorLog(
           "You have entered a not supported data type. Please provide a locator (string) or element (object)." +
-            ts.methodMessages_errorMessage2(
-              this.sendKeys.name,
-              __filename.split(__dirname + "/").pop()
-            )
+          ts.methodMessages_errorMessage2(
+            this.sendKeys.name,
+            __filename.split(__dirname + "/").pop()
+          )
         );
       }
 
@@ -800,9 +800,9 @@ export class dsl {
       ts.informLog(
         ts.methodMessages_informMessage(
           config.beginInformMessage +
-            "The automated test fill with text inside the input text element with value: '" +
-            text +
-            "'."
+          "The automated test fill with text inside the input text element with value: '" +
+          text +
+          "'."
         )
       );
     } catch (error) {
@@ -862,10 +862,10 @@ export class dsl {
       else {
         ts.errorLog(
           "You have entered a not supported data type. Please provide a locator (string) or element (object)." +
-            ts.methodMessages_errorMessage2(
-              this.sendKeys_MultySelect.name,
-              __filename.split(__dirname + "/").pop()
-            )
+          ts.methodMessages_errorMessage2(
+            this.sendKeys_MultySelect.name,
+            __filename.split(__dirname + "/").pop()
+          )
         );
       }
 
@@ -892,10 +892,10 @@ export class dsl {
       else {
         ts.errorLog(
           "You have entered a not supported data type. Please provide a locator (string) or element (object)." +
-            ts.methodMessages_errorMessage2(
-              this.sendKeys_MultySelect.name,
-              __filename.split(__dirname + "/").pop()
-            )
+          ts.methodMessages_errorMessage2(
+            this.sendKeys_MultySelect.name,
+            __filename.split(__dirname + "/").pop()
+          )
         );
       }
 
@@ -933,9 +933,9 @@ export class dsl {
       ts.informLog(
         ts.methodMessages_informMessage(
           config.beginInformMessage +
-            "The automated test fill with text inside the multi-select element with the value: '" +
-            text +
-            "'."
+          "The automated test fill with text inside the multi-select element with the value: '" +
+          text +
+          "'."
         )
       );
     } catch (error) {
@@ -997,10 +997,10 @@ export class dsl {
         else {
           ts.errorLog(
             "You provided the wrong action data. If you want to provide data for this parameter, please provide only the 'check' or 'click' value for the 'checkOrClickAction' parameter." +
-              ts.methodMessages_errorMessage2(
-                this.checkRadioButtonCheckBox.name,
-                __filename.split(__dirname + "/").pop()
-              )
+            ts.methodMessages_errorMessage2(
+              this.checkRadioButtonCheckBox.name,
+              __filename.split(__dirname + "/").pop()
+            )
           );
         }
       } else {
@@ -1075,10 +1075,10 @@ export class dsl {
         else {
           ts.errorLog(
             "You provided the wrong action data. If you want to provide data for this parameter, please provide only the 'uncheck' or 'click' value for the 'checkOrClickAction' parameter." +
-              ts.methodMessages_errorMessage2(
-                this.unCheckBox.name,
-                __filename.split(__dirname + "/").pop()
-              )
+            ts.methodMessages_errorMessage2(
+              this.unCheckBox.name,
+              __filename.split(__dirname + "/").pop()
+            )
           );
         }
       } else {
@@ -1093,7 +1093,7 @@ export class dsl {
       ts.informLog(
         ts.methodMessages_informMessage(
           config.beginInformMessage +
-            "The automated test unchecks the check box element."
+          "The automated test unchecks the check box element."
         )
       );
     } catch (error) {
@@ -1130,7 +1130,7 @@ export class dsl {
       ts.informLog(
         ts.methodMessages_informMessage(
           config.beginInformMessage +
-            "The automated test makes the double mouse (left) click over the element."
+          "The automated test makes the double mouse (left) click over the element."
         )
       );
     } catch (error) {
@@ -1170,7 +1170,7 @@ export class dsl {
       ts.informLog(
         ts.methodMessages_informMessage(
           config.beginInformMessage +
-            "The automated test makes the right click with the mouse over the element."
+          "The automated test makes the right click with the mouse over the element."
         )
       );
     } catch (error) {
@@ -1208,7 +1208,7 @@ export class dsl {
       ts.informLog(
         ts.methodMessages_informMessage(
           config.beginInformMessage +
-            "The automated test makes the left click with the mouse over the element."
+          "The automated test makes the left click with the mouse over the element."
         )
       );
     } catch (error) {
@@ -1292,30 +1292,30 @@ export class dsl {
       else if (xValue <= 0 || yValue <= 0) {
         ts.errorLog(
           "You entered a negative value. Please enter a positive integer value." +
-            ts.methodMessages_errorMessage2(
-              this.clickPosition.name,
-              __filename.split(__dirname + "/").pop()
-            )
+          ts.methodMessages_errorMessage2(
+            this.clickPosition.name,
+            __filename.split(__dirname + "/").pop()
+          )
         );
       }
       // If the numbers are not an integer.
       else if (!Number.isInteger(xValue) || !Number.isInteger(yValue)) {
         ts.errorLog(
           "You need to enter an integer value." +
-            ts.methodMessages_errorMessage2(
-              this.clickPosition.name,
-              __filename.split(__dirname + "/").pop()
-            )
+          ts.methodMessages_errorMessage2(
+            this.clickPosition.name,
+            __filename.split(__dirname + "/").pop()
+          )
         );
       }
       // Everything else...
       else {
         ts.errorLog(
           "You entered an invalid value. Please provide a positive integer number for two parameters." +
-            ts.methodMessages_errorMessage2(
-              this.clickPosition.name,
-              __filename.split(__dirname + "/").pop()
-            )
+          ts.methodMessages_errorMessage2(
+            this.clickPosition.name,
+            __filename.split(__dirname + "/").pop()
+          )
         );
       }
 
@@ -1323,11 +1323,11 @@ export class dsl {
       ts.informLog(
         ts.methodMessages_informMessage(
           config.beginInformMessage +
-            "The automated test makes the left click with the mouse over the element on a specific position with coordinates: X:" +
-            xValue +
-            " and Y:" +
-            yValue +
-            "."
+          "The automated test makes the left click with the mouse over the element on a specific position with coordinates: X:" +
+          xValue +
+          " and Y:" +
+          yValue +
+          "."
         )
       );
     } catch (error) {
@@ -1372,9 +1372,9 @@ export class dsl {
       ts.informLog(
         ts.methodMessages_informMessage(
           config.beginInformMessage +
-            "The automated test makes click with keyboard key/s using: '" +
-            keyboardKey +
-            "'."
+          "The automated test makes click with keyboard key/s using: '" +
+          keyboardKey +
+          "'."
         )
       );
     } catch (error) {
@@ -1429,10 +1429,10 @@ export class dsl {
       } else {
         ts.errorLog(
           "This error should never happen." +
-            ts.methodMessages_errorMessage2(
-              this.downloadFile.name,
-              __filename.split(__dirname + "/").pop()
-            )
+          ts.methodMessages_errorMessage2(
+            this.downloadFile.name,
+            __filename.split(__dirname + "/").pop()
+          )
         );
       }
 
@@ -1447,9 +1447,9 @@ export class dsl {
         ts.informLog(
           ts.methodMessages_informMessage(
             config.beginInformMessage +
-              "The automated test downloads a file in the: '" +
-              downloadFolderPathWithFileNameAndExtension +
-              "'."
+            "The automated test downloads a file in the: '" +
+            downloadFolderPathWithFileNameAndExtension +
+            "'."
           )
         );
       }
@@ -1494,7 +1494,7 @@ export class dsl {
       ts.informLog(
         ts.methodMessages_informMessage(
           config.beginInformMessage +
-            "The automated test uploads a file successfully."
+          "The automated test uploads a file successfully."
         )
       );
     } catch (error) {
@@ -1544,7 +1544,7 @@ export class dsl {
       ts.informLog(
         ts.methodMessages_informMessage(
           config.beginInformMessage +
-            "The automation accepted the Alert pop-up window."
+          "The automation accepted the Alert pop-up window."
         )
       );
     } catch (error) {
@@ -1594,7 +1594,7 @@ export class dsl {
       ts.informLog(
         ts.methodMessages_informMessage(
           config.beginInformMessage +
-            "The automation dismissed the Alert pop-up window."
+          "The automation dismissed the Alert pop-up window."
         )
       );
     } catch (error) {
@@ -1649,9 +1649,9 @@ export class dsl {
       ts.informLog(
         ts.methodMessages_informMessage(
           config.beginInformMessage +
-            "The automation accepts and fills the value '" +
-            textValue +
-            "' in the Alert pop-up window."
+          "The automation accepts and fills the value '" +
+          textValue +
+          "' in the Alert pop-up window."
         )
       );
     } catch (error) {
@@ -1686,7 +1686,7 @@ export class dsl {
       ts.informLog(
         ts.methodMessages_informMessage(
           config.beginInformMessage +
-            "The automation successfully switched to iFrame."
+          "The automation successfully switched to iFrame."
         )
       );
 
@@ -1730,7 +1730,7 @@ export class dsl {
       ts.informLog(
         ts.methodMessages_informMessage(
           config.beginInformMessage +
-            "The automation successfully switched to neasted iFrame."
+          "The automation successfully switched to neasted iFrame."
         )
       );
 
@@ -1783,10 +1783,10 @@ export class dsl {
       else {
         ts.errorLog(
           "You have entered a not supported data type. Please provide a locator (string)." +
-            ts.methodMessages_errorMessage2(
-              this.dropDown_ByDoubleClick.name,
-              __filename.split(__dirname + "/").pop()
-            )
+          ts.methodMessages_errorMessage2(
+            this.dropDown_ByDoubleClick.name,
+            __filename.split(__dirname + "/").pop()
+          )
         );
       }
       // Wait for the element to be visible.
@@ -1827,19 +1827,69 @@ export class dsl {
       ts.informLog(
         ts.methodMessages_informMessage(
           config.beginInformMessage +
-            "The automated test selected a value '" +
-            dropDownListValue +
-            "' from the drop-down list."
+          "The automated test selected a value '" +
+          dropDownListValue +
+          "' from the drop-down list."
         )
       );
 
       // Add the alert message.
       ts.alertLog(
         "This method doesn't do any assertion. You need to check if the automation test selected correct drop-down value. Method name is '" +
-          this.dropDown_ByDoubleClick.name +
-          "', the class of the method is '" +
-          __filename.split(__dirname + "/").pop() +
-          "'"
+        this.dropDown_ByDoubleClick.name +
+        "', the class of the method is '" +
+        __filename.split(__dirname + "/").pop() +
+        "'"
+      );
+    } catch (error) {
+      // Unit Test.
+      // Create the error log and show it to the UI. Show the function name, the class where the function is located and the cached error.
+      ts.errorLog(
+        ts.methodMessages_errorMessage(
+          this.dropDown_ByDoubleClick.name,
+          __filename.split(__dirname + "/").pop(),
+          error
+        )
+      );
+    }
+  }
+
+
+  /**
+  * @description                       This method selects a value from the drop-down list by providing the value of the attribute "value".
+  * @param locatorDropDownList         Provide a locator (string) of drop-down list.
+  * @param DropDownAttributeValue      Provide a "value" attribute of the "option" element.
+  * @type                              The type of this method is set to "Promise<void>".
+  * @usage                             - Usage : Use the method by providing locator parameters and attribute "value".
+  *                                      {constructorKeyword}.dropDown_oldStyle({locator}, {attribute value});
+  * @example                           Example : Provide the locators for two elemets.
+  *                                      await dsl.dropDown_oldStyle("#drop-down-list-id", "2");
+  */
+  async dropDown_oldStyle(
+    locatorDropDownList: string,
+    DropDownAttributeValue: string
+  ): Promise<void> {
+    try {
+      // Create the method steps here. Describe the custom command in this "try" statement (Domain Specific Language).
+
+      // Call this method, to verify that the element is present and it is ready for usage.
+      await this.element(locatorDropDownList, config.elementTimeOut);
+
+      // Declare an element.
+      let oldStyleDropDownList = this.page.locator(locatorDropDownList);
+      // Select by value.
+      await oldStyleDropDownList.selectOption(DropDownAttributeValue);
+      // Verify that automation selected the value correctly.
+      await expect(oldStyleDropDownList).toHaveValue(DropDownAttributeValue);
+
+      // Add the information message.
+      ts.informLog(
+        ts.methodMessages_informMessage(
+          config.beginInformMessage +
+          "The automated test selected a value '" +
+          DropDownAttributeValue +
+          "' from the drop-down list."
+        )
       );
     } catch (error) {
       // Unit Test.
