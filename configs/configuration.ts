@@ -1,5 +1,5 @@
 // 01. Define class with name.
-export class configuration {
+export class Configuration {
   // 02. Define config values of the automation framework.
 
   /**

@@ -27,7 +27,8 @@ Please follow the steps to set up the project:
 > npx playwright install    
 7. If there is a new version of Playwright, you can update it by normal behaviour.  
 8. Read the readme.md file to understand how to use the framework.  
-9. Enjoy and automate with pleasure!  
+9. Make sure you have installed at least one of the supported browsers.  
+10. Enjoy and automate with pleasure!  
 
 ### Software dependencies
 The dependencies will be downloaded automatically by NodeJS.  
@@ -48,6 +49,16 @@ To develop new tests:
 For example, if your test class is named "myTestClass.spec.ts" the command will look like "npx playwright test myTestClass.spec.ts".  
 
 Make sure you execute the command at the root of the project folder.  
+
+# What you should review:
+Make sure that you cover those classes. Read the comments inside, and you will learn the framework:  
+- See the "scripts" area from the "package.json". You will see the available commands for running the tests.  
+- Every test folder has each config class. All classes with name *.config.ts contains configuration for tests. "playwright.config.ts" is the default config class for Playwright.  
+- Review class and comments inside the ./baseClass/baseClass.ts class.  
+- Review class and comments inside the ./configs/Configuration.ts class.
+- Review class and comments inside the ./custom-methods/**/*.ts classes.  
+- Review class and comments inside the ./pom/**/*.po.ts  classes.
+- Review class and comments inside the ./tests/**/*.spec.ts  classes.
 
 # What this framework contains
 Because this is a custom framework - the following section shows what was added to the frame and how it can be used by the automation QAs.  

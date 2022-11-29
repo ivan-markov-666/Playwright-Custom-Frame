@@ -1,9 +1,9 @@
 // Import Playwright test library.
 import { Page } from "@playwright/test";
-import { configuration } from "../../configs/configuration"; // Import configuration class. This class contains config data like messages, values, etc.
+import { Configuration } from "../../configs/configuration"; // Import configuration class. This class contains config data like messages, values, etc.
 
 // Declare a class.
-export class tsMethods {
+export class TsMethods {
   // Declare a page varible.
   page: Page;
   // Declare a constructor.
@@ -11,7 +11,7 @@ export class tsMethods {
     // Get access to the page property.
     this.page = page;
   }
-  public readonly conf = new configuration(); // Configuration constructor.
+  public readonly conf = new Configuration(); // Configuration constructor.
 
   /**
    * @description           This method waits for some time. We provide the time that we want to stay at this statement.
@@ -174,7 +174,16 @@ export class tsMethods {
       );
     }
   }
+
+  /**
+   * @description     This method returns the current time in Unix format.
+   * @returns         Return the current time in Unix format.
+   */
+  public currentTimeUnixFormat():number {
+    return Date.now() / 1000;
+  }
+
 }
 
 // Export the current class.
-export default tsMethods;
+export default TsMethods;
