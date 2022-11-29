@@ -6,3 +6,6 @@ node_modules/
 /playwright/.cache/
 /playwright/.system/
 /.system/
+# oaf-v2
+/pom/oaf-v2/
+/tests/oaf-v2
