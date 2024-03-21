@@ -3,7 +3,7 @@ This project is a custom Playwright frame using the Jest.
 The framework supports TS languages.  
 
 # Precondition
-Make sure that you read Playwright documentation located here: https://playwright.dev .  
+Make sure that you read the Playwright documentation located here: https://playwright.dev .  
 Because Playwright is using Jest by default (and we are using Jest in this frame) - it will be good to cover this documentation, too: https://jestjs.io/ .  
 Playwright is using node.js, so it will be good to have a basic knowledge of it: https://nodejs.org/en/ .  
 For any questions, refer to the original documentation. This framework doesn't have anything unique. It uses technologies that are combined with working together. For any questions about the technologies, refer to their official documentation.  
@@ -25,7 +25,7 @@ Please follow the steps to set up the project:
 -- https://marketplace.visualstudio.com/items?itemName=mskelton.playwright-test-snippets  
 - If you see some error related to the browser, maybe you need to execute the following command in the terminal into the root folder of the project:  
 > npx playwright install    
-7. If there is a new version of Playwright, you can update it by normal behaviour.  
+7. If there is a new version of Playwright, you can update it by normal behavior.  
 8. Read the readme.md file to understand how to use the framework.  
 9. Make sure you have installed at least one of the supported browsers.  
 10. Enjoy and automate with pleasure!  
@@ -40,11 +40,11 @@ Official repository: https://www.npmjs.com/package/grep
 
 # Build and Test  
 To develop new tests:  
-1. Make sure that you read Playwright documentation carefully. It would help if you knew how to create tests with Playwright.  
+1. Make sure that you read the Playwright's documentation carefully. It would help if you knew how to create tests with Playwright.  
 2. In this frame, we are using a POM design pattern. You must create a PO class in the "pom/" folder. For more details, you can see comments inside examples. It would be best to create the PO classes like the example one.  
 3. Create a spec class in the "tests/" folder. For more details, you can see comments in the examples. It would be best to create the SPEC classes like the example one.  
 4. Before starting the tests, you must change the 'testDir' value from 'playwright.config.ts' to your test folder. For example, if your tests are located inside '{root}/tests/my-tests' you should set the 'testDir' value to this relative location. Example "testDir: './tests/my-tests'".  
-5. You can start the tests by executin the following command in the terminal:  
+5. You can start the tests by executing the following command in the terminal:  
 > npx playwright test {testName.spec.ts}
 For example, if your test class is named "myTestClass.spec.ts" the command will look like "npx playwright test myTestClass.spec.ts".  
 
@@ -53,7 +53,7 @@ Make sure you execute the command at the root of the project folder.
 # What you should review:
 Make sure that you cover those classes. Read the comments inside, and you will learn the framework:  
 - See the "scripts" area from the "package.json". You will see the available commands for running the tests.  
-- Every test folder has each config class. All classes with name *.config.ts contains configuration for tests. "playwright.config.ts" is the default config class for Playwright.  
+- Every test folder has each config class. All classes with name *.config.ts contain configuration for tests. "playwright.config.ts" is the default config class for Playwright.  
 - Review class and comments inside the ./baseClass/baseClass.ts class.  
 - Review class and comments inside the ./configs/Configuration.ts class.
 - Review class and comments inside the ./custom-methods/**/*.ts classes.  
@@ -84,12 +84,12 @@ The frame uses using POM design pattern.
 
 ### Test Suites:
 The framework can run multiple tests grouped in different suites. For more details review: https://playwright.dev/docs/test-annotations  
-1. First you need to add annotation inside the name of your test. For example, if you want to group smoke tests - add "@smoke" inside the name of your test block.  
+1. First you need to add an annotation inside the name of your test. For example, if you want to group smoke tests - add "@smoke" inside the name of your test block.  
 2. Second execute the following command inside the terminal:
 > npx playwright test --grep smoke
 
 Review the examples for more details.  
-Don't forget to add your test folder to "playwright.config.ts" file if needed.  
+Don't forget to add your test folder to the "playwright.config.ts" file if needed.  
 
 ### Configuration:
 There is a configuration class. You can find it in the "{root}/configs/configuration.ts".  
@@ -105,16 +105,16 @@ We will add a mechanism for reading testing data from the EXCEL file in the futu
 Because sometimes we will need to upload files, there is a folder where we can put those files. The folder is located in "{root}/uploads". Of course, you can use any other folder inside your storage.  
 
 ### Log:
-The frame has error logs, alert logs and information logs.  
-The logs can be turned on and off from config class.  
+The frame has error logs, alert logs, and information logs.  
+The logs can be turned on and off from the config class.  
 - The automation will show the error log if something is wrong with the execution of a function (if the operation fails for some reason).  
 - The automation will show the alert log if something is not covered in the executed function.
 - The automation will show the information log whenever we pass some function.  
 
 ### Colorize the log:
-Because reading log data from the terminal is not easy, so you can use three methods to colourize the log from the "{root}/custom-methods/other-methods/tsMethods.ts" class. The methods are: "informLog()", "alertLog()" and "errorLog()".  
+Because reading log data from the terminal is not easy, so you can use three methods to colorize the log from the "{root}/custom-methods/other-methods/tsMethods.ts" class. The methods are: "informLog()", "alertLog()" and "errorLog()".  
 
-### Ide Extendions:
+### Ide Extensions:
 If you are using VSCode, there are a few excellent extensions that you need to install. With them working with Playwright is much easier.  
 Playwright Test for VScode: https://marketplace.visualstudio.com/items?itemName=ms-playwright.playwright  
 Playwright Runner: https://marketplace.visualstudio.com/items?itemName=ortoni.ortoni  
