@@ -80,7 +80,7 @@ There are a few packages added to the frame. Please refer to the official docume
 2. grep.js: https://www.npmjs.com/package/grep .  
 
 ### Design Patterns:
-The frame uses using POM design pattern.  
+The frame uses using POM design pattern  
 
 ### Test Suites:
 The framework can run multiple tests grouped in different suites. For more details review: https://playwright.dev/docs/test-annotations  
