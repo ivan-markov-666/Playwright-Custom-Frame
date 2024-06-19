@@ -14,7 +14,7 @@ Please follow the steps to set up the project:
 ### Installation process
 1. Clone the repository.  
 2. If you don't have Node.js - download and install it: https://nodejs.org/en/ . The LTS version should be OK.  
-3. Open the project from your IDE. The IDE should have installed TypeScript. We prefer to use Visual Studio Code - which comes with installed   TypeScript.  
+3. Open the project from your IDE. The IDE should have installed TypeScript. We prefer to use Visual Studio Code - which comes with installed TypeScript.  
 4. Navigate to the project root folder from the terminal.  
 5. Get all dependencies:  
 > npm install  
@@ -27,7 +27,6 @@ Please follow the steps to set up the project:
 > npx playwright install    
 7. If there is a new version of Playwright, you can update it by normal behavior.  
 8. Read the readme.md file to understand how to use the framework.  
-9. Make sure you have installed at least one of the supported browsers.  
 10. Enjoy and automate with pleasure!  
 
 ### Software dependencies
@@ -113,6 +112,15 @@ The logs can be turned on and off from the config class.
 
 ### Colorize the log:
 Because reading log data from the terminal is not easy, so you can use three methods to colorize the log from the "{root}/custom-methods/other-methods/tsMethods.ts" class. The methods are: "informLog()", "alertLog()" and "errorLog()".  
+Разбира се! Ето по-кратък и ясен текст, който можеш да добавиш в `README.md` файла за секцията за дебъгване:
+
+### Debugging
+This project supports debugging via Visual Studio Code. To use the debugging features, follow these simple steps:
+1. **Open the project in VS Code.**
+2. **Navigate to the Run and Debug section by clicking on the play icon in the sidebar or pressing `Ctrl+Shift+D` (Windows/Linux) or `Cmd+Shift+D` (MacOS).**
+3. **Select a debug configuration from the dropdown menu, which corresponds to the script you want to debug from the `package.json` file.**
+4. **Start the debugging session by clicking the green play button or pressing `F5`.**
+These steps will allow you to debug the scripts configured in the `.vscode/launch.json` file effectively.
 
 ### Ide Extensions:
 If you are using VSCode, there are a few excellent extensions that you need to install. With them working with Playwright is much easier.  
