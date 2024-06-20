@@ -16,7 +16,7 @@
 import { test, expect } from "@playwright/test";
 import { faker } from "@faker-js/faker"; // Data-Driven Testing with dynamically generated data using faker-js.
 // Import the PO class.
-import PomExample from "../../pom/real-examples/04.FillTheForm.po";
+import PomExample from "../../pom/real-example/04.FillTheForm.po";
 
 //02. Create the "describe" block.
 test.describe("Fill the form.", () => {
@@ -24,16 +24,16 @@ test.describe("Fill the form.", () => {
 
   //03. Define data.
   // Define testing data
-  let firstName: string = faker.name.firstName();
-  let lastName: string = faker.name.lastName();
-  let email: string = faker.internet.email(
-    firstName,
-    lastName,
-    "fake.email.com"
-  );
+  let firstNameValue: string = faker.person.firstName();
+  let lastNameValue: string = faker.person.lastName();
+  let email: string = faker.internet.email({
+    firstName: firstNameValue,
+    lastName: lastNameValue,
+    provider: "fake.email.com",
+    allowSpecialCharacters: false
+});
   let gender: string = "Male";
-  let mobile: string = faker.datatype
-    .number({
+  let mobile: string = faker.number.int({
       min: 1000000000,
       max: 9999999999,
     })
@@ -45,11 +45,11 @@ test.describe("Fill the form.", () => {
   let uploadFile: string = "test-image.jpg";
   let uploadFilePath: string = "uploads/" + uploadFile;
   let currentAddress: string =
-    faker.address.country() +
+    faker.location.country() +
     " " +
-    faker.address.city() +
+    faker.location.city() +
     " " +
-    faker.address.streetAddress(true);
+    faker.location.streetAddress(true);
   let verifySelectedStateDropDownList: string = "Uttar Pradesh";
   let verifySelectedCityDropDownList: string = "Agra";
 
@@ -70,15 +70,15 @@ test.describe("Fill the form.", () => {
   //06. Create the "test" block.
   test("Fill the form with valid data.", async ({ page }) => {
     // 2. Fill with correct data into the "First Name" input text element.
-    await pom.firstName_InputTextElement.fill(firstName);
+    await pom.firstName_InputTextElement.fill(firstNameValue);
     // Verify that the input text element contains the sent text data.
     expect(await pom.firstName_InputTextElement.inputValue()).toEqual(
-      firstName
+      firstNameValue
     );
     // 3. Fill with valid data into the "Last Name" input text element.
-    await pom.lastName_InputTextElement.fill(lastName);
+    await pom.lastName_InputTextElement.fill(lastNameValue);
     // Verify that the input text element contains the sent text data.
-    expect(await pom.lastName_InputTextElement.inputValue()).toEqual(lastName);
+    expect(await pom.lastName_InputTextElement.inputValue()).toEqual(lastNameValue);
     // 4. Fill with accurate data into the "Email" input text element.
     await pom.email_InputTextElement.fill(email);
     // Verify that the input text element contains the sent text data.
@@ -145,7 +145,7 @@ test.describe("Fill the form.", () => {
     let name_actualResult_value = (
       await pom.name_actualResultElement.innerText()
     ).valueOf();
-    expect(name_actualResult_value).toEqual(firstName + " " + lastName);
+    expect(name_actualResult_value).toEqual(firstNameValue + " " + lastNameValue);
     let email_actualResult_value = (
       await pom.email_actualResultElement.innerText()
     ).valueOf();

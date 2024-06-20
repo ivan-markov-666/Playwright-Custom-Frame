@@ -19,14 +19,12 @@ class Pom extends BaseClass {
   //03. Declare a page variable.
   page: Page;
   //04. Declare elements and selectors.
-  fullName_InputTextElement: string; // That is an example of a declaration of selector. The selector variable uses using "string" type of data.
   firstName_InputTextElement: string;
   lastName_InputTextElement: string;
   email_InputTextElement: string;
   gender_RadioButton: string;
   mobilePhone_InputTextElement: string;
   dateOfBirth_DropDownCalendar: string;
-  dateOfBirth_DropDownValue: string;
   subject_InputTextElement: string;
   hobbies_CheckBox: string;
   uploadImage_Button: string;

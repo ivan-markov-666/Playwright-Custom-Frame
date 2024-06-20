@@ -5,6 +5,7 @@
  *                      - We are not using page object model optimisation.
  *                      - We do not confirm (verify) that the test steps are performed correctly.
  *                      - The tested data is hardcoded directly in the test. The data is not declared outside of the test. No dynamic data - only static data.
+ *                      - We are asserting the birth date, but the date is hardcoded. That can fail the test if the date is not correct.
  *                      - We are not using a base test class to execute the precondition code.
  *                      - We are not using methods for similar steps. The methods are not defined in the PO classes.
  *                      - We are not using domain-specific language.
@@ -107,7 +108,7 @@ test.describe("Fill the form.", async () => {
     let dateOfBirth_actualResult_value = (
       await dateOfBirth_actualResultElement.innerText()
     ).valueOf();
-    expect(dateOfBirth_actualResult_value).toEqual("30 October,2022");
+    expect(dateOfBirth_actualResult_value).toEqual("26 May,2024");
 
     let subject_actualResultElement = page.locator(
       '//*[contains(text(),"Subjects")]/following-sibling::td'

@@ -20,7 +20,7 @@ import { faker } from "@faker-js/faker";
 // Import BaseClass.
 import { BaseClass } from "../../baseClass/baseClass";
 // Import the PO class.
-import PomExample from "../../pom/real-examples/08.FillTheForm.po";
+import PomExample from "../../pom/real-example/08.FillTheForm.po";
 // Import data from JSON file.
 import data from "../../fixtures/testing-data/test-data.json";
 
@@ -31,19 +31,19 @@ test.describe("Fill the form.", () => {
 
   //03. Define data.
   // Define testing data.
-  let firstName: string = faker.name.firstName();
-  let lastName: string = faker.name.lastName();
-  let email: string = faker.internet.email(
-    firstName,
-    lastName,
-    "fake.email.com"
-  );
+  let firstNameValue: string = faker.person.firstName();
+  let lastNameValue: string = faker.person.lastName();
+  let email: string = faker.internet.email({
+    firstName: firstNameValue,
+    lastName: lastNameValue,
+    provider: "fake.email.com",
+    allowSpecialCharacters: false
+  });
   let gender: string = data.testData.gender;
-  let mobile: string = faker.datatype
-    .number({
-      min: 1000000000,
-      max: 9999999999,
-    })
+  let mobile: string = faker.number.int({
+    min: 1000000000,
+    max: 9999999999,
+  })
     .toString();
   let dateOfBirth: string = data.testData.dateOfBirth;
   let verifyDateOfBirth: string = data.testData.verifyDateOfBirth;
@@ -52,11 +52,11 @@ test.describe("Fill the form.", () => {
   let uploadFile: string = data.testData.uploadFile;
   let uploadFilePath: string = data.testData.uploadPath + uploadFile;
   let currentAddress: string =
-    faker.address.country() +
+    faker.location.country() +
     " " +
-    faker.address.city() +
+    faker.location.city() +
     " " +
-    faker.address.streetAddress(true);
+    faker.location.streetAddress(true);
   let verifySelectedStateDropDownList: string = data.testData.state;
   let verifySelectedCityDropDownList: string = data.testData.city;
 
@@ -80,9 +80,9 @@ test.describe("Fill the form.", () => {
   //07. Create the "test" block.
   test("Fill the form with valid data.", async () => {
     // 2. Fill with correct data into the "First Name" input text element.
-    await pom.firstNameFill_InputTextElement(firstName);
+    await pom.firstNameFill_InputTextElement(firstNameValue);
     // 3. Fill with valid data into the "Last Name" input text element.
-    await pom.lastNameFill_InputTextElement(lastName);
+    await pom.lastNameFill_InputTextElement(lastNameValue);
     // 4. Fill with accurate data into the "Email" input text element.
     await pom.emailFill_InputTextElement(email);
     // 5. Select the correct random option from the "Gender" section.
@@ -107,8 +107,8 @@ test.describe("Fill the form.", () => {
     await pom.submitPress_Button();
     // 15. Verify that the test case ware executed everything correctly.
     await pom.assert_All(
-      firstName,
-      lastName,
+      firstNameValue,
+      lastNameValue,
       email,
       gender,
       mobile,

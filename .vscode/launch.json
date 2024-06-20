@@ -45,6 +45,15 @@
             "runtimeArgs": ["run", "test:suite"],
             "skipFiles": ["<node_internals>/**"],
             "console": "integratedTerminal"
+        },
+        {
+            "name": "Debug Test: Weather Underground",
+            "type": "node",
+            "request": "launch",
+            "runtimeExecutable": "npm",
+            "runtimeArgs": ["run", "scrap:wu"],
+            "skipFiles": ["<node_internals>/**"],
+            "console": "integratedTerminal"
         }
     ]
 }

@@ -5,6 +5,7 @@
  *                      - As you can see - we are using page object model optimisation.
  *                      - We confirm (verify) that the test steps are performed correctly.
  *                      - The tested data is hardcoded directly in the test. The data is not declared outside of the test. No dynamic data - only static data.
+ *                      - We are asserting the birth date, but the date is hardcoded. That can fail the test if the date is not correct.
  *                      - We are not using a base test class to execute the precondition code.
  *                      - We are not using methods for similar steps. The methods are not defined in the PO classes.
  *                      - We are not using domain-specific language.
@@ -14,7 +15,7 @@
 // Import Playwright test library.
 import { test, expect } from "@playwright/test";
 // Import the PO class.
-import PomExample from "../../pom/real-examples/03.FillTheForm.po";
+import PomExample from "../../pom/real-example/03.FillTheForm.po";
 
 //02. Create the "describe" block.
 test.describe("Fill the form.", () => {
@@ -125,7 +126,7 @@ test.describe("Fill the form.", () => {
     let dateOfBirth_actualResult_value = (
       await pom.dateOfBirth_actualResultElement.innerText()
     ).valueOf();
-    expect(dateOfBirth_actualResult_value).toEqual("30 October,2022");
+    expect(dateOfBirth_actualResult_value).toEqual("26 May,2024");
     let subject_actualResult_value = (
       await pom.subject_actualResultElement.innerText()
     ).valueOf();

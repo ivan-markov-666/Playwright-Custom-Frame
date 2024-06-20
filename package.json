@@ -8,8 +8,8 @@
     "test:dsl": "playwright test --config=dsl.config.ts",
     "test:poAndJest": "playwright test --config=poAndJest.config.ts",
     "test:real": "playwright test --config=realExamples.config.ts",
-    "test:suite": "playwright test --config=suite.config.ts"
-
+    "test:suite": "playwright test --config=suite.config.ts",
+    "scrap:wu": "playwright test --config=wunderground.config.ts"
   },
   "keywords": [],
   "author": "",
@@ -19,6 +19,7 @@
   },
   "dependencies": {
     "@faker-js/faker": "^8.4.1",
+    "dotenv": "^16.4.5",
     "grep": "^0.1.0"
   }
 }

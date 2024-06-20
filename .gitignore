@@ -9,3 +9,5 @@ node_modules/
 # oaf-v2
 /pom/oaf-v2/
 /tests/oaf-v2
+# dotenv
+.env
