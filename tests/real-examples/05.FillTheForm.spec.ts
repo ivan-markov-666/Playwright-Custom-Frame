@@ -17,10 +17,11 @@
 import { test, expect } from "@playwright/test";
 import { faker } from "@faker-js/faker"; // Data-Driven Testing with dynamically generated data using faker-js.
 // Import the PO class.
-import PomExample from "../../pom/real-examples/04.FillTheForm.po";
+import PomExample from "../../pom/real-example/04.FillTheForm.po";
 // Import data from JSON file.
 import data from "../../fixtures/testing-data/test-data.json";
-import env from "../../fixtures/env/env.json";
+import * as dotenv from 'dotenv';
+dotenv.config();
 
 //02. Create the "describe" block.
 test.describe("Fill the form.", () => {
@@ -28,19 +29,19 @@ test.describe("Fill the form.", () => {
 
   //03. Define data.
   // Define testing data.
-  let firstName: string = faker.name.firstName();
-  let lastName: string = faker.name.lastName();
-  let email: string = faker.internet.email(
-    firstName,
-    lastName,
-    "fake.email.com"
-  );
+  let firstNameValue: string = faker.person.firstName();
+  let lastNameValue: string = faker.person.lastName();
+  let email: string = faker.internet.email({
+    firstName: firstNameValue,
+    lastName: lastNameValue,
+    provider: "fake.email.com",
+    allowSpecialCharacters: false
+});
   let gender: string = data.testData.gender;
-  let mobile: string = faker.datatype
-    .number({
-      min: 1000000000,
-      max: 9999999999,
-    })
+  let mobile: string = faker.number.int({
+    min: 1000000000,
+    max: 9999999999,
+  })
     .toString();
   let dateOfBirth: string = data.testData.dateOfBirth;
   let verifyDateOfBirth: string = data.testData.verifyDateOfBirth;
@@ -49,11 +50,11 @@ test.describe("Fill the form.", () => {
   let uploadFile: string = data.testData.uploadFile;
   let uploadFilePath: string = data.testData.uploadPath + uploadFile;
   let currentAddress: string =
-    faker.address.country() +
+    faker.location.country() +
     " " +
-    faker.address.city() +
+    faker.location.city() +
     " " +
-    faker.address.streetAddress(true);
+    faker.location.streetAddress(true);
   let verifySelectedStateDropDownList: string = data.testData.state;
   let verifySelectedCityDropDownList: string = data.testData.city;
 
@@ -69,25 +70,22 @@ test.describe("Fill the form.", () => {
     });
     // 1. Navigate to: https://demoqa.com/automation-practice-form .
     await page.goto(
-      env.toolsqa.protocol +
-        "://" +
-        env.toolsqa.production +
-        "automation-practice-form/"
+      `${process.env.DEMOQA_PROTOCOL}://${process.env.DEMOQA_URL}automation-practice-form/`
     );
   });
 
   //05. Create the "test" block.
   test("Fill the form with valid data.", async ({ page }) => {
     // 2. Fill with correct data into the "First Name" input text element.
-    await pom.firstName_InputTextElement.fill(firstName);
+    await pom.firstName_InputTextElement.fill(firstNameValue);
     // Verify that the input text element contains the sent text data.
     expect(await pom.firstName_InputTextElement.inputValue()).toEqual(
-      firstName
+      firstNameValue
     );
     // 3. Fill with valid data into the "Last Name" input text element.
-    await pom.lastName_InputTextElement.fill(lastName);
+    await pom.lastName_InputTextElement.fill(lastNameValue);
     // Verify that the input text element contains the sent text data.
-    expect(await pom.lastName_InputTextElement.inputValue()).toEqual(lastName);
+    expect(await pom.lastName_InputTextElement.inputValue()).toEqual(lastNameValue);
     // 4. Fill with accurate data into the "Email" input text element.
     await pom.email_InputTextElement.fill(email);
     // Verify that the input text element contains the sent text data.
@@ -154,7 +152,7 @@ test.describe("Fill the form.", () => {
     let name_actualResult_value = (
       await pom.name_actualResultElement.innerText()
     ).valueOf();
-    expect(name_actualResult_value).toEqual(firstName + " " + lastName);
+    expect(name_actualResult_value).toEqual(firstNameValue + " " + lastNameValue);
     let email_actualResult_value = (
       await pom.email_actualResultElement.innerText()
     ).valueOf();

@@ -27,12 +27,10 @@ export class TsMethods {
     // Static wait.
     await this.page.waitForTimeout(periodTime);
     this.informLog(
-      this.methodMessages_informMessage(
         this.conf.beginInformMessage +
           " The automation test paused the execution of the code for '" +
           periodTime +
           "' milliseconds."
-      )
     );
   }
 
@@ -62,11 +60,7 @@ export class TsMethods {
    */
   errorLog(errorMessage: string): void {
     // Print the error message.
-    console.log(
-      "\x1b[41m\x1b[1m",
-      this.conf.beginErrorMessage + " " + errorMessage,
-      "\x1b[0m"
-    );
+    throw new Error(this.conf.beginErrorMessage + " " + errorMessage);
   }
 
   /**
@@ -99,80 +93,6 @@ export class TsMethods {
   informLog(informMessage: string): void {
     // Print the inform message.
     console.log("\x1b[32m\x1b[1m", informMessage, "\x1b[0m");
-  }
-
-  /**
-   * @description              This method adds an error message template to custom methods.
-   * @param methodName         Provide the method name.
-   * @param classPath          Provide the method classpath.
-   * @param errorMessage       Optional. Provide the handled error.
-   * @returns                  Return the string with the whole error message.
-   */
-  public methodMessages_errorMessage(
-    methodName: any,
-    classPath: any,
-    errorMessage?: string
-  ): string {
-    if (errorMessage != null) {
-      return (
-        this.conf.beginErrorMessage +
-        " from the unit! The function with the name '" +
-        methodName +
-        "' located inside the '" +
-        classPath +
-        "' class has the following error: '" +
-        errorMessage +
-        "'."
-      );
-    } else {
-      return (
-        this.conf.beginErrorMessage +
-        " from the unit! The function with the name '" +
-        methodName +
-        "' located inside the '" +
-        classPath +
-        "' class."
-      );
-    }
-  }
-
-  /**
-   * @description              This method adds an error message template to custom methods inside if-else statements..
-   * @param methodName         Provide the method name.
-   * @param classPath          Provide the method classpath.
-   * @returns                  Return the string with the whole error message.
-   */
-  public methodMessages_errorMessage2(methodName: any, classPath: any): string {
-    return (
-      " For more details review The function with the name '" +
-      methodName +
-      "' located inside the '" +
-      classPath +
-      "' class."
-    );
-  }
-
-  /**
-   * @description              This method adds an information message template to custom methods.
-   * @param informMessage      Provide the information message.
-   * @returns                  Return the string with the whole information message.
-   */
-  public methodMessages_informMessage(informMessage: string): string {
-    if (this.conf.methodMessages_informationMessage == "enable") {
-      return informMessage;
-    } else if (this.conf.methodMessages_informationMessage == "disable") {
-      // No message, because it is disabled!
-      return "";
-    } else {
-      this.errorLog(
-        this.conf.beginErrorMessage +
-          " It seems that you provided the wrong string value. Please give an 'enable' or 'disable' value only!"
-      );
-      return (
-        this.conf.beginErrorMessage +
-        " It seems that you provided the wrong string value. Please give an 'enable' or 'disable' value only!"
-      );
-    }
   }
 
   /**

@@ -1,4 +1,4 @@
-import { Page, expect } from "@playwright/test"; // Add this to have suggestions in the spec class.
+import { Page, FrameLocator, expect } from "@playwright/test"; // Add this to have suggestions in the spec class.
 import { Configuration } from "../../configs/configuration"; // Add this to have suggestions in the spec class.
 import { TsMethods } from "../other-methods/tsMethods";
 
@@ -41,55 +41,45 @@ export class Dsl {
         });
         // Add the information message.
         this.ts.informLog(
-          this.ts.methodMessages_informMessage(
-            this.config.beginInformMessage +
-            "The screen size was set to: '" +
-            widthSize +
-            "' width and '" +
-            heightSize +
-            "' height."
-          )
+          this.config.beginInformMessage +
+          "The screen size was set to: '" +
+          widthSize +
+          "' width and '" +
+          heightSize +
+          "' height."
         );
       }
       // If the numbers are negative or it is 0.
       else if (widthSize <= 0 || heightSize <= 0) {
         this.ts.errorLog(
           "You entered a negative value. Please enter a positive integer value." +
-          this.ts.methodMessages_errorMessage2(
-            this.screenSize.name,
-            __filename.split(__dirname + "/").pop()
-          )
+          this.screenSize.name + " " +
+          __filename.split(__dirname + "/").pop()
         );
       }
       // If the numbers are not an integer.
       else if (!Number.isInteger(widthSize) || !Number.isInteger(heightSize)) {
         this.ts.errorLog(
           "You need to enter an integer value." +
-          this.ts.methodMessages_errorMessage2(
-            this.screenSize.name,
-            __filename.split(__dirname + "/").pop()
-          )
+          this.screenSize.name + " " +
+          __filename.split(__dirname + "/").pop()
         );
       }
       // Everything else...
       else {
         this.ts.errorLog(
           "You entered an invalid value. Please provide a positive integer number for two parameters." +
-          this.ts.methodMessages_errorMessage2(
-            this.screenSize.name,
-            __filename.split(__dirname + "/").pop()
-          )
+          this.screenSize.name + " " +
+          __filename.split(__dirname + "/").pop()
         );
       }
     } catch (error) {
       // Unit Test.
       // Create the error log and show it to the UI. Show the function name, the class where the function is located and the cached error.
       this.ts.errorLog(
-        this.ts.methodMessages_errorMessage(
-          this.screenSize.name,
-          __filename.split(__dirname + "/").pop(),
-          error
-        )
+        this.screenSize.name + " " +
+        __filename.split(__dirname + "/").pop() + " " +
+        error
       );
     }
   }
@@ -112,21 +102,17 @@ export class Dsl {
       await expect(this.page).toHaveURL(url);
       // Add the information message.
       this.ts.informLog(
-        this.ts.methodMessages_informMessage(
-          this.config.beginInformMessage +
-          "The user was redirected to the URL address: " +
-          url
-        )
+        this.config.beginInformMessage +
+        "The user was redirected to the URL address: " +
+        url
       );
     } catch (error) {
       // Unit Test.
       // Create the error log and show it to the UI. Show the function name, the class where the function is located and the cached error.
       this.ts.errorLog(
-        this.ts.methodMessages_errorMessage(
-          this.navigateTo.name,
-          __filename.split(__dirname + "/").pop(),
-          error
-        )
+        this.navigateTo.name + " " +
+        __filename.split(__dirname + "/").pop() + " " +
+        error
       );
     }
   }
@@ -142,29 +128,23 @@ export class Dsl {
    */
   async goBack(verifyUrl: string): Promise<void> {
     try {
-      // Create the method steps here. Describe the custom command in this "try" statement (Domain Specific Language).
-
       // Navigate back to the previous URL.
       await this.page.goBack();
       // Verify that the browser loads the correct URL.
       await expect(this.page).toHaveURL(verifyUrl);
       // Add the information message.
       this.ts.informLog(
-        this.ts.methodMessages_informMessage(
-          this.config.beginInformMessage +
-          "The use was redirected to the previous URL address: " +
-          verifyUrl
-        )
+        this.config.beginInformMessage +
+        "The use was redirected to the previous URL address: " +
+        verifyUrl
       );
     } catch (error) {
       // Unit Test.
       // Create the error log and show it to the UI. Show the function name, the class where the function is located and the cached error.
       this.ts.errorLog(
-        this.ts.methodMessages_errorMessage(
-          this.goBack.name,
-          __filename.split(__dirname + "/").pop(),
-          error
-        )
+        this.goBack.name + " " +
+        __filename.split(__dirname + "/").pop() + " " +
+        error
       );
     }
   }
@@ -180,29 +160,23 @@ export class Dsl {
    */
   async goForward(verifyUrl: string): Promise<void> {
     try {
-      // Create the method steps here. Describe the custom command in this "try" statement (Domain Specific Language).
-
       // Navigate to the forward URL.
       await this.page.goForward();
       // Verify that the browser loads the correct URL.
       await expect(this.page).toHaveURL(verifyUrl);
       // Add the information message.
       this.ts.informLog(
-        this.ts.methodMessages_informMessage(
-          this.config.beginInformMessage +
-          "The use was redirected to the forward URL address: " +
-          verifyUrl
-        )
+        this.config.beginInformMessage +
+        "The use was redirected to the forward URL address: " +
+        verifyUrl
       );
     } catch (error) {
       // Unit Test.
       // Create the error log and show it to the UI. Show the function name, the class where the function is located and the cached error.
       this.ts.errorLog(
-        this.ts.methodMessages_errorMessage(
-          this.goForward.name,
-          __filename.split(__dirname + "/").pop(),
-          error
-        )
+        this.goForward.name + " " +
+        __filename.split(__dirname + "/").pop() + " " +
+        error
       );
     }
   }
@@ -247,10 +221,8 @@ export class Dsl {
       }
       // Add the information message.
       this.ts.informLog(
-        this.ts.methodMessages_informMessage(
-          this.config.beginInformMessage +
-          "The automation test switched the focus to the second browser tab."
-        )
+        this.config.beginInformMessage +
+        "The automation test switched the focus to the second browser tab."
       );
       // Return the switched browser focus as an object.
       return newPage;
@@ -258,11 +230,9 @@ export class Dsl {
       // Unit Test.
       // Create the error log and show it to the UI. Show the function name, the class where the function is located and the cached error.
       this.ts.errorLog(
-        this.ts.methodMessages_errorMessage(
-          this.browserWindowAfterClick.name,
-          __filename.split(__dirname + "/").pop(),
-          error
-        )
+        this.browserWindowAfterClick.name + " " +
+        __filename.split(__dirname + "/").pop() + " " +
+        error
       );
     }
   }
@@ -314,14 +284,10 @@ export class Dsl {
       else {
         this.ts.errorLog(
           "You have entered a not supported data type. Please provide a locator (string) or element (object)." +
-          this.ts.methodMessages_errorMessage2(
-            this.element.name,
-            __filename.split(__dirname + "/").pop()
-          )
+          this.element.name + " " +
+          __filename.split(__dirname + "/").pop()
         );
       }
-      // Focus on the element.
-      await element.focus();
       // Wait for the element to be visible.
       await element.waitFor({ state: "visible", timeout: timeoutPeriod });
       // Verify that the element is visible.
@@ -348,18 +314,14 @@ export class Dsl {
       // Add the information message.
       if (timeoutPeriod == null) {
         this.ts.informLog(
-          this.ts.methodMessages_informMessage(
-            this.config.beginInformMessage + "The element was selected."
-          )
+          this.config.beginInformMessage + "The element was selected."
         );
       } else {
         this.ts.informLog(
-          this.ts.methodMessages_informMessage(
-            this.config.beginInformMessage +
-            "The element was selected. Timeout was set to: " +
-            timeoutPeriod +
-            " milliseconds."
-          )
+          this.config.beginInformMessage +
+          "The element was selected. Timeout was set to: " +
+          timeoutPeriod +
+          " milliseconds."
         );
       }
 
@@ -369,11 +331,9 @@ export class Dsl {
       // Unit Test.
       // Create the error log and show it to the UI. Show the function name, the class where the function is located and the cached error.
       this.ts.errorLog(
-        this.ts.methodMessages_errorMessage(
-          this.element.name,
-          __filename.split(__dirname + "/").pop(),
-          error
-        )
+        this.element.name + " " +
+        __filename.split(__dirname + "/").pop() + " " +
+        error
       );
     }
   }
@@ -424,12 +384,10 @@ export class Dsl {
 
       // Add the information message.
       this.ts.informLog(
-        this.ts.methodMessages_informMessage(
-          this.config.beginInformMessage +
-          "The automated test reads the attribute value from the used element. The attribute value is: '" +
-          (await attributeValue) +
-          "'."
-        )
+        this.config.beginInformMessage +
+        "The automated test reads the attribute value from the used element. The attribute value is: '" +
+        (await attributeValue) +
+        "'."
       );
 
       // Return the attribute value.
@@ -438,11 +396,9 @@ export class Dsl {
       // Unit Test.
       // Create the error log and show it to the UI. Show the function name, the class where the function is located and the cached error.
       this.ts.errorLog(
-        this.ts.methodMessages_errorMessage(
-          this.getAttribute.name,
-          __filename.split(__dirname + "/").pop(),
-          error
-        )
+        this.getAttribute.name + " " +
+        __filename.split(__dirname + "/").pop() + " " +
+        error
       );
     }
   }
@@ -497,10 +453,8 @@ export class Dsl {
       else {
         this.ts.errorLog(
           "You have entered a not supported data type. Please provide a locator (string) or element (object)." +
-          this.ts.methodMessages_errorMessage2(
-            this.getInnerText.name,
-            __filename.split(__dirname + "/").pop()
-          )
+          this.getInnerText.name + " " +
+          __filename.split(__dirname + "/").pop()
         );
       }
       // Call this method, to verify that the element is present and it is ready for usage.
@@ -515,12 +469,10 @@ export class Dsl {
 
       // Add the information message.
       this.ts.informLog(
-        this.ts.methodMessages_informMessage(
-          this.config.beginInformMessage +
-          "The automated test reads the element text value. The element text value is: '" +
-          (await elementTextValue) +
-          "'."
-        )
+        this.config.beginInformMessage +
+        "The automated test reads the element text value. The element text value is: '" +
+        (await elementTextValue) +
+        "'."
       );
 
       // Return the containing element text.
@@ -529,11 +481,9 @@ export class Dsl {
       // Unit Test.
       // Create the error log and show it to the UI. Show the function name, the class where the function is located and the cached error.
       this.ts.errorLog(
-        this.ts.methodMessages_errorMessage(
-          this.getInnerText.name,
-          __filename.split(__dirname + "/").pop(),
-          error
-        )
+        this.getInnerText.name + " " +
+        __filename.split(__dirname + "/").pop() + " " +
+        error
       );
     }
   }
@@ -588,10 +538,8 @@ export class Dsl {
       else {
         this.ts.errorLog(
           "You have entered a not supported data type. Please provide a locator (string) or element (object)." +
-          this.ts.methodMessages_errorMessage2(
-            this.getText.name,
-            __filename.split(__dirname + "/").pop()
-          )
+          this.getText.name + " " +
+          __filename.split(__dirname + "/").pop()
         );
       }
       // Call this method, to verify that the element is present and it is ready for usage.
@@ -607,12 +555,10 @@ export class Dsl {
 
       // Add the information message.
       this.ts.informLog(
-        this.ts.methodMessages_informMessage(
-          this.config.beginInformMessage +
-          "The automated test reads the element text value. The element text value is: '" +
-          elementTextValue +
-          "'."
-        )
+        this.config.beginInformMessage +
+        "The automated test reads the element text value. The element text value is: '" +
+        elementTextValue +
+        "'."
       );
 
       // Return the containing element text.
@@ -621,11 +567,9 @@ export class Dsl {
       // Unit Test.
       // Create the error log and show it to the UI. Show the function name, the class where the function is located and the cached error.
       this.ts.errorLog(
-        this.ts.methodMessages_errorMessage(
-          this.getText.name,
-          __filename.split(__dirname + "/").pop(),
-          error
-        )
+        this.getText.name + " " +
+        __filename.split(__dirname + "/").pop() + " " +
+        error
       );
     }
   }
@@ -682,10 +626,8 @@ export class Dsl {
       else {
         this.ts.errorLog(
           "You have entered a not supported data type. Please provide a locator (string) or element (object)." +
-          this.ts.methodMessages_errorMessage2(
-            this.getAllTexts.name,
-            __filename.split(__dirname + "/").pop()
-          )
+          this.getAllTexts.name + " " +
+          __filename.split(__dirname + "/").pop()
         );
       }
       // Call this method, to verify that the element is present and it is ready for usage.
@@ -705,12 +647,10 @@ export class Dsl {
 
         // Add the information message.
         this.ts.informLog(
-          this.ts.methodMessages_informMessage(
-            this.config.beginInformMessage +
-            "The automated test reads the element text value. The element text value is: '" +
-            elementTextValue +
-            "'."
-          )
+          this.config.beginInformMessage +
+          "The automated test reads the element text value. The element text value is: '" +
+          elementTextValue +
+          "'."
         );
 
         // Return the containing element text.
@@ -730,11 +670,9 @@ export class Dsl {
       // Unit Test.
       // Create the error log and show it to the UI. Show the function name, the class where the function is located and the cached error.
       this.ts.errorLog(
-        this.ts.methodMessages_errorMessage(
-          this.getAllTexts.name,
-          __filename.split(__dirname + "/").pop(),
-          error
-        )
+        this.getAllTexts.name + " " +
+        __filename.split(__dirname + "/").pop() + " " +
+        error
       );
     }
   }
@@ -776,10 +714,8 @@ export class Dsl {
       else {
         this.ts.errorLog(
           "You have entered a not supported data type. Please provide a locator (string) or element (object)." +
-          this.ts.methodMessages_errorMessage2(
-            this.sendKeys.name,
-            __filename.split(__dirname + "/").pop()
-          )
+          this.sendKeys.name + " " +
+          __filename.split(__dirname + "/").pop()
         );
       }
 
@@ -797,23 +733,19 @@ export class Dsl {
 
       // Add the information message.
       this.ts.informLog(
-        this.ts.methodMessages_informMessage(
-          this.config.beginInformMessage +
-          "The automated test fill with text inside the input text element with value: '" +
-          text +
-          "'."
-        )
+        this.config.beginInformMessage +
+        "The automated test fill with text inside the input text element with value: '" +
+        text +
+        "'."
       );
     } catch (error) {
       // Unit Test.
       // Create the error log and show it to the UI. Show the function name, the class where the function is located and the cached error.
       this.ts.errorLog(
-        this.ts.methodMessages_errorMessage(
-          this.sendKeys.name,
-          __filename.split(__dirname + "/").pop(),
-          error
-        )
-      );
+        this.sendKeys.name + " " +
+        __filename.split(__dirname + "/").pop() + " " +
+        error
+      )
     }
   }
 
@@ -861,11 +793,9 @@ export class Dsl {
       else {
         this.ts.errorLog(
           "You have entered a not supported data type. Please provide a locator (string) or element (object)." +
-          this.ts.methodMessages_errorMessage2(
-            this.sendKeys_MultySelect.name,
-            __filename.split(__dirname + "/").pop()
-          )
-        );
+          this.sendKeys_MultySelect.name + " " +
+          __filename.split(__dirname + "/").pop()
+        )
       }
 
       // If the provided value is a string, this is just a selector.
@@ -891,10 +821,8 @@ export class Dsl {
       else {
         this.ts.errorLog(
           "You have entered a not supported data type. Please provide a locator (string) or element (object)." +
-          this.ts.methodMessages_errorMessage2(
-            this.sendKeys_MultySelect.name,
-            __filename.split(__dirname + "/").pop()
-          )
+          this.sendKeys_MultySelect.name + " " +
+          __filename.split(__dirname + "/").pop()
         );
       }
 
@@ -930,22 +858,18 @@ export class Dsl {
 
       // Add the information message.
       this.ts.informLog(
-        this.ts.methodMessages_informMessage(
-          this.config.beginInformMessage +
-          "The automated test fill with text inside the multi-select element with the value: '" +
-          text +
-          "'."
-        )
+        this.config.beginInformMessage +
+        "The automated test fill with text inside the multi-select element with the value: '" +
+        text +
+        "'."
       );
     } catch (error) {
       // Unit Test.
       // Create the error log and show it to the UI. Show the function name, the class where the function is located and the cached error.
       this.ts.errorLog(
-        this.ts.methodMessages_errorMessage(
-          this.sendKeys_MultySelect.name,
-          __filename.split(__dirname + "/").pop(),
-          error
-        )
+        this.sendKeys_MultySelect.name + " " +
+        __filename.split(__dirname + "/").pop() + " " +
+        error
       );
     }
   }
@@ -996,10 +920,8 @@ export class Dsl {
         else {
           this.ts.errorLog(
             "You provided the wrong action data. If you want to provide data for this parameter, please provide only the 'check' or 'click' value for the 'checkOrClickAction' parameter." +
-            this.ts.methodMessages_errorMessage2(
-              this.checkRadioButtonCheckBox.name,
-              __filename.split(__dirname + "/").pop()
-            )
+            this.checkRadioButtonCheckBox.name + " " +
+            __filename.split(__dirname + "/").pop()
           );
         }
       } else {
@@ -1012,19 +934,15 @@ export class Dsl {
 
       // Add the information message.
       this.ts.informLog(
-        this.ts.methodMessages_informMessage(
-          this.config.beginInformMessage + "The automated test checks the element."
-        )
+        this.config.beginInformMessage + "The automated test checks the element."
       );
     } catch (error) {
       // Unit Test.
       // Create the error log and show it to the UI. Show the function name, the class where the function is located and the cached error.
       this.ts.errorLog(
-        this.ts.methodMessages_errorMessage(
-          this.checkRadioButtonCheckBox.name,
-          __filename.split(__dirname + "/").pop(),
-          error
-        )
+        this.checkRadioButtonCheckBox.name + " " +
+        __filename.split(__dirname + "/").pop() + " " +
+        error
       );
     }
   }
@@ -1074,10 +992,8 @@ export class Dsl {
         else {
           this.ts.errorLog(
             "You provided the wrong action data. If you want to provide data for this parameter, please provide only the 'uncheck' or 'click' value for the 'checkOrClickAction' parameter." +
-            this.ts.methodMessages_errorMessage2(
-              this.unCheckBox.name,
-              __filename.split(__dirname + "/").pop()
-            )
+            this.unCheckBox.name + " " +
+            __filename.split(__dirname + "/").pop()
           );
         }
       } else {
@@ -1090,20 +1006,16 @@ export class Dsl {
 
       // Add the information message.
       this.ts.informLog(
-        this.ts.methodMessages_informMessage(
-          this.config.beginInformMessage +
-          "The automated test unchecks the check box element."
-        )
+        this.config.beginInformMessage +
+        "The automated test unchecks the check box element."
       );
     } catch (error) {
       // Unit Test.
       // Create the error log and show it to the UI. Show the function name, the class where the function is located and the cached error.
       this.ts.errorLog(
-        this.ts.methodMessages_errorMessage(
-          this.unCheckBox.name,
-          __filename.split(__dirname + "/").pop(),
-          error
-        )
+        this.unCheckBox.name + " " +
+        __filename.split(__dirname + "/").pop() + " " +
+        error
       );
     }
   }
@@ -1127,20 +1039,16 @@ export class Dsl {
 
       // Add the information message.
       this.ts.informLog(
-        this.ts.methodMessages_informMessage(
-          this.config.beginInformMessage +
-          "The automated test makes the double mouse (left) click over the element."
-        )
+        this.config.beginInformMessage +
+        "The automated test makes the double mouse (left) click over the element."
       );
     } catch (error) {
       // Unit Test.
       // Create the error log and show it to the UI. Show the function name, the class where the function is located and the cached error.
       this.ts.errorLog(
-        this.ts.methodMessages_errorMessage(
-          this.doubleClick.name,
-          __filename.split(__dirname + "/").pop(),
-          error
-        )
+        this.doubleClick.name + " " +
+        __filename.split(__dirname + "/").pop() + " " +
+        error
       );
     }
   }
@@ -1167,20 +1075,16 @@ export class Dsl {
 
       // Add the information message.
       this.ts.informLog(
-        this.ts.methodMessages_informMessage(
-          this.config.beginInformMessage +
-          "The automated test makes the right click with the mouse over the element."
-        )
+        this.config.beginInformMessage +
+        "The automated test makes the right click with the mouse over the element."
       );
     } catch (error) {
       // Unit Test.
       // Create the error log and show it to the UI. Show the function name, the class where the function is located and the cached error.
       this.ts.errorLog(
-        this.ts.methodMessages_errorMessage(
-          this.rightClick.name,
-          __filename.split(__dirname + "/").pop(),
-          error
-        )
+        this.rightClick.name + " " +
+        __filename.split(__dirname + "/").pop() + " " +
+        error
       );
     }
   }
@@ -1205,20 +1109,16 @@ export class Dsl {
 
       // Add the information message.
       this.ts.informLog(
-        this.ts.methodMessages_informMessage(
-          this.config.beginInformMessage +
-          "The automated test makes the left click with the mouse over the element."
-        )
+        this.config.beginInformMessage +
+        "The automated test makes the left click with the mouse over the element."
       );
     } catch (error) {
       // Unit Test.
       // Create the error log and show it to the UI. Show the function name, the class where the function is located and the cached error.
       this.ts.errorLog(
-        this.ts.methodMessages_errorMessage(
-          this.click.name,
-          __filename.split(__dirname + "/").pop(),
-          error
-        )
+        this.click.name + " " +
+        __filename.split(__dirname + "/").pop() + " " +
+        error
       );
     }
   }
@@ -1242,19 +1142,15 @@ export class Dsl {
 
       // Add the information message.
       this.ts.informLog(
-        this.ts.methodMessages_informMessage(
-          this.config.beginInformMessage + "The automated test hovers the element."
-        )
+        this.config.beginInformMessage + "The automated test hovers the element."
       );
     } catch (error) {
       // Unit Test.
       // Create the error log and show it to the UI. Show the function name, the class where the function is located and the cached error.
       this.ts.errorLog(
-        this.ts.methodMessages_errorMessage(
-          this.hover.name,
-          __filename.split(__dirname + "/").pop(),
-          error
-        )
+        this.hover.name + " " +
+        __filename.split(__dirname + "/").pop() + " " +
+        error
       );
     }
   }
@@ -1291,53 +1187,43 @@ export class Dsl {
       else if (xValue <= 0 || yValue <= 0) {
         this.ts.errorLog(
           "You entered a negative value. Please enter a positive integer value." +
-          this.ts.methodMessages_errorMessage2(
-            this.clickPosition.name,
-            __filename.split(__dirname + "/").pop()
-          )
+          this.clickPosition.name + " " +
+          __filename.split(__dirname + "/").pop()
         );
       }
       // If the numbers are not an integer.
       else if (!Number.isInteger(xValue) || !Number.isInteger(yValue)) {
         this.ts.errorLog(
-          "You need to enter an integer value." +
-          this.ts.methodMessages_errorMessage2(
-            this.clickPosition.name,
-            __filename.split(__dirname + "/").pop()
-          )
+          "You need to enter an integer value. " +
+          this.clickPosition.name + " " +
+          __filename.split(__dirname + "/").pop()
         );
       }
       // Everything else...
       else {
         this.ts.errorLog(
           "You entered an invalid value. Please provide a positive integer number for two parameters." +
-          this.ts.methodMessages_errorMessage2(
-            this.clickPosition.name,
-            __filename.split(__dirname + "/").pop()
-          )
+          this.clickPosition.name + " " +
+          __filename.split(__dirname + "/").pop()
         );
       }
 
       // Add the information message.
       this.ts.informLog(
-        this.ts.methodMessages_informMessage(
-          this.config.beginInformMessage +
-          "The automated test makes the left click with the mouse over the element on a specific position with coordinates: X:" +
-          xValue +
-          " and Y:" +
-          yValue +
-          "."
-        )
+        this.config.beginInformMessage +
+        "The automated test makes the left click with the mouse over the element on a specific position with coordinates: X:" +
+        xValue +
+        " and Y:" +
+        yValue +
+        "."
       );
     } catch (error) {
       // Unit Test.
       // Create the error log and show it to the UI. Show the function name, the class where the function is located and the cached error.
       this.ts.errorLog(
-        this.ts.methodMessages_errorMessage(
-          this.clickPosition.name,
-          __filename.split(__dirname + "/").pop(),
-          error
-        )
+        this.clickPosition.name + " " +
+        __filename.split(__dirname + "/").pop() + " " +
+        error
       );
     }
   }
@@ -1369,22 +1255,18 @@ export class Dsl {
 
       // Add the information message.
       this.ts.informLog(
-        this.ts.methodMessages_informMessage(
-          this.config.beginInformMessage +
-          "The automated test makes click with keyboard key/s using: '" +
-          keyboardKey +
-          "'."
-        )
+        this.config.beginInformMessage +
+        "The automated test makes click with keyboard key/s using: '" +
+        keyboardKey +
+        "'."
       );
     } catch (error) {
       // Unit Test.
       // Create the error log and show it to the UI. Show the function name, the class where the function is located and the cached error.
       this.ts.errorLog(
-        this.ts.methodMessages_errorMessage(
-          this.clickWithHoldingKeyboardKey.name,
-          __filename.split(__dirname + "/").pop(),
-          error
-        )
+        this.clickWithHoldingKeyboardKey.name + " " +
+        __filename.split(__dirname + "/").pop() + " " +
+        error
       );
     }
   }
@@ -1428,39 +1310,31 @@ export class Dsl {
       } else {
         this.ts.errorLog(
           "This error should never happen." +
-          this.ts.methodMessages_errorMessage2(
-            this.downloadFile.name,
-            __filename.split(__dirname + "/").pop()
-          )
+          this.downloadFile.name + " " +
+          __filename.split(__dirname + "/").pop()
         );
       }
 
       // Add the information message.
       if (downloadFolderPathWithFileNameAndExtension != null) {
         this.ts.informLog(
-          this.ts.methodMessages_informMessage(
-            this.config.beginInformMessage + "The automated test downloads a file."
-          )
+          this.config.beginInformMessage + "The automated test downloads a file."
         );
       } else {
         this.ts.informLog(
-          this.ts.methodMessages_informMessage(
-            this.config.beginInformMessage +
-            "The automated test downloads a file in the: '" +
-            downloadFolderPathWithFileNameAndExtension +
-            "'."
-          )
+          this.config.beginInformMessage +
+          "The automated test downloads a file in the: '" +
+          downloadFolderPathWithFileNameAndExtension +
+          "'."
         );
       }
     } catch (error) {
       // Unit Test.
       // Create the error log and show it to the UI. Show the function name, the class where the function is located and the cached error.
       this.ts.errorLog(
-        this.ts.methodMessages_errorMessage(
-          this.downloadFile.name,
-          __filename.split(__dirname + "/").pop(),
-          error
-        )
+        this.downloadFile.name + " " +
+        __filename.split(__dirname + "/").pop() + " " +
+        error
       );
     }
   }
@@ -1491,20 +1365,16 @@ export class Dsl {
 
       // Add the information message.
       this.ts.informLog(
-        this.ts.methodMessages_informMessage(
-          this.config.beginInformMessage +
-          "The automated test uploads a file successfully."
-        )
+        this.config.beginInformMessage +
+        " The automated test uploads a file successfully."
       );
     } catch (error) {
       // Unit Test.
       // Create the error log and show it to the UI. Show the function name, the class where the function is located and the cached error.
       this.ts.errorLog(
-        this.ts.methodMessages_errorMessage(
-          this.uploadFile.name,
-          __filename.split(__dirname + "/").pop(),
-          error
-        )
+        this.uploadFile.name + " " +
+        __filename.split(__dirname + "/").pop() + " " +
+        error
       );
     }
   }
@@ -1541,20 +1411,16 @@ export class Dsl {
 
       // Add the information message.
       this.ts.informLog(
-        this.ts.methodMessages_informMessage(
-          this.config.beginInformMessage +
-          "The automation accepted the Alert pop-up window."
-        )
+        this.config.beginInformMessage +
+        " The automation accepted the Alert pop-up window."
       );
     } catch (error) {
       // Unit Test.
       // Create the error log and show it to the UI. Show the function name, the class where the function is located and the cached error.
       this.ts.errorLog(
-        this.ts.methodMessages_errorMessage(
-          this.alertAccept.name,
-          __filename.split(__dirname + "/").pop(),
-          error
-        )
+        this.alertAccept.name + " " +
+        __filename.split(__dirname + "/").pop() + " " +
+        error
       );
     }
   }
@@ -1591,20 +1457,16 @@ export class Dsl {
 
       // Add the information message.
       this.ts.informLog(
-        this.ts.methodMessages_informMessage(
-          this.config.beginInformMessage +
-          "The automation dismissed the Alert pop-up window."
-        )
+        this.config.beginInformMessage +
+        " The automation dismissed the Alert pop-up window."
       );
     } catch (error) {
       // Unit Test.
       // Create the error log and show it to the UI. Show the function name, the class where the function is located and the cached error.
       this.ts.errorLog(
-        this.ts.methodMessages_errorMessage(
-          this.alertCancel.name,
-          __filename.split(__dirname + "/").pop(),
+          this.alertCancel.name + " " + 
+          __filename.split(__dirname + "/").pop() + " " + 
           error
-        )
       );
     }
   }
@@ -1646,22 +1508,18 @@ export class Dsl {
 
       // Add the information message.
       this.ts.informLog(
-        this.ts.methodMessages_informMessage(
           this.config.beginInformMessage +
           "The automation accepts and fills the value '" +
           textValue +
           "' in the Alert pop-up window."
-        )
       );
     } catch (error) {
       // Unit Test.
       // Create the error log and show it to the UI. Show the function name, the class where the function is located and the cached error.
       this.ts.errorLog(
-        this.ts.methodMessages_errorMessage(
-          this.alertTypeValueAndAccept.name,
-          __filename.split(__dirname + "/").pop(),
+          this.alertTypeValueAndAccept.name + " " + 
+          __filename.split(__dirname + "/").pop() + " " + 
           error
-        )
       );
     }
   }
@@ -1683,10 +1541,8 @@ export class Dsl {
 
       // Add the information message.
       this.ts.informLog(
-        this.ts.methodMessages_informMessage(
           this.config.beginInformMessage +
-          "The automation successfully switched to iFrame."
-        )
+          " The automation successfully switched to iFrame."
       );
 
       // Return the switched focus inside the iFrame.
@@ -1695,11 +1551,9 @@ export class Dsl {
       // Unit Test.
       // Create the error log and show it to the UI. Show the function name, the class where the function is located and the cached error.
       this.ts.errorLog(
-        this.ts.methodMessages_errorMessage(
-          this.iFrame.name,
-          __filename.split(__dirname + "/").pop(),
+          this.iFrame.name + " " + 
+          __filename.split(__dirname + "/").pop() + " " + 
           error
-        )
       );
     }
   }
@@ -1727,10 +1581,8 @@ export class Dsl {
 
       // Add the information message.
       this.ts.informLog(
-        this.ts.methodMessages_informMessage(
           this.config.beginInformMessage +
-          "The automation successfully switched to neasted iFrame."
-        )
+          " The automation successfully switched to neasted iFrame."
       );
 
       // Return the switched focus inside the nested iFrame.
@@ -1739,11 +1591,9 @@ export class Dsl {
       // Unit Test.
       // Create the error log and show it to the UI. Show the function name, the class where the function is located and the cached error.
       this.ts.errorLog(
-        this.ts.methodMessages_errorMessage(
-          this.iFrameNested.name,
-          __filename.split(__dirname + "/").pop(),
+          this.iFrameNested.name + " " + 
+          __filename.split(__dirname + "/").pop() + " " + 
           error
-        )
       );
     }
   }
@@ -1781,11 +1631,9 @@ export class Dsl {
       // Unit test.
       else {
         this.ts.errorLog(
-          "You have entered a not supported data type. Please provide a locator (string)." +
-          this.ts.methodMessages_errorMessage2(
-            this.dropDown_ByDoubleClick.name,
+          "You have entered a not supported data type. Please provide a locator (string). " +
+            this.dropDown_ByDoubleClick.name + " " + 
             __filename.split(__dirname + "/").pop()
-          )
         );
       }
       // Wait for the element to be visible.
@@ -1824,12 +1672,10 @@ export class Dsl {
 
       // Add the information message.
       this.ts.informLog(
-        this.ts.methodMessages_informMessage(
           this.config.beginInformMessage +
-          "The automated test selected a value '" +
+          " The automated test selected a value '" +
           dropDownListValue +
           "' from the drop-down list."
-        )
       );
 
       // Add the alert message.
@@ -1844,11 +1690,9 @@ export class Dsl {
       // Unit Test.
       // Create the error log and show it to the UI. Show the function name, the class where the function is located and the cached error.
       this.ts.errorLog(
-        this.ts.methodMessages_errorMessage(
-          this.dropDown_ByDoubleClick.name,
-          __filename.split(__dirname + "/").pop(),
+          this.dropDown_ByDoubleClick.name + " " + 
+          __filename.split(__dirname + "/").pop() + " " + 
           error
-        )
       );
     }
   }
@@ -1883,22 +1727,18 @@ export class Dsl {
 
       // Add the information message.
       this.ts.informLog(
-        this.ts.methodMessages_informMessage(
           this.config.beginInformMessage +
-          "The automated test selected a value '" +
+          " The automated test selected a value '" +
           DropDownAttributeValue +
           "' from the drop-down list."
-        )
       );
     } catch (error) {
       // Unit Test.
       // Create the error log and show it to the UI. Show the function name, the class where the function is located and the cached error.
       this.ts.errorLog(
-        this.ts.methodMessages_errorMessage(
-          this.dropDown_ByDoubleClick.name,
-          __filename.split(__dirname + "/").pop(),
+          this.dropDown_ByDoubleClick.name + " " + 
+          __filename.split(__dirname + "/").pop() + " " + 
           error
-        )
       );
     }
   }

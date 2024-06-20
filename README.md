@@ -29,18 +29,10 @@ Please follow the steps to set up the project:
 8. Read the readme.md file to understand how to use the framework.  
 10. Enjoy and automate with pleasure!  
 
-### Software dependencies
-The dependencies will be downloaded automatically by NodeJS.  
-Faker-js is added to generate dynamic data for testing purposes.  
-Official repository: https://github.com/faker-js/faker   
-Official documentation: https://fakerjsdocs.netlify.app/  
-Grep.js is added too.  
-Official repository: https://www.npmjs.com/package/grep  
-
 # Build and Test  
 To develop new tests:  
 1. Make sure that you read the Playwright's documentation carefully. It would help if you knew how to create tests with Playwright.  
-2. In this frame, we are using a POM design pattern. You must create a PO class in the "pom/" folder. For more details, you can see comments inside examples. It would be best to create the PO classes like the example one.  
+2. In this frame, we are using a POM design pattern. You must create a PO class in the "pom/" folder. For more details, you can see comments inside "page-object-model-examples". It would be best to create the PO classes like the example one.  
 3. Create a spec class in the "tests/" folder. For more details, you can see comments in the examples. It would be best to create the SPEC classes like the example one.  
 4. Before starting the tests, you must change the 'testDir' value from 'playwright.config.ts' to your test folder. For example, if your tests are located inside '{root}/tests/my-tests' you should set the 'testDir' value to this relative location. Example "testDir: './tests/my-tests'".  
 5. You can start the tests by executing the following command in the terminal:  
@@ -116,11 +108,23 @@ Because reading log data from the terminal is not easy, so you can use three met
 
 ### Debugging
 This project supports debugging via Visual Studio Code. To use the debugging features, follow these simple steps:
-1. **Open the project in VS Code.**
-2. **Navigate to the Run and Debug section by clicking on the play icon in the sidebar or pressing `Ctrl+Shift+D` (Windows/Linux) or `Cmd+Shift+D` (MacOS).**
-3. **Select a debug configuration from the dropdown menu, which corresponds to the script you want to debug from the `package.json` file.**
-4. **Start the debugging session by clicking the green play button or pressing `F5`.**
+1. Open the project in VS Code.
+2. Navigate to the Run and Debug section by clicking on the play icon in the sidebar or pressing `Ctrl+Shift+D` (Windows/Linux) or `Cmd+Shift+D` (MacOS).
+3. Select a debug configuration from the dropdown menu, which corresponds to the script you want to debug from the `package.json` file.
+4. Start the debugging session by clicking the green play button or pressing `F5`.
 These steps will allow you to debug the scripts configured in the `.vscode/launch.json` file effectively.
+
+### Environment
+The project uses the `dotenv` package to manage environment variables. To set up environment variables, follow these steps:  
+1. Rename the Create a new file named `.env-example` located in the root directory of the project to `.env`.
+2. Fill with your environment variables in the `.env` file.  
+Hint: Because this framework is mainly craeted for educational purposes, you can use the following environment variables:
+```
+DEMOQA_URL="demoqa.com/"
+DEMOQA_PROTOCOL="https"
+DEMOQA_USERNAME="testUser"
+DEMOQA_PASSWORD="TestingPassword123!@#"
+```
 
 ### Ide Extensions:
 If you are using VSCode, there are a few excellent extensions that you need to install. With them working with Playwright is much easier.  
@@ -128,6 +132,16 @@ Playwright Test for VScode: https://marketplace.visualstudio.com/items?itemName=
 Playwright Runner: https://marketplace.visualstudio.com/items?itemName=ortoni.ortoni  
 Playwright Trace Viewer for VScode: https://marketplace.visualstudio.com/items?itemName=ryanrosello-og.playwright-vscode-trace-viewer  
 PlayWright/Cypress Step Definition Generator: https://marketplace.visualstudio.com/items?itemName=RajUppadhyay.playwritecypress-steps-definition-generator  
+
+### Software dependencies
+The dependencies will be downloaded automatically by NodeJS.  
+Faker-js is added to generate dynamic data for testing purposes.  
+Official repository: https://github.com/faker-js/faker   
+Official documentation: https://fakerjsdocs.netlify.app/  
+Grep.js is added too.  
+Official repository: https://www.npmjs.com/package/grep  
+Dotenv is added to read the environment variables.
+Official repository: https://www.npmjs.com/package/dotenv
 
 ### To Do:
 The frame is not perfect. That's why there is a to-do list located in "{root}/toDo/toDo.txt".  

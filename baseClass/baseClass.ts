@@ -1,23 +1,33 @@
-// Import Playwright test library.
 import { Page } from "@playwright/test";
-// Import faker-js library. Data-Driven Testing with dynamically generated data using faker-js.
-import { faker } from "@faker-js/faker";
-// Import tsMethods class.
 import { TsMethods } from "../custom-methods/other-methods/tsMethods";
 import { Dsl } from "../custom-methods/domain-specific-language/dsl";
-// Import data from JSON file.
-import env from "../fixtures/env/env.json";
+
+// Ensure dotenv is configured (if not already configured in your entry file)
+import * as dotenv from 'dotenv';
+dotenv.config();
 
 // Declare a class.
 export class BaseClass {
+  // Declare page, ts, and dsl as readonly members of the class.
+  public readonly ts: TsMethods;
+  public readonly dsl: Dsl;
+  public readonly url: string;
+
   // Declare a page constructor.
-  constructor(public page: Page) {}
+  constructor(public page: Page) {
+    this.ts = new TsMethods(page);
+    this.dsl = new Dsl(page);
 
-  public readonly ts = new TsMethods(this.page);
-  public readonly dsl = new Dsl(this.page);
+    // Construct the URL from environment variables. Default to HTTP and localhost if not specified.
+    const protocol = process.env.DEMOQA_PROTOCOL || 'http'; // Use HTTPS as default protocol if not specified in .env
+    const url = process.env.DEMOQA_URL || 'localhost'; // Use localhost as default URL if not specified in .env
+    this.url = `${protocol}://${url}`;
+  }
 
-  public readonly url = env.toolsqa.protocol + "://" + env.toolsqa.production;
-  public async beforeTest() {}
+  // It is still empty because we don't have any data to put in it yet. Feel free to add data to it.
+  public async beforeTest() {
+    // Placeholder for method to run before each test. Add any setup code here.
+  }
 }
 
 // Export the current class.
