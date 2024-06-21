@@ -10,7 +10,7 @@
 
 //01. Import libraries and classes.
 // Import Playwright test library.
-import { Page, Locator, expect } from "@playwright/test";
+import { Page } from "@playwright/test";
 // Import BaseClass.
 import { BaseClass } from "../../baseClass/baseClass";
 

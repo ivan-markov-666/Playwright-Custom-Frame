@@ -31,7 +31,6 @@ export class Dsl {
    */
   async screenSize(widthSize: number, heightSize: number): Promise<void> {
     try {
-      // Create the method steps here. Describe the custom command in this "try" statement (Domain Specific Language).
       // If the numbers are positive numbers...
       if (widthSize > 0 || heightSize > 0) {
         // Change the screen size.
@@ -79,7 +78,7 @@ export class Dsl {
       this.ts.errorLog(
         this.screenSize.name + " " +
         __filename.split(__dirname + "/").pop() + " " +
-        error
+        await error
       );
     }
   }
@@ -95,7 +94,6 @@ export class Dsl {
    */
   async navigateTo(url: string): Promise<void> {
     try {
-      // Create the method steps here. Describe the custom command in this "try" statement (Domain Specific Language).
       // Provide the destination URL.
       await this.page.goto(url);
       // Verify that the browser loads the correct URL.
@@ -112,7 +110,7 @@ export class Dsl {
       this.ts.errorLog(
         this.navigateTo.name + " " +
         __filename.split(__dirname + "/").pop() + " " +
-        error
+        await error
       );
     }
   }
@@ -144,7 +142,7 @@ export class Dsl {
       this.ts.errorLog(
         this.goBack.name + " " +
         __filename.split(__dirname + "/").pop() + " " +
-        error
+        await error
       );
     }
   }
@@ -176,7 +174,7 @@ export class Dsl {
       this.ts.errorLog(
         this.goForward.name + " " +
         __filename.split(__dirname + "/").pop() + " " +
-        error
+        await error
       );
     }
   }
@@ -204,20 +202,18 @@ export class Dsl {
     verifyLocatorOrElement?: any
   ): Promise<any> {
     try {
-      // Create the method steps here. Describe the custom command in this "try" statement (Domain Specific Language).
-
       // Get a page after a specific action (e.g. clicking a link).
       let [newPage] = await Promise.all([
         // Wait for a specific event to happen. In this case, we are waiting for the browser to open a new window.
-        this.context.waitForEvent("page"),
+        await this.context.waitForEvent("page"),
         // Click over an element to force open the new browser window.
-        this.click(locatorForcesOpeningNewWindow),
+        await this.click(await locatorForcesOpeningNewWindow),
       ]);
       // Wait until the opening of the new browser window happens.
       await newPage.waitForLoadState();
       // If the parameter "verifyLocatorOrElement" is provided - verify if the verification element loads in the new (switched) browser window.
-      if (verifyLocatorOrElement != null) {
-        await this.element(await newPage.locator(verifyLocatorOrElement));
+      if (await verifyLocatorOrElement != null) {
+        await this.element(await newPage.locator(await verifyLocatorOrElement));
       }
       // Add the information message.
       this.ts.informLog(
@@ -232,7 +228,7 @@ export class Dsl {
       this.ts.errorLog(
         this.browserWindowAfterClick.name + " " +
         __filename.split(__dirname + "/").pop() + " " +
-        error
+        await error
       );
     }
   }
@@ -264,8 +260,6 @@ export class Dsl {
    */
   async element(locatorOrElement: any, timeoutPeriod?: number): Promise<any> {
     try {
-      // Create the method steps here. Describe the custom command in this "try" statement (Domain Specific Language).
-
       let element: any; // Declare an internal variable for assigning the element value.
       // If the provided value is a string, this is just a selector.
       if (typeof locatorOrElement === "string") {
@@ -274,11 +268,11 @@ export class Dsl {
       }
       // If the provided value is an object, this is the whole element.
       else if (
-        typeof locatorOrElement === "object" ||
-        locatorOrElement instanceof Object
+        typeof await locatorOrElement === "object" ||
+        await locatorOrElement instanceof Object
       ) {
         // So we don't need to do anything else unique.
-        element = locatorOrElement;
+        element = await locatorOrElement;
       }
       // Unit test.
       else {
@@ -291,23 +285,23 @@ export class Dsl {
       // Wait for the element to be visible.
       await element.waitFor({ state: "visible", timeout: timeoutPeriod });
       // Verify that the element is visible.
-      await expect(element).toBeVisible({
+      await expect(await element).toBeVisible({
         timeout: timeoutPeriod,
       });
       // Verify that the element is not hidden.
-      await expect(element).not.toBeHidden({
+      await expect(await element).not.toBeHidden({
         timeout: timeoutPeriod,
       });
       // Verify that the element is enabled.
-      await expect(element).toBeEnabled({
+      await expect(await element).toBeEnabled({
         timeout: timeoutPeriod,
       });
       // Verify that the element is not disabled.
-      await expect(element).not.toBeDisabled({
+      await expect(await element).not.toBeDisabled({
         timeout: timeoutPeriod,
       });
       // Verify that the element is the only one in the DOM tree.
-      await expect(element).toHaveCount(1, {
+      await expect(await element).toHaveCount(1, {
         timeout: timeoutPeriod,
       });
 
@@ -326,14 +320,14 @@ export class Dsl {
       }
 
       // Return the selected element.
-      return element;
+      return await element;
     } catch (error) {
       // Unit Test.
       // Create the error log and show it to the UI. Show the function name, the class where the function is located and the cached error.
       this.ts.errorLog(
         this.element.name + " " +
         __filename.split(__dirname + "/").pop() + " " +
-        error
+        await error
       );
     }
   }
@@ -372,7 +366,6 @@ export class Dsl {
     expectedAttributeValue?: string
   ): Promise<any> {
     try {
-      // Create the method steps here. Describe the custom command in this "try" statement (Domain Specific Language).
       // Assign the element to a variable.
       let element = await this.element(locatorOrElement, this.config.elementTimeOut);
       // Get the attribute value from the element.
@@ -398,7 +391,7 @@ export class Dsl {
       this.ts.errorLog(
         this.getAttribute.name + " " +
         __filename.split(__dirname + "/").pop() + " " +
-        error
+        await error
       );
     }
   }
@@ -433,21 +426,19 @@ export class Dsl {
     expectedTextValue?: string
   ): Promise<any> {
     try {
-      // Create the method steps here. Describe the custom command in this "try" statement (Domain Specific Language).
-
       let element: any; // Declare an internal variable for assigning the element value.
       // If the provided value is a string, this is just a selector.
-      if (typeof locatorOrElement === "string") {
+      if (typeof await locatorOrElement === "string") {
         // We need to transform this selector into an element.
-        element = this.page.locator(locatorOrElement);
+        element = this.page.locator(await locatorOrElement);
       }
       // If the provided value is an object, this is the whole element.
       else if (
-        typeof locatorOrElement === "object" ||
-        locatorOrElement instanceof Object
+        typeof await locatorOrElement === "object" ||
+        await locatorOrElement instanceof Object
       ) {
         // So we don't need to do anything else unique.
-        element = locatorOrElement;
+        element = await locatorOrElement;
       }
       // Unit test.
       else {
@@ -458,13 +449,12 @@ export class Dsl {
         );
       }
       // Call this method, to verify that the element is present and it is ready for usage.
-      await this.element(element, this.config.elementTimeOut);
+      await this.element(await element, this.config.elementTimeOut);
       // Get the text of an inspected element and assign it to a variable.
-      let elementTextValue = (await element.innerText()).valueOf();
-
+      let elementTextValue = await element.innerText();
       // Make a verification. If there is provided string for the expected value parameter - assert to verify that the inspected element contains the exact text.
       if (expectedTextValue != null) {
-        expect(elementTextValue).toEqual(expectedTextValue);
+        expect(await elementTextValue).toEqual(expectedTextValue);
       }
 
       // Add the information message.
@@ -483,7 +473,7 @@ export class Dsl {
       this.ts.errorLog(
         this.getInnerText.name + " " +
         __filename.split(__dirname + "/").pop() + " " +
-        error
+        await error
       );
     }
   }
@@ -518,21 +508,19 @@ export class Dsl {
     expectedTextValue?: string
   ): Promise<any> {
     try {
-      // Create the method steps here. Describe the custom command in this "try" statement (Domain Specific Language).
-
       let element: any; // Declare an internal variable for assigning the element value.
       // If the provided value is a string, this is just a selector.
-      if (typeof locatorOrElement === "string") {
+      if (typeof await locatorOrElement === "string") {
         // We need to transform this selector into an element.
-        element = this.page.locator(locatorOrElement);
+        element = this.page.locator(await locatorOrElement);
       }
       // If the provided value is an object, this is the whole element.
       else if (
-        typeof locatorOrElement === "object" ||
-        locatorOrElement instanceof Object
+        typeof await locatorOrElement === "object" ||
+        await locatorOrElement instanceof Object
       ) {
         // So we don't need to do anything else unique.
-        element = locatorOrElement;
+        element = await locatorOrElement;
       }
       // Unit test.
       else {
@@ -543,7 +531,7 @@ export class Dsl {
         );
       }
       // Call this method, to verify that the element is present and it is ready for usage.
-      await this.element(element, this.config.elementTimeOut);
+      await this.element(await element, this.config.elementTimeOut);
 
       // Get the text of an inspected element and assign it to a variable. As you can see, we are getting the first value from the list because "all text contents" return an array list.
       let elementTextValue: string = await (await element.allTextContents())[0];
@@ -569,7 +557,7 @@ export class Dsl {
       this.ts.errorLog(
         this.getText.name + " " +
         __filename.split(__dirname + "/").pop() + " " +
-        error
+        await error
       );
     }
   }
@@ -606,21 +594,19 @@ export class Dsl {
     expectedTextValue?: string
   ): Promise<any> {
     try {
-      // Create the method steps here. Describe the custom command in this "try" statement (Domain Specific Language).
-
       let element: any; // Declare an internal variable for assigning the element value.
       // If the provided value is a string, this is just a selector.
-      if (typeof locatorOrElement === "string") {
+      if (typeof await locatorOrElement === "string") {
         // We need to transform this selector into an element.
-        element = this.page.locator(locatorOrElement);
+        element = this.page.locator(await locatorOrElement);
       }
       // If the provided value is an object, this is the whole element.
       else if (
-        typeof locatorOrElement === "object" ||
-        locatorOrElement instanceof Object
+        typeof await locatorOrElement === "object" ||
+        await locatorOrElement instanceof Object
       ) {
         // So we don't need to do anything else unique.
-        element = locatorOrElement;
+        element = await locatorOrElement;
       }
       // Unit test.
       else {
@@ -631,7 +617,7 @@ export class Dsl {
         );
       }
       // Call this method, to verify that the element is present and it is ready for usage.
-      await this.element(element, this.config.elementTimeOut);
+      await this.element(await element, this.config.elementTimeOut);
 
       let listLenght = await (await element.allTextContents()).length;
 
@@ -672,7 +658,7 @@ export class Dsl {
       this.ts.errorLog(
         this.getAllTexts.name + " " +
         __filename.split(__dirname + "/").pop() + " " +
-        error
+        await error
       );
     }
   }
@@ -698,17 +684,17 @@ export class Dsl {
 
       let element: any; // Declare an internal variable for assigning the element value.
       // If the provided value is a string, this is just a selector.
-      if (typeof locatorOrElement === "string") {
+      if (typeof await locatorOrElement === "string") {
         // We need to transform this selector into an element.
-        element = this.page.locator(locatorOrElement);
+        element = this.page.locator(await locatorOrElement);
       }
       // If the provided value is an object, this is the whole element.
       else if (
-        typeof locatorOrElement === "object" ||
-        locatorOrElement instanceof Object
+        typeof await locatorOrElement === "object" ||
+        await locatorOrElement instanceof Object
       ) {
         // So we don't need to do anything else unique.
-        element = locatorOrElement;
+        element = await locatorOrElement;
       }
       // Unit test.
       else {
@@ -720,7 +706,7 @@ export class Dsl {
       }
 
       // Call this method, to verify that the element is present and it is ready for usage.
-      await this.element(element, this.config.elementTimeOut);
+      await this.element(await element, this.config.elementTimeOut);
       // Send Ctrl+A to the element. This will work for Windows and Linux. We are using this to select all containing text inside inspected input text element.
       await this.page.keyboard.press("Control+A");
       // Send Meta+A to the element. This will work for macOS. We are using this to select all containing text inside inspected input text element.
@@ -744,7 +730,7 @@ export class Dsl {
       this.ts.errorLog(
         this.sendKeys.name + " " +
         __filename.split(__dirname + "/").pop() + " " +
-        error
+        await error
       )
     }
   }
@@ -772,22 +758,20 @@ export class Dsl {
     loctorOrElementVerificator?: any
   ): Promise<void> {
     try {
-      // Create the method steps here. Describe the custom command in this "try" statement (Domain Specific Language).
-
       let element: any; // Declare an internal variable for assigning the element value.
       let elementVerificator: any; // Declare an internal variable for assigning the element value.
       // If the provided value is a string, this is just a selector.
-      if (typeof locatorOrElement === "string") {
+      if (typeof await locatorOrElement === "string") {
         // We need to transform this selector into an element.
-        element = this.page.locator(locatorOrElement);
+        element = this.page.locator(await locatorOrElement);
       }
       // If the provided value is an object, this is the whole element.
       else if (
-        typeof locatorOrElement === "object" ||
-        locatorOrElement instanceof Object
+        typeof await locatorOrElement === "object" ||
+        await locatorOrElement instanceof Object
       ) {
         // So we don't need to do anything else unique.
-        element = locatorOrElement;
+        element = await locatorOrElement;
       }
       // Unit test.
       else {
@@ -800,21 +784,21 @@ export class Dsl {
 
       // If the provided value is a string, this is just a selector.
       if (
-        typeof loctorOrElementVerificator === "string" &&
-        loctorOrElementVerificator != null
+        typeof await loctorOrElementVerificator === "string" &&
+        await loctorOrElementVerificator != null
       ) {
         // We need to transform this selector into an element.
-        elementVerificator = this.page.locator(loctorOrElementVerificator);
+        elementVerificator = this.page.locator(await loctorOrElementVerificator);
       }
       // If the provided value is an object, this is the whole element.
       else if (
-        typeof loctorOrElementVerificator === "object" ||
-        (loctorOrElementVerificator instanceof Object &&
-          loctorOrElementVerificator != null)
+        typeof await loctorOrElementVerificator === "object" ||
+        (await loctorOrElementVerificator instanceof Object &&
+          await loctorOrElementVerificator != null)
       ) {
         // So we don't need to do anything else unique.
-        elementVerificator = loctorOrElementVerificator;
-      } else if (loctorOrElementVerificator == null) {
+        elementVerificator = await loctorOrElementVerificator;
+      } else if (await loctorOrElementVerificator == null) {
         // Do nothing, because the parameter is optional.
       }
       // Unit test.
@@ -827,7 +811,7 @@ export class Dsl {
       }
 
       // Call this method, to verify that the element is present and it is ready for usage.
-      await this.element(element, this.config.elementTimeOut);
+      await this.element(await element, this.config.elementTimeOut);
       // Send Ctrl+A to the element. This will work for Windows and Linux. We are using this to select all containing text inside inspected input text element.
       await this.page.keyboard.press("Control+A");
       // Send Meta+A to the element. This will work for macOS. We are using this to select all containing text inside inspected input text element.
@@ -840,8 +824,8 @@ export class Dsl {
       // Verify that the input text element contains the sent text data.
       // If the element we use is the same as the element, that will verify the operation was compleated correctly. Or if we don't provide a verification element - because it is the same as a used element.
       if (
-        locatorOrElement == loctorOrElementVerificator ||
-        loctorOrElementVerificator == null
+        await locatorOrElement == await loctorOrElementVerificator ||
+        await loctorOrElementVerificator == null
       ) {
         let verificateValueIsCorrect: string = await (
           await element.allTextContents()
@@ -869,7 +853,7 @@ export class Dsl {
       this.ts.errorLog(
         this.sendKeys_MultySelect.name + " " +
         __filename.split(__dirname + "/").pop() + " " +
-        error
+        await error
       );
     }
   }
@@ -903,7 +887,7 @@ export class Dsl {
       let element = await this.element(locator, this.config.elementTimeOut);
       // Verify the element is not checked.
       expect(await this.page.isChecked(locator)).toBeFalsy();
-      await expect(element).not.toBeChecked();
+      await expect(await element).not.toBeChecked();
       // If the checkOrClickAction value is not null.
       if (checkOrClickAction != null) {
         // If the provided action is "check".
@@ -930,7 +914,7 @@ export class Dsl {
       }
       // Verify the element is checked.
       expect(await this.page.isChecked(locator)).toBeTruthy();
-      await expect(element).toBeChecked();
+      await expect(await element).toBeChecked();
 
       // Add the information message.
       this.ts.informLog(
@@ -942,7 +926,7 @@ export class Dsl {
       this.ts.errorLog(
         this.checkRadioButtonCheckBox.name + " " +
         __filename.split(__dirname + "/").pop() + " " +
-        error
+        await error
       );
     }
   }
@@ -970,12 +954,11 @@ export class Dsl {
     checkOrClickAction?: string
   ): Promise<void> {
     try {
-      // Create the method steps here. Describe the custom command in this "try" statement (Domain Specific Language).
       // Create an element.
       let element = await this.element(locator, this.config.elementTimeOut);
       // Verify the element is checked.
       expect(await this.page.isChecked(locator)).toBeTruthy();
-      await expect(element).toBeChecked();
+      await expect(await element).toBeChecked();
       // If the checkOrClickAction value is not null.
       if (checkOrClickAction != null) {
         // If the provided action is "uncheck".
@@ -1002,7 +985,7 @@ export class Dsl {
       }
       // Verify the element is not checked.
       expect(await this.page.isChecked(locator)).toBeFalsy();
-      await expect(element).not.toBeChecked();
+      await expect(await element).not.toBeChecked();
 
       // Add the information message.
       this.ts.informLog(
@@ -1015,7 +998,7 @@ export class Dsl {
       this.ts.errorLog(
         this.unCheckBox.name + " " +
         __filename.split(__dirname + "/").pop() + " " +
-        error
+        await error
       );
     }
   }
@@ -1031,7 +1014,6 @@ export class Dsl {
    */
   async doubleClick(locator: string): Promise<void> {
     try {
-      // Create the method steps here. Describe the custom command in this "try" statement (Domain Specific Language).
       // Call this method, to verify that the element is present and it is ready for usage.
       await this.element(locator, this.config.elementTimeOut);
       // Make double-click mouse action over selected element.
@@ -1048,7 +1030,7 @@ export class Dsl {
       this.ts.errorLog(
         this.doubleClick.name + " " +
         __filename.split(__dirname + "/").pop() + " " +
-        error
+        await error
       );
     }
   }
@@ -1064,7 +1046,6 @@ export class Dsl {
    */
   async rightClick(locator: string): Promise<void> {
     try {
-      // Create the method steps here. Describe the custom command in this "try" statement (Domain Specific Language).
       // Call this method, to verify that the element is present and it is ready for usage.
       await this.element(locator, this.config.elementTimeOut);
       // Make right-click mouse action over selected element.
@@ -1084,7 +1065,7 @@ export class Dsl {
       this.ts.errorLog(
         this.rightClick.name + " " +
         __filename.split(__dirname + "/").pop() + " " +
-        error
+        await error
       );
     }
   }
@@ -1100,7 +1081,6 @@ export class Dsl {
    */
   async click(locator: string): Promise<void> {
     try {
-      // Create the method steps here. Describe the custom command in this "try" statement (Domain Specific Language).
       // Call this method, to verify that the element is present and it is ready for usage.
       await this.element(locator, this.config.elementTimeOut);
 
@@ -1118,7 +1098,7 @@ export class Dsl {
       this.ts.errorLog(
         this.click.name + " " +
         __filename.split(__dirname + "/").pop() + " " +
-        error
+        await error
       );
     }
   }
@@ -1134,7 +1114,6 @@ export class Dsl {
    */
   async hover(locator: string): Promise<void> {
     try {
-      // Create the method steps here. Describe the custom command in this "try" statement (Domain Specific Language).
       // Call this method, to verify that the element is present and it is ready for usage.
       await this.element(locator, this.config.elementTimeOut);
       // Hover over the element.
@@ -1150,7 +1129,7 @@ export class Dsl {
       this.ts.errorLog(
         this.hover.name + " " +
         __filename.split(__dirname + "/").pop() + " " +
-        error
+        await error
       );
     }
   }
@@ -1172,7 +1151,6 @@ export class Dsl {
     yValue: number
   ): Promise<void> {
     try {
-      // Create the method steps here. Describe the custom command in this "try" statement (Domain Specific Language).
       // Call this method, to verify that the element is present and it is ready for usage.
       await this.element(locator, this.config.elementTimeOut);
       // If the numbers are positive numbers...
@@ -1223,7 +1201,7 @@ export class Dsl {
       this.ts.errorLog(
         this.clickPosition.name + " " +
         __filename.split(__dirname + "/").pop() + " " +
-        error
+        await error
       );
     }
   }
@@ -1244,7 +1222,6 @@ export class Dsl {
     keyboardKey: "Alt" | "Control" | "Meta" | "Shift"
   ): Promise<void> {
     try {
-      // Create the method steps here. Describe the custom command in this "try" statement (Domain Specific Language).
       // Call this method, to verify that the element is present and it is ready for usage.
       await this.element(locator, this.config.elementTimeOut);
       // Send keyboard key/s to inspected element.
@@ -1266,7 +1243,7 @@ export class Dsl {
       this.ts.errorLog(
         this.clickWithHoldingKeyboardKey.name + " " +
         __filename.split(__dirname + "/").pop() + " " +
-        error
+        await error
       );
     }
   }
@@ -1290,15 +1267,14 @@ export class Dsl {
     downloadFolderPathWithFileNameAndExtension?: string
   ): Promise<void> {
     try {
-      // Create the method steps here. Describe the custom command in this "try" statement (Domain Specific Language).
       // Call this method, to verify that the element is present and it is ready for usage.
       await this.element(locator);
       // Initialize the downloading process.
       let [download] = await Promise.all([
         // Start waiting for the download process.
-        this.page.waitForEvent("download"),
+        await this.page.waitForEvent("download"),
         // Perform the action that initiates the download.
-        this.page.locator(locator).click(),
+        await this.page.locator(locator).click(),
       ]);
       // Wait for the download process to complete.
       if (downloadFolderPathWithFileNameAndExtension != null) {
@@ -1334,7 +1310,7 @@ export class Dsl {
       this.ts.errorLog(
         this.downloadFile.name + " " +
         __filename.split(__dirname + "/").pop() + " " +
-        error
+        await error
       );
     }
   }
@@ -1354,7 +1330,6 @@ export class Dsl {
     uploadFilePathWithFileNameAndExtension: string
   ): Promise<void> {
     try {
-      // Create the method steps here. Describe the custom command in this "try" statement (Domain Specific Language).
       // Call this method, to verify that the element is present and it is ready for usage.
       await this.element(locator);
       // Upload the file by providing the element locator and file path.
@@ -1374,7 +1349,7 @@ export class Dsl {
       this.ts.errorLog(
         this.uploadFile.name + " " +
         __filename.split(__dirname + "/").pop() + " " +
-        error
+        await error
       );
     }
   }
@@ -1395,7 +1370,6 @@ export class Dsl {
    */
   async alertAccept(locator: string, alertMessage?: string): Promise<void> {
     try {
-      // Create the method steps here. Describe the custom command in this "try" statement (Domain Specific Language).
       // Handle the alert pop-up window.
       this.page.once("dialog", async (dialog) => {
         // If we provide the alertMessage parameter...
@@ -1420,7 +1394,7 @@ export class Dsl {
       this.ts.errorLog(
         this.alertAccept.name + " " +
         __filename.split(__dirname + "/").pop() + " " +
-        error
+        await error
       );
     }
   }
@@ -1441,7 +1415,6 @@ export class Dsl {
    */
   async alertCancel(locator: string, alertMessage?: string): Promise<void> {
     try {
-      // Create the method steps here. Describe the custom command in this "try" statement (Domain Specific Language).
       // Handle the alert pop-up window.
       this.page.once("dialog", async (dialog) => {
         // If we provide the alertMessage parameter...
@@ -1464,9 +1437,9 @@ export class Dsl {
       // Unit Test.
       // Create the error log and show it to the UI. Show the function name, the class where the function is located and the cached error.
       this.ts.errorLog(
-          this.alertCancel.name + " " + 
-          __filename.split(__dirname + "/").pop() + " " + 
-          error
+        this.alertCancel.name + " " +
+        __filename.split(__dirname + "/").pop() + " " +
+        await error
       );
     }
   }
@@ -1492,7 +1465,6 @@ export class Dsl {
     alertMessage?: string
   ): Promise<void> {
     try {
-      // Create the method steps here. Describe the custom command in this "try" statement (Domain Specific Language).
       // Handle the alert pop-up window.
       this.page.once("dialog", async (dialog) => {
         // If we provide the alertMessage parameter...
@@ -1508,18 +1480,18 @@ export class Dsl {
 
       // Add the information message.
       this.ts.informLog(
-          this.config.beginInformMessage +
-          "The automation accepts and fills the value '" +
-          textValue +
-          "' in the Alert pop-up window."
+        this.config.beginInformMessage +
+        "The automation accepts and fills the value '" +
+        textValue +
+        "' in the Alert pop-up window."
       );
     } catch (error) {
       // Unit Test.
       // Create the error log and show it to the UI. Show the function name, the class where the function is located and the cached error.
       this.ts.errorLog(
-          this.alertTypeValueAndAccept.name + " " + 
-          __filename.split(__dirname + "/").pop() + " " + 
-          error
+        this.alertTypeValueAndAccept.name + " " +
+        __filename.split(__dirname + "/").pop() + " " +
+        await error
       );
     }
   }
@@ -1537,12 +1509,10 @@ export class Dsl {
    */
   async iFrame(iFrameLocator: string): Promise<any> {
     try {
-      // Create the method steps here. Describe the custom command in this "try" statement (Domain Specific Language).
-
       // Add the information message.
       this.ts.informLog(
-          this.config.beginInformMessage +
-          " The automation successfully switched to iFrame."
+        this.config.beginInformMessage +
+        " The automation successfully switched to iFrame."
       );
 
       // Return the switched focus inside the iFrame.
@@ -1551,9 +1521,9 @@ export class Dsl {
       // Unit Test.
       // Create the error log and show it to the UI. Show the function name, the class where the function is located and the cached error.
       this.ts.errorLog(
-          this.iFrame.name + " " + 
-          __filename.split(__dirname + "/").pop() + " " + 
-          error
+        this.iFrame.name + " " +
+        __filename.split(__dirname + "/").pop() + " " +
+        await error
       );
     }
   }
@@ -1575,14 +1545,13 @@ export class Dsl {
     childIframeLocator: string
   ): Promise<any> {
     try {
-      // Create the method steps here. Describe the custom command in this "try" statement (Domain Specific Language).
       // Assign the parent iFrame focus to the variable.
       let iFrameParent = await this.iFrame(parentIframeLocator);
 
       // Add the information message.
       this.ts.informLog(
-          this.config.beginInformMessage +
-          " The automation successfully switched to neasted iFrame."
+        this.config.beginInformMessage +
+        " The automation successfully switched to neasted iFrame."
       );
 
       // Return the switched focus inside the nested iFrame.
@@ -1591,9 +1560,9 @@ export class Dsl {
       // Unit Test.
       // Create the error log and show it to the UI. Show the function name, the class where the function is located and the cached error.
       this.ts.errorLog(
-          this.iFrameNested.name + " " + 
-          __filename.split(__dirname + "/").pop() + " " + 
-          error
+        this.iFrameNested.name + " " +
+        __filename.split(__dirname + "/").pop() + " " +
+        await error
       );
     }
   }
@@ -1613,8 +1582,6 @@ export class Dsl {
     locatorDropDownValue: string
   ): Promise<void> {
     try {
-      // Create the method steps here. Describe the custom command in this "try" statement (Domain Specific Language).
-
       // Call this method, to verify that the element is present and it is ready for usage.
       await this.element(locatorDropDownList, this.config.elementTimeOut);
 
@@ -1624,7 +1591,7 @@ export class Dsl {
       // Because we are not able to use the "focus()" function over the listed drop-down list value, we can't use "dsl.element()" method from this class. That's why we will add the following few lines of code for verification that the drop-down value is ready for usage.
       let elementDropDownValue: any; // Declare an internal variable for assigning the element value.
       // If the provided value is a string, this is just a selector.
-      if (typeof locatorDropDownValue === "string") {
+      if (typeof await locatorDropDownValue === "string") {
         // We need to transform this selector into an element.
         elementDropDownValue = this.page.locator(locatorDropDownValue);
       }
@@ -1632,8 +1599,8 @@ export class Dsl {
       else {
         this.ts.errorLog(
           "You have entered a not supported data type. Please provide a locator (string). " +
-            this.dropDown_ByDoubleClick.name + " " + 
-            __filename.split(__dirname + "/").pop()
+          this.dropDown_ByDoubleClick.name + " " +
+          __filename.split(__dirname + "/").pop()
         );
       }
       // Wait for the element to be visible.
@@ -1642,23 +1609,23 @@ export class Dsl {
         timeout: this.config.elementTimeOut,
       });
       // Verify that the element is visible.
-      await expect(elementDropDownValue).toBeVisible({
+      await expect(await elementDropDownValue).toBeVisible({
         timeout: this.config.elementTimeOut,
       });
       // Verify that the element is not hidden.
-      await expect(elementDropDownValue).not.toBeHidden({
+      await expect(await elementDropDownValue).not.toBeHidden({
         timeout: this.config.elementTimeOut,
       });
       // Verify that the element is enabled.
-      await expect(elementDropDownValue).toBeEnabled({
+      await expect(await elementDropDownValue).toBeEnabled({
         timeout: this.config.elementTimeOut,
       });
       // Verify that the element is not disabled.
-      await expect(elementDropDownValue).not.toBeDisabled({
+      await expect(await elementDropDownValue).not.toBeDisabled({
         timeout: this.config.elementTimeOut,
       });
       // Verify that the element is the only one in the DOM tree.
-      await expect(elementDropDownValue).toHaveCount(1, {
+      await expect(await elementDropDownValue).toHaveCount(1, {
         timeout: this.config.elementTimeOut,
       });
 
@@ -1672,10 +1639,10 @@ export class Dsl {
 
       // Add the information message.
       this.ts.informLog(
-          this.config.beginInformMessage +
-          " The automated test selected a value '" +
-          dropDownListValue +
-          "' from the drop-down list."
+        this.config.beginInformMessage +
+        " The automated test selected a value '" +
+        dropDownListValue +
+        "' from the drop-down list."
       );
 
       // Add the alert message.
@@ -1690,9 +1657,9 @@ export class Dsl {
       // Unit Test.
       // Create the error log and show it to the UI. Show the function name, the class where the function is located and the cached error.
       this.ts.errorLog(
-          this.dropDown_ByDoubleClick.name + " " + 
-          __filename.split(__dirname + "/").pop() + " " + 
-          error
+        this.dropDown_ByDoubleClick.name + " " +
+        __filename.split(__dirname + "/").pop() + " " +
+        await error
       );
     }
   }
@@ -1713,8 +1680,6 @@ export class Dsl {
     DropDownAttributeValue: string
   ): Promise<void> {
     try {
-      // Create the method steps here. Describe the custom command in this "try" statement (Domain Specific Language).
-
       // Call this method, to verify that the element is present and it is ready for usage.
       await this.element(locatorDropDownList, this.config.elementTimeOut);
 
@@ -1727,18 +1692,34 @@ export class Dsl {
 
       // Add the information message.
       this.ts.informLog(
-          this.config.beginInformMessage +
-          " The automated test selected a value '" +
-          DropDownAttributeValue +
-          "' from the drop-down list."
+        this.config.beginInformMessage +
+        " The automated test selected a value '" +
+        DropDownAttributeValue +
+        "' from the drop-down list."
       );
     } catch (error) {
       // Unit Test.
       // Create the error log and show it to the UI. Show the function name, the class where the function is located and the cached error.
       this.ts.errorLog(
-          this.dropDown_ByDoubleClick.name + " " + 
-          __filename.split(__dirname + "/").pop() + " " + 
-          error
+        this.dropDown_ByDoubleClick.name + " " +
+        __filename.split(__dirname + "/").pop() + " " +
+        await error
+      );
+    }
+  }
+
+  /**
+   * @description                    This method shows the template for creating a custom DSL function.           
+   */
+  async templateDslFunction(): Promise<void> {
+    // We are using try-catch block to catch the error and log it to the console.
+    try {
+      // Create the method steps here. Describe the custom command in this "try" statement (Domain Specific Language).
+    } catch (error) {
+      this.ts.errorLog(
+        this.templateDslFunction.name + " " +
+        __filename.split(__dirname + "/").pop() + " " +
+        await error
       );
     }
   }
@@ -1746,3 +1727,5 @@ export class Dsl {
 
 // Export the current class.
 export default Dsl;
+
+

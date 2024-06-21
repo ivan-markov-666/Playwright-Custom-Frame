@@ -103,6 +103,20 @@ export class TsMethods {
     return Date.now() / 1000;
   }
 
+  /**
+   * @description     This method get the environment variable from the .env file and throw an error if the variable is not set.
+   * @param name      Provide the name of the environment variable.
+   * @returns         Return the value of the environment variable.
+   * @usage           getEnvVariable('BASE_URL');
+   */
+  public getEnvVariable(name: string): string {
+    const value = process.env[name];
+    if (value === undefined) {
+      throw new Error(`Environment variable ${name} is not set.`);
+    }
+    return value;
+  }
+
 }
 
 // Export the current class.
