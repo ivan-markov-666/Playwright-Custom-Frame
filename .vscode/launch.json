@@ -54,6 +54,15 @@
             "runtimeArgs": ["run", "scrap:wu"],
             "skipFiles": ["<node_internals>/**"],
             "console": "integratedTerminal"
+        },
+        {
+            "name": "Debug Test: Iris",
+            "type": "node",
+            "request": "launch",
+            "runtimeExecutable": "npm",
+            "runtimeArgs": ["run", "test:iris"],
+            "console": "integratedTerminal",
+            "internalConsoleOptions": "openOnSessionStart"
         }
     ]
 }
