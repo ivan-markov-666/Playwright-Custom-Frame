@@ -9,19 +9,19 @@
 import { test, expect, Page } from "@playwright/test";
 import BaseClass from "../../baseClass/baseClass";
 // Import the domain-specific language class.
-import domainSpecificLanguage from "../../custom-methods/domain-specific-language/dsl";
+import DomainSpecificLanguage from "../../custom-methods/domain-specific-language/dsl";
 import tsMethods from "../../custom-methods/other-methods/tsMethods";
 
 //02. Create the "describe" block.
 test.describe("This block contains examples for selecting a value from the drop-down list.", async () => {
   let page: Page; // Create a new variable for Page. Add a specific type (of the Page class) to enable the suggestions.
-  let dsl: domainSpecificLanguage; // Create a new variable for a domain-specific language. Add a specific type (of the domainSpecificLanguage class) to enable the suggestions.
+  let dsl: DomainSpecificLanguage; // Create a new variable for a domain-specific language. Add a specific type (of the domainSpecificLanguage class) to enable the suggestions.
   let ts: tsMethods;
 
   //03. Create the "beforeAll" block.
   test.beforeAll(async ({ browser }) => {
     page = await browser.newPage(); // Add value to 'page'.
-    dsl = new domainSpecificLanguage(page); // Create a new 'dsl' and include 'page' inside.
+    dsl = new DomainSpecificLanguage(page); // Create a new 'dsl' and include 'page' inside.
     ts = new tsMethods(page);
   });
 
