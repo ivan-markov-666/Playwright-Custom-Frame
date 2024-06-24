@@ -42,13 +42,16 @@ class DslHelper {
    * @returns                 The method returns the element.
    * @usage                   await dslHelper.resolveElement(locatorOrElement);
    */
-  async resolveElement(locatorOrElement: LocatorOrElement): Promise<Element> {
+  async resolveElement(
+    locatorOrElement: LocatorOrElement,
+    pageInstance: Page = this.page
+  ): Promise<Element> {
     // Declare an internal variable for assigning the element value.
     let element: Element = null;
     // If the provided value is a string, this is just a selector.
     if (typeof locatorOrElement === "string") {
       // We need to transform this selector into an element.
-      element = this.page.locator(locatorOrElement);
+      element = pageInstance.locator(locatorOrElement);
     }
     // If the provided value is an object containing 'waitFor' property, this is a Playwright locator object.
     else if (locatorOrElement && 'waitFor' in locatorOrElement) {
@@ -98,18 +101,22 @@ export class Dsl {
    * @description               This function changes the screen size.
    * @param widthSize           Provide the number for the width screen size.
    * @param heightSize          Provide the number for the height screen size.
-   * @type                      The type is set to: "Promise<void>".
+   * @param pageInstance        Optional. Provide the page instance. The default value is set to the current page. If you want to use this method with a new page, provide the new page instance.
    * @usage                     - Usage:
    *                              {constructorKeyword}.screenSize({widthSize}, {heightSize});
    * @example                   Example: Provide values for screen width and height.
    *                              await dsl.screenSize(1920, 1080);
    */
-  async screenSize(widthSize: PositiveInteger, heightSize: PositiveInteger): Promise<void> {
+  async screenSize(
+    widthSize: PositiveInteger,
+    heightSize: PositiveInteger,
+    pageInstance: Page = this.page
+  ): Promise<void> {
     try {
       // If the numbers are positive numbers...
       if (widthSize > 0 || heightSize > 0) {
         // Change the screen size.
-        await this.page.setViewportSize({
+        await pageInstance.setViewportSize({
           width: widthSize,
           height: heightSize,
         });
@@ -160,18 +167,21 @@ export class Dsl {
   /**
    * @description               This function navigates to the URL.
    * @param url                 Provide the destination URL.
-   * @type                      The type is set to: "Promise<void>".
+   * @param pageInstance        Optional. Provide the page instance. The default value is set to the current page. If you want to use this method with a new page, provide the new page instance.
    * @usage                     - Usage:
    *                              {constructorKeyword}.navigateTo({URL address});
    * @example                   Example: Provide the URL address.
    *                              await dsl.navigateTo("https://domainurladdress/endpoint/");
    */
-  async navigateTo(url: Url): Promise<void> {
+  async navigateTo(
+    url: Url,
+    pageInstance: Page = this.page
+  ): Promise<void> {
     try {
       // Provide the destination URL.
-      await this.page.goto(url);
+      await pageInstance.goto(url);
       // Verify that the browser loads the correct URL.
-      await expect(this.page).toHaveURL(url);
+      await expect(pageInstance).toHaveURL(url);
       // Add the information message.
       this.ts.informLog(
         this.config.beginInformMessage +
@@ -191,18 +201,21 @@ export class Dsl {
   /**
    * @description               This function navigates back to the previous URL.
    * @param verifyUrl           Provide the expected URL address.
-   * @type                      The type is set to: "Promise<void>".
+   * @param pageInstance        Optional. Provide the page instance. The default value is set to the current page. If you want to use this method with a new page, provide the new page instance.
    * @usage                     - Usage:
    *                              {constructorKeyword}.goBack({expected URL address});
    * @example                   Example: Provide the expected URL address.
    *                              await dsl.goBack("https://domainurladdress/previous/url/");
    */
-  async goBack(verifyUrl: Url): Promise<void> {
+  async goBack(
+    verifyUrl: Url,
+    pageInstance: Page = this.page
+  ): Promise<void> {
     try {
       // Navigate back to the previous URL.
-      await this.page.goBack();
+      await pageInstance.goBack();
       // Verify that the browser loads the correct URL.
-      await expect(this.page).toHaveURL(verifyUrl);
+      await expect(pageInstance).toHaveURL(verifyUrl);
       // Add the information message.
       this.ts.informLog(
         this.config.beginInformMessage +
@@ -222,18 +235,21 @@ export class Dsl {
   /**
    * @description               This function navigates to the forward URL.
    * @param verifyUrl           Provide the expected URL address.
-   * @type                      The type is set to: "Promise<void>".
+   * @param pageInstance        Optional. Provide the page instance. The default value is set to the current page. If you want to use this method with a new page, provide the new page instance.
    * @usage                     - Usage:
    *                              {constructorKeyword}.goForward({expected URL address});
    * @example                   Example: Provide the expected URL address.
    *                              await dsl.goForward("https://domainurladdress/forward/url/");
    */
-  async goForward(verifyUrl: Url): Promise<void> {
+  async goForward(
+    verifyUrl: Url,
+    pageInstance: Page = this.page
+  ): Promise<void> {
     try {
       // Navigate to the forward URL.
-      await this.page.goForward();
+      await pageInstance.goForward();
       // Verify that the browser loads the correct URL.
-      assert.strictEqual(this.page.url(), verifyUrl, 'Current page URL does not match the expected URL.');
+      assert.strictEqual(pageInstance.url(), verifyUrl, 'Current page URL does not match the expected URL.');
       // Add the information message.
       this.ts.informLog(
         this.config.beginInformMessage +
@@ -251,77 +267,11 @@ export class Dsl {
   }
 
   /**
-   * @description                                    This method switches to a second browser window. The browser window should be opened after some action - pressing the over button, hyperlink etc.
-   * @param locatorForcesOpeningNewWindow            Provide a locator (string) that receives the action forces opening the new browser tab.
-   * @param verifyLocatorOrElement                   Optional. Provide a locator (string) to verify that the browser opened a new tab window.
-   * @type                                           The type is set to: "Promise<any>".
-   * @returns                                        The method is returning the switched browser focus as an object.
-   * @usage                                          - Usage 1: Use the method by providing a verification locator parameter.
-   *                                                   {constructorKeyword}.browserWindowAfterClick("#id1", "#id2");
-   *                                                 - Usage 2: Use the method without providing a verification locator parameter.
-   *                                                   {constructorKeyword}.browserWindowAfterClick("#id");
-   * @example                                        Example 1: Use the method by providing a verification locator parameter.
-   *                                                   await dsl.browserWindowAfterClick("#id1", "#id2");
-   *                                                 Example 2: Use the method without providing a verification locator parameter.
-   *                                                   let newPage = await dsl.browserWindowAfterClick("#id");
-   *                                                   let elementInsideNewBrowserWindow: any = newPage.locator("#id2");
-   *                                                   await dsl.element(elementInsideNewBrowserWindow);
-   *
-   */
-  async browserWindowAfterClick(
-    locatorForcesOpeningNewWindow: Selector,
-    verifyLocatorOrElement?: LocatorOrElement
-  ): Promise<any> {
-    try {
-      await this.element(locatorForcesOpeningNewWindow);
-      // Get a page after a specific action (e.g. clicking a link).
-      let [newPage] = await Promise.all([
-        // Wait for a specific event to happen. In this case, we are waiting for the browser to open a new window.
-        await this.context.waitForEvent("page", { timeout: 10000 }),
-        // Click over an element to force open the new browser window.
-        await this.click(locatorForcesOpeningNewWindow),
-      ]);
-      // Wait until the opening of the new browser window happens.
-      await newPage.waitForLoadState();
-      // If the parameter "verifyLocatorOrElement" is provided - verify if the verification element loads in the new (switched) browser window.
-      if (verifyLocatorOrElement != null) {
-        await this.element(await newPage.locator(verifyLocatorOrElement));
-      }
-      // Add the information message.
-      this.ts.informLog(
-        this.config.beginInformMessage +
-        "The automation test switched the focus to the second browser tab."
-      );
-      // Return the switched browser focus as an object.
-      return newPage;
-    } catch (error) {
-      // Create the error log and show it to the UI. Show the function name, the class where the function is located and the cached error.
-      this.ts.errorLog(
-        this.browserWindowAfterClick.name + " " +
-        __filename.split(__dirname + "/").pop() + " " +
-        await error
-      );
-    }
-  }
-
-
-  async interactWithNewTab(buttonSelector: string): Promise<Page> {
-    const page = await this.context.newPage();
-    const [newTab] = await Promise.all([
-      this.context.waitForEvent('page'), // Слушане за отваряне на нов таб
-      this.click(buttonSelector)    // Кликване на бутона за отваряне на нов таб
-    ]);
-  
-    await newTab.bringToFront(); // Фокусиране на новия таб
-    return newTab; // Връщане на обекта на новия таб
-  }
-
-  /**
    * @description               This function is responsible for selecting an element and verifying that the element is ready to be used.
    * @param locatorOrElement    Provide a locator (string) or element (object). The method uses a mechanism to use a locator (string) and an element (object). That is useful if we want to provide just a locator or give the whole element (in cases when we want to use this method with iFrames or want to use the method with other browser windows).
    * @param timeoutPeriod       Optional. Provide the time out in miliseconds.
+   * @param pageInstance        Optional. Provide the page instance. The default value is set to the current page. If you want to use this method with a new page, provide the new page instance.
    * @return                    We are returning the element.
-   * @type                      The type is set to: "Promise<any>".
    * @usage                     - Usage 1: Use the method by providing a locator parameter and timeout period.
    *                              {constructorKeyword}.element({locator}, {timeout});
    *                            - Usage 2: Use the method by providing a locator parameter without timeout period.
@@ -341,10 +291,14 @@ export class Dsl {
    *                            Example 4: Provide the element without timeout.
    *                               await dsl.element("#id");
    */
-  async element(locatorOrElement: LocatorOrElement, timeoutPeriod?: PositiveInteger): Promise<Locator> {
+  async element(
+    locatorOrElement: LocatorOrElement,
+    timeoutPeriod?: PositiveInteger,
+    pageInstance: Page = this.page
+  ): Promise<Locator> {
     try {
       // Get the element, no matter if it is a locator or an object (Playwright locator), we will will work with Playwright locator object as a result.
-      const element = await this.dslHelper.resolveElement(locatorOrElement);
+      const element = await this.dslHelper.resolveElement(locatorOrElement, pageInstance);
 
       // If the element is null, we can continue with the verification.
       if (!element) {
@@ -384,7 +338,7 @@ export class Dsl {
    * @param locatorOrElement        Provide a locator (string) or element (object). The method uses a mechanism to use a locator (string) and an element (object). That is useful if we want to provide just a locator or give the whole element (in cases when we want to use this method with iFrames or want to use the method with other browser windows).
    * @param attributeName           Provide the attribute name.
    * @param expectedAttributeValue  Optional. Provide the expected attribute value.
-   * @type                          The type is set to: "Promise<any>".
+   * @param pageInstance            Optional. Provide the page instance. The default value is set to the current page. If you want to use this method with a new page, provide the new page instance.
    * @return                        The method returns the attribute value.
    * @usage                         - Usage 1: Use the method by providing a locator parameter of an element we want to inspect, providing an attribute name and expected attribute value.
    *                                  {constructorKeyword}.getAttribute({locator}, {attribute-name}, {expected-attribute-value});
@@ -410,11 +364,12 @@ export class Dsl {
   async getAttribute(
     locatorOrElement: LocatorOrElement,
     attributeName: string,
-    expectedAttributeValue?: string
+    expectedAttributeValue?: string,
+    pageInstance: Page = this.page
   ): Promise<string | null> {
     try {
       // Get the element, no matter if it is a locator or an object (Playwright locator), we will will work with Playwright locator object as a result.
-      const element = await this.element(locatorOrElement);
+      const element = await this.element(locatorOrElement, this.config.elementTimeOut, pageInstance);
 
       // Get the attribute value from the element.
       let attributeValue = await element.getAttribute(attributeName);
@@ -450,7 +405,7 @@ export class Dsl {
    * @description               This method gets a text from an element that contains the text.
    * @param locatorOrElement    Provide a locator (string) or element (object). The method uses a mechanism to use a locator (string) and an element (object). That is useful if we want to provide just a locator or give the whole element (in cases when we want to use this method with iFrames or want to use the method with other browser windows).
    * @param expectedTextValue   Optional. Provide a string value to verify that the inspected text is like provided parameter (expected value).
-   * @type                      The type of this method is set to "Promise<any>".
+   * @param pageInstance        Optional. Provide the page instance. The default value is set to the current page. If you want to use this method with a new page, provide the new page instance.
    * @return                    We return the text (string) value we read from the inspected element.
    * @usage                     - Usage 1: Use the method by providing a locator parameter and expected text value.
    *                              {constructorKeyword}.getInnerText({locator}, "expected text value");
@@ -473,14 +428,13 @@ export class Dsl {
    */
   async getInnerText(
     locatorOrElement: LocatorOrElement,
-    expectedTextValue?: string
+    expectedTextValue?: string,
+    pageInstance: Page = this.page
   ): Promise<string | null> {
     try {
       // Get the element, no matter if it is a locator or an object (Playwright locator), we will will work with Playwright locator object as a result.
-      const element = await this.element(locatorOrElement);
+      const element = await this.element(locatorOrElement, this.config.elementTimeOut, pageInstance);
 
-      // Call this method, to verify that the element is present and it is ready for usage.
-      await this.element(element, this.config.elementTimeOut);
       // Get the text of an inspected element and assign it to a variable.
       let elementTextValue = await element.innerText();
       // Make a verification. If there is provided string for the expected value parameter - assert to verify that the inspected element contains the exact text.
@@ -515,7 +469,7 @@ export class Dsl {
    * @description               This method gets all texts from an element that contains the text. We are using the Playwright method "allTextContents()". This (our) method returns a list with values. In our method - we are using only the first value from the list. So you need to give a selector (or element) with only one coordinate in the DOM tree.
    * @param locatorOrElement    Provide a locator (string) or element (object). The method uses a mechanism to use a locator (string) and an element (object). That is useful if we want to provide just a locator or give the whole element (in cases when we want to use this method with iFrames or want to use the method with other browser windows).
    * @param expectedTextValue   Optional. Provide a string value to verify that the inspected text is like provided parameter (expected value).
-   * @type                      The type of this method is set to "Promise<any>".
+   * @param pageInstance        Optional. Provide the page instance. The default value is set to the current page. If you want to use this method with a new page, provide the new page instance.
    * @return                    We return the text (string) value we read from the inspected element.
    * @usage                     - Usage 1: Use the method by providing a locator parameter and expected text value.
    *                              {constructorKeyword}.getText({locator}, "expected text value");
@@ -538,14 +492,12 @@ export class Dsl {
    */
   async getText(
     locatorOrElement: LocatorOrElement,
-    expectedTextValue?: string
+    expectedTextValue?: string,
+    pageInstance: Page = this.page
   ): Promise<string | null> {
     try {
       // Get the element, no matter if it is a locator or an object (Playwright locator), we will will work with Playwright locator object as a result.
-      const element = await this.element(locatorOrElement);
-
-      // Call this method, to verify that the element is present and it is ready for usage.
-      await this.element(element, this.config.elementTimeOut);
+      const element = await this.element(locatorOrElement, this.config.elementTimeOut, pageInstance);
 
       // Get the text of an inspected element and assign it to a variable. As you can see, we are getting the first value from the list because "all text contents" return an array list.
       let elementTextValue: string = (await element.allTextContents())[0];
@@ -583,7 +535,7 @@ export class Dsl {
    * @param locatorOrElement    Provide a locator (string) or element (object). The method uses a mechanism to use a locator (string) and an element (object). That is useful if we want to provide just a locator or give the whole element (in cases when we want to use this method with iFrames or want to use the method with other browser windows).
    * @param sequenceNumber      Provide the sequence number of the list, that we want to inspect.
    * @param expectedTextValue   Optional. Provide a string value to verify that the inspected text is like provided parameter (expected value).
-   * @type                      The type of this method is set to "Promise<any>".
+   * @param pageInstance        Optional. Provide the page instance. The default value is set to the current page. If you want to use this method with a new page, provide the new page instance.
    * @return                    We return the text (string) value we read from the inspected element.
    * @usage                     - Usage 1: Use the method by providing a locator parameter, sequence number and expected text value.
    *                              {constructorKeyword}.getAllTexts({locator}, {number} "expected text value");
@@ -607,11 +559,12 @@ export class Dsl {
   async getAllTexts(
     locatorOrElement: LocatorOrElement,
     sequenceNumber: PositiveInteger,
-    expectedTextValue?: string
+    expectedTextValue?: string,
+    pageInstance: Page = this.page
   ): Promise<string | null> {
     try {
       // Get the element, no matter if it is a locator or an object (Playwright locator), we will will work with Playwright locator object as a result.
-      const element = await this.element(locatorOrElement);
+      const element = await this.element(locatorOrElement, this.config.elementTimeOut, pageInstance);
 
       // Get the list length.
       let listLenght = (await element.allTextContents()).length;
@@ -667,7 +620,7 @@ export class Dsl {
    * @description               This method sends a text to the input text element.
    * @param locatorOrElement    Provide a locator (string) or element (object). The method uses a mechanism to use a locator (string) and an element (object). That is useful if we want to provide just a locator or give the whole element (in cases when we want to use this method with iFrames or want to use the method with other browser windows).
    * @param text                Provide the text that we will send to the input text element.
-   * @type                      The type of this method is set to "Promise<void>".
+   * @param pageInstance        Optional. Provide the page instance. The default value is set to the current page. If you want to use this method with a new page, provide the new page instance.
    * @usage                     - Usage 1: Use the method by providing a locator parameter.
    *                              {constructorKeyword}.sendKeys({locator}, "the text we send");
    *                            - Usage 2: Use the method by providing an element parameter.
@@ -678,13 +631,15 @@ export class Dsl {
    *                              let elementName: any = dsl.element("#userName");
    *                              await dsl.sendKeys(await elementName, "test");
    */
-  async sendKeys(locatorOrElement: LocatorOrElement, text: string): Promise<void> {
+  async sendKeys(
+    locatorOrElement: LocatorOrElement,
+    text: string,
+    pageInstance: Page = this.page
+  ): Promise<void> {
     try {
       // Get the element, no matter if it is a locator or an object (Playwright locator), we will will work with Playwright locator object as a result.
-      const element = await this.element(locatorOrElement);
+      const element = await this.element(locatorOrElement, this.config.elementTimeOut, pageInstance);
 
-      // Call this method, to verify that the element is present and it is ready for usage.
-      await this.element(await element, this.config.elementTimeOut);
       // Send Ctrl+A to the element. This will work for Windows and Linux. We are using this to select all containing text inside inspected input text element.
       await this.page.keyboard.press("Control+A");
       // Send Meta+A to the element. This will work for macOS. We are using this to select all containing text inside inspected input text element.
@@ -716,7 +671,7 @@ export class Dsl {
    * @description               This method checks radio buttons or checkboxes.
    * @param locator             Provide the locator of the element that we want to check.
    * @param checkOrClickAction  Optional. If we don't provide a value for this parameter, the method will use the "click" action for checking the element. Provide a "check" or "click" value to choose the action we will use for checking the radio button or checkbox. We can checks radio buttons and checkboxes using two action methods - "check" and "click".
-   * @type                      The type of this method is set to "Promise<void>".
+   * @param pageInstance        Optional. Provide the page instance. The default value is set to the current page. If you want to use this method with a new page, provide the new page instance.
    * @usage                     - Usage 1: Use the method by providing a locator parameter only.
    *                              {constructorKeyword}.checkRadioButtonCheckBox({locator});
    *                            - Usage 2: Use the method by providing a locator parameter and "check" action.
@@ -733,28 +688,29 @@ export class Dsl {
    */
   async checkRadioButtonCheckBox(
     locator: Selector,
-    checkOrClickAction?: CheckOrClickAction
+    checkOrClickAction?: CheckOrClickAction,
+    pageInstance: Page = this.page
   ): Promise<void> {
     try {
       // Get the element, no matter if it is a locator or an object (Playwright locator), we will will work with Playwright locator object as a result.
-      const element = await this.element(locator);
+      const element = await this.element(locator, this.config.elementTimeOut, pageInstance);
 
       // If the element is not null, we can continue with the verification.
       if (element) {
         // Verify the element is not checked.
-        expect(await this.page.isChecked(locator)).toBeFalsy();
+        expect(await pageInstance.isChecked(locator)).toBeFalsy();
         await expect(element).not.toBeChecked();
         // If the checkOrClickAction value is not null.
         if (checkOrClickAction != null) {
           // If the provided action is "check".
           if (checkOrClickAction == "check") {
             // Check the element using "check" action.
-            await this.page.check(locator, { force: true });
+            await pageInstance.check(locator, { force: true });
           }
           // If the provided action is "click".
           else if (checkOrClickAction == "click") {
             // Check the element using "click" action.
-            await this.page.click(locator, { force: true });
+            await pageInstance.click(locator, { force: true });
           }
           else {
             this.ts.errorLog(
@@ -765,10 +721,10 @@ export class Dsl {
           }
         } else {
           // Check the element using "click" action.
-          await this.page.click(locator, { force: true });
+          await pageInstance.click(locator, { force: true });
         }
         // Verify the element is checked.
-        expect(await this.page.isChecked(locator)).toBeTruthy();
+        expect(await pageInstance.isChecked(locator)).toBeTruthy();
         await expect(element).toBeChecked();
 
         // Add the information message.
@@ -794,7 +750,7 @@ export class Dsl {
    * @description               This method unchecks radio buttons or checkboxes.
    * @param locator             Provide the locator of the element that we want to uncheck.
    * @param checkOrClickAction  Optional. If we don't provide a value for this parameter, the method will use the "click" action for checking the element. Provide a "uncheck" or "click" value to choose the action we will use for unchecking the checkbox. We can unchecks checkboxes using two action methods - "uncheck" and "click".
-   * @type                      The type of this method is set to "Promise<void>".
+   * @param pageInstance        Optional. Provide the page instance. The default value is set to the current page. If you want to use this method with a new page, provide the new page instance.
    * @usage                     - Usage 1: Use the method by providing a locator parameter only.
    *                              {constructorKeyword}.checkRadioButtonCheckBox({locator});
    *                            - Usage 2: Use the method by providing a locator parameter and "uncheck" action.
@@ -810,28 +766,29 @@ export class Dsl {
    */
   async unCheckBox(
     locator: Selector,
-    checkOrClickAction?: UnCheckOrUnClickAction
+    checkOrClickAction?: UnCheckOrUnClickAction,
+    pageInstance: Page = this.page
   ): Promise<void> {
     try {
       // Get the element, no matter if it is a locator or an object (Playwright locator), we will will work with Playwright locator object as a result.
-      const element = await this.element(locator);
+      const element = await this.element(locator, this.config.elementTimeOut, pageInstance);
 
       // If the element is not null, we can continue with the verification.
       if (element) {
         // Verify the element is checked.
-        expect(await this.page.isChecked(locator)).toBeTruthy();
-        await expect(await element).toBeChecked();
+        expect(await pageInstance.isChecked(locator)).toBeTruthy();
+        await expect(element).toBeChecked();
         // If the checkOrClickAction value is not null.
         if (checkOrClickAction != null) {
           // If the provided action is "uncheck".
           if (checkOrClickAction == "uncheck") {
             // Check the element using "uncheck" action.
-            await this.page.uncheck(locator, { force: true });
+            await pageInstance.uncheck(locator, { force: true });
           }
           // If the provided action is "click".
           else if (checkOrClickAction == "click") {
             // Check the element using "click" action.
-            await this.page.click(locator, { force: true });
+            await pageInstance.click(locator, { force: true });
           }
           else {
             this.ts.errorLog(
@@ -842,11 +799,11 @@ export class Dsl {
           }
         } else {
           // Check the element using "click" action.
-          await this.page.click(locator, { force: true });
+          await pageInstance.click(locator, { force: true });
         }
         // Verify the element is not checked.
-        expect(await this.page.isChecked(locator)).toBeFalsy();
-        await expect(await element).not.toBeChecked();
+        expect(await pageInstance.isChecked(locator)).toBeFalsy();
+        await expect(element).not.toBeChecked();
 
         // Add the information message.
         this.ts.informLog(
@@ -871,18 +828,21 @@ export class Dsl {
   /**
    * @description               This method makes a double-click mouse action over an element.
    * @param locator             Provide the locator of the element that we will use.
-   * @type                      The type of this method is set to "Promise<void>".
+   * @param pageInstance        Optional. Provide the page instance. The default value is set to the current page. If you want to use this method with a new page, provide the new page instance.
    * @usage                     - Usage: Use the method by providing a locator parameter only.
    *                              {constructorKeyword}.doubleClick({locator});
    * @exaple                    Example: Provide the locator.
    *                              await dsl.doubleClick("#id");
    */
-  async doubleClick(locator: Selector): Promise<void> {
+  async doubleClick(
+    locator: Selector,
+    pageInstance: Page = this.page
+  ): Promise<void> {
     try {
       // Call this method, to verify that the element is present and it is ready for usage.
-      await this.element(locator, this.config.elementTimeOut);
+      await this.element(locator, this.config.elementTimeOut, pageInstance);
       // Make double-click mouse action over selected element.
-      await this.page.dblclick(locator, { force: true });
+      await pageInstance.dblclick(locator, { force: true });
 
       // Add the information message.
       this.ts.informLog(
@@ -902,18 +862,21 @@ export class Dsl {
   /**
    * @description               This method makes a right-click mouse action over an element.
    * @param locator             Provide the locator of the element that we will use.
-   * @type                      The type of this method is set to "Promise<void>".
+   * @param pageInstance        Optional. Provide the page instance. The default value is set to the current page. If you want to use this method with a new page, provide the new page instance.
    * @usage                     - Usage: Use the method by providing a locator parameter only.
    *                              {constructorKeyword}.rightClick({locator});
    * @exaple                    Example: Provide the locator.
    *                              await dsl.rightClick("#id");
    */
-  async rightClick(locator: Selector): Promise<void> {
+  async rightClick(
+    locator: Selector,
+    pageInstance: Page = this.page
+  ): Promise<void> {
     try {
       // Call this method, to verify that the element is present and it is ready for usage.
-      await this.element(locator, this.config.elementTimeOut);
+      await this.element(locator, this.config.elementTimeOut, pageInstance);
       // Make right-click mouse action over selected element.
-      await this.page.click(locator, {
+      await pageInstance.click(locator, {
         button: "right",
         force: true,
       });
@@ -936,19 +899,22 @@ export class Dsl {
   /**
    * @description               This method clicks on an element.
    * @param locator             Provide the locator of the element that we want to click.
-   * @type                      The type of this method is set to "Promise<void>".
+   * @param pageInstance        Optional. Provide the page instance. The default value is set to the current page. If you want to use this method with a new page, provide the new page instance.
    * @usage                     - Usage: Use the method by providing a locator parameter.
    *                              {constructorKeyword}.click({locator});
    * @example                   Example: Provide the locator.
    *                              await dsl.click("#id");
    */
-  async click(locator: Selector): Promise<void> {
+  async click(
+    locator: Selector,
+    pageInstance: Page = this.page
+  ): Promise<void> {
     try {
       // Call this method, to verify that the element is present and it is ready for usage.
-      await this.element(locator, this.config.elementTimeOut);
+      await this.element(locator, this.config.elementTimeOut, pageInstance);
 
       // Click over the element using the locator.
-      await this.page.click(locator, { force: true });
+      await pageInstance.click(locator, { force: true });
 
       // Add the information message.
       this.ts.informLog(
@@ -968,18 +934,21 @@ export class Dsl {
   /**
    * @description               This method hovers over the element.
    * @param locator             Provide the locator of the element that we want to hover.
-   * @type                      The type of this method is set to "Promise<void>".
+   * @param pageInstance        Optional. Provide the page instance. The default value is set to the current page. If you want to use this method with a new page, provide the new page instance.
    * @usage                     - Usage: Use the method by providing a locator parameter.
    *                              {constructorKeyword}.hover({locator});
    * @example                   Example: Provide the locator.
    *                              await dsl.hover("#id");
    */
-  async hover(locator: Selector): Promise<void> {
+  async hover(
+    locator: Selector,
+    pageInstance: Page = this.page
+  ): Promise<void> {
     try {
       // Call this method, to verify that the element is present and it is ready for usage.
-      await this.element(locator, this.config.elementTimeOut);
+      await this.element(locator, this.config.elementTimeOut, pageInstance);
       // Hover over the element.
-      await this.page.hover(locator, { force: true });
+      await pageInstance.hover(locator, { force: true });
 
       // Add the information message.
       this.ts.informLog(
@@ -1000,7 +969,7 @@ export class Dsl {
    * @param locator             Provide the locator of the element that we want to hover.
    * @param xValue              Provide the position where we will click the element for X (horizontal) value.
    * @param yValue              Provide the position where we will click the element for Y (vertical) value.
-   * @type                      The type of this method is set to "Promise<void>".
+   * @param pageInstance        Optional. Provide the page instance. The default value is set to the current page. If you want to use this method with a new page, provide the new page instance.
    * @usage                     - Usage: Use the method by providing a locator parameter and position for X and Y.
    *                              {constructorKeyword}.clickPosition({locator}, {integer number for x}, {integer number for y});
    * @example                   Example: Provide the locator and position where the click action should happen.
@@ -1009,15 +978,16 @@ export class Dsl {
   async clickPosition(
     locator: Selector,
     xValue: PositiveInteger,
-    yValue: PositiveInteger
+    yValue: PositiveInteger,
+    pageInstance: Page = this.page
   ): Promise<void> {
     try {
       // Call this method, to verify that the element is present and it is ready for usage.
-      await this.element(locator, this.config.elementTimeOut);
+      await this.element(locator, this.config.elementTimeOut, pageInstance);
       // If the numbers are positive numbers...
       if (xValue > 0 || yValue > 0) {
         // ...click over the element on the exact position using the locator.
-        await this.page.click(locator, {
+        await pageInstance.click(locator, {
           position: { x: xValue, y: yValue },
           force: true,
         });
@@ -1070,7 +1040,7 @@ export class Dsl {
    * @description               This method sends keyboard keys to the element.
    * @param locator             Provide the locator of the element that we want to use.
    * @param keyboardKey         Provide the key or combination of keys.
-   * @type                      The type of this method is set to "Promise<void>".
+   * @param pageInstance        Optional. Provide the page instance. The default value is set to the current page. If you want to use this method with a new page, provide the new page instance.
    * @usage                     - Usage: Use the method by providing a locator parameter and keyboard key/s.
    *                              {constructorKeyword}.clickWithHoldingKeyboardKey({locator}, {keyboardKey/s});
    * @example                   Example: Provide the locator and keyboard key/s.
@@ -1079,13 +1049,14 @@ export class Dsl {
    */
   async clickWithHoldingKeyboardKey(
     locator: Selector,
-    keyboardKey: KeyboardKeys
+    keyboardKey: KeyboardKeys,
+    pageInstance: Page = this.page
   ): Promise<void> {
     try {
       // Call this method, to verify that the element is present and it is ready for usage.
-      await this.element(locator, this.config.elementTimeOut);
+      await this.element(locator, this.config.elementTimeOut, pageInstance);
       // Send keyboard key/s to inspected element.
-      await this.page.click(locator, {
+      await pageInstance.click(locator, {
         modifiers: [keyboardKey],
         force: true,
       });
@@ -1111,7 +1082,7 @@ export class Dsl {
    * @description                                       This function downloads a file.
    * @param locator                                     Provide the locator of the element (button/hyperlink) that we want to use.
    * @param downloadFolderPathWithFileNameAndExtension  Optional. Provide the downloads folder path with the file name and file extension. If we don't provide this parameter, the automation will download and delete the file when the test is ready. We can use this approach to verify that the download process is working.
-   * @type                                              The type of this method is set to "Promise<void>".
+   * @param pageInstance                                Optional. Provide the page instance. The default value is set to the current page. If you want to use this method with a new page, provide the new page instance.
    * @usage                                             - Usage 1: Use the method by providing a button locator to force the downloading process and provide the destination path to download the file. Alert, ensure that you add the file name and extension to the destination folder path.
    *                                                      {constructorKeyword}.downloadFile({locator}, {destination path});
    *                                                    - Usage 2: Use the method by providing a button locator to force the downloading process without giving the destination path to download the file. We can use this approach only to verify that the download process is working as expected and the file is downloaded. The file will be deleted when the test is ready.
@@ -1123,19 +1094,20 @@ export class Dsl {
    */
   async downloadFile(
     locator: Selector,
-    downloadFolderPathWithFileNameAndExtension?: string
+    downloadFolderPathWithFileNameAndExtension?: string,
+    pageInstance: Page = this.page
   ): Promise<void> {
     try {
       // Call this method, to verify that the element is present and it is ready for usage.
-      await this.element(locator);
+      await this.element(locator, this.config.elementTimeOut, pageInstance);
       // Wait for the download process to complete. Wait for some period of time to download the file.
       await new Promise(resolve => setTimeout(resolve, this.config.elementTimeOut));
       // Get the download object and initialize the downloading process.
       let [download] = await Promise.all([
         // Start waiting for the download process.
-        this.page.waitForEvent('download'),
+        pageInstance.waitForEvent('download'),
         // Perform the action that initiates the download.
-        this.page.locator(locator).click()
+        pageInstance.locator(locator).click()
       ]);
       // Wait for the download process to complete.
       if (downloadFolderPathWithFileNameAndExtension != null) {
@@ -1179,7 +1151,7 @@ export class Dsl {
    * @description                                       This function uploads a file.
    * @param locator                                     Provide the locator of the element (button/hyperlink) that we want to use.
    * @param uploadFilePathWithFileNameAndExtension      Add the uploaded file path, including the file name and file extension.
-   * @type                                              The type of this method is set to "Promise<void>".
+   * @param pageInstance                                Optional. Provide the page instance. The default value is set to the current page. If you want to use this method with a new page, provide the new page instance.
    * @usage                                             - Usage: Use the method by providing a button locator to force the uploading process and provide the destination path of the uploading file. Alert, ensure that you add the file name and extension to the destination folder path.
    *                                                      {constructorKeyword}.uploadFile({locator}, {destination path});
    * @example                                           Example: Provide the locator of a button that triggers the uploading process and the destination folder path where the automation will download the file. Alert, ensure that you add the file name and extension to the destination folder path.
@@ -1187,13 +1159,14 @@ export class Dsl {
    */
   async uploadFile(
     locator: Selector,
-    uploadFilePathWithFileNameAndExtension: string
+    uploadFilePathWithFileNameAndExtension: string,
+    pageInstance: Page = this.page
   ): Promise<void> {
     try {
       // Call this method, to verify that the element is present and it is ready for usage.
-      await this.element(locator);
+      await this.element(locator, this.config.elementTimeOut, pageInstance);
       // Upload the file by providing the element locator and file path.
-      await this.page.setInputFiles(
+      await pageInstance.setInputFiles(
         locator,
         uploadFilePathWithFileNameAndExtension
       );
@@ -1217,7 +1190,7 @@ export class Dsl {
    * @description             This method accepts alert pop-up windows.
    * @param locator           Provide the locator of the element that will force the alert window.
    * @param alertMessage      Optional. Provide the alert message contained in the alert pop-up window.
-   * @type                    The type of this method is set to "Promise<void>".
+   * @param pageInstance      Optional. Provide the page instance. The default value is set to the current page. If you want to use this method with a new page, provide the new page instance.
    * @usage                   - Usage 1: Use the method by providing a button locator to force the pop-up window and provide the text contained in the alert pop-up window.
    *                            {constructorKeyword}.alertAccept({locator}, {contained text inside alert pop up window});
    *                          - Usage 2: Use the method by providing a button locator to force the pop-up window.
@@ -1227,12 +1200,16 @@ export class Dsl {
    *                          Example 2: Provide the locator of a button that triggers the alert pop-up window.
    *                            dsl.alertAccept("#id");
    */
-  async alertAccept(locator: Selector, alertMessage?: string): Promise<void> {
+  async alertAccept(
+    locator: Selector,
+    alertMessage?: string,
+    pageInstance: Page = this.page
+  ): Promise<void> {
     try {
       // Call this method, to verify that the element is present and it is ready for usage.
-      await this.element(locator);
+      await this.element(locator, this.config.elementTimeOut, pageInstance);
       // Handle the alert pop-up window.
-      this.page.once("dialog", async (dialog) => {
+      pageInstance.once("dialog", async (dialog) => {
         // If we provide the alertMessage parameter...
         if (alertMessage != null) {
           // ...assert to verify that the pop-up window contains the expected text.
@@ -1263,7 +1240,7 @@ export class Dsl {
    * @description             This method dismisses alert pop-up windows.
    * @param locator           Provide the locator of the element that will force the alert window.
    * @param alertMessage      Optional. Provide the alert message contained in the alert pop-up window.
-   * @type                    The type of this method is set to "Promise<void>".
+   * @param pageInstance        Optional. Provide the page instance. The default value is set to the current page. If you want to use this method with a new page, provide the new page instance.
    * @usage                   - Usage 1: Use the method by providing a button locator to force the pop-up window and provide the text contained in the alert pop-up window.
    *                            {constructorKeyword}.alertCancel({locator}, {contained text inside alert pop up window});
    *                          - Usage 2: Use the method by providing a button locator to force the pop-up window.
@@ -1273,12 +1250,16 @@ export class Dsl {
    *                          Example 2: Provide the locator of a button that triggers the alert pop-up window.
    *                            dsl.alertCancel("#id");
    */
-  async alertCancel(locator: Selector, alertMessage?: string): Promise<void> {
+  async alertCancel(
+    locator: Selector,
+    alertMessage?: string,
+    pageInstance: Page = this.page
+  ): Promise<void> {
     try {
       // Call this method, to verify that the element is present and it is ready for usage.
-      await this.element(locator);
+      await this.element(locator, this.config.elementTimeOut, pageInstance);
       // Handle the alert pop-up window.
-      this.page.once("dialog", async (dialog) => {
+      pageInstance.once("dialog", async (dialog) => {
         // If we provide the alertMessage parameter...
         if (alertMessage != null) {
           // ...assert to verify that the pop-up window contains the expected text.
@@ -1310,7 +1291,7 @@ export class Dsl {
    * @param locator           Provide the locator of the element that will force the alert window.
    * @param textValue         Provide the text value that we will fill inside the alert pop-up window.
    * @param alertMessage      Optional. Provide the alert message contained in the alert pop-up window.
-   * @type                    The type of this method is set to "Promise<void>".
+   * @param pageInstance        Optional. Provide the page instance. The default value is set to the current page. If you want to use this method with a new page, provide the new page instance.
    * @usage                   - Usage 1: Use the method by providing a button locator to force the pop-up window, give the text that will be filled inside the alert pop-up window and provide the text (contained) in the alert pop-up window.
    *                            {constructorKeyword}.alertTypeValueAndAccept({locator}, {text value}, {contained text inside alert pop up window});
    *                          - Usage 2: Use the method by providing a button locator to force the pop-up window, give the text that will be filled inside the alert pop-up window.
@@ -1323,13 +1304,14 @@ export class Dsl {
   async alertTypeValueAndAccept(
     locator: Selector,
     textValue: string,
-    alertMessage?: string
+    alertMessage?: string,
+    pageInstance: Page = this.page
   ): Promise<void> {
     try {
       // Call this method, to verify that the element is present and it is ready for usage.
-      await this.element(locator);
+      await this.element(locator, this.config.elementTimeOut, pageInstance);
       // Handle the alert pop-up window.
-      this.page.once("dialog", async (dialog) => {
+      pageInstance.once("dialog", async (dialog) => {
         // If we provide the alertMessage parameter...
         if (alertMessage != null) {
           // ...assert to verify that the pop-up window contains the expected text.
@@ -1361,15 +1343,18 @@ export class Dsl {
   /**
    * @description             This method gives a focus to the iFrame.
    * @param iFrameLocator     Provide the iFrame locator.
+   * @param pageInstance       Optional. Provide the page instance. The default value is set to the current page. If you want to use this method with a new page, provide the new page instance.
    * @returns                 Returns the switched iFrame element.
-   * @type                    The type of this method is set to "Promise<any>".
    * @usage                   - Usage: Use the method by providing a iFrame locator.
    *                            {constructorKeyword}.iFrame({locator});
    * @example                 Example: Provide the locator of an iFrame element.
    *                            let iFrame = await dsl.iFrame("#id1");
    *                            let iFrameElement = dsl.element(await iFrame.locator('#id2'));
    */
-  async iFrame(iFrameLocator: Selector): Promise<FrameLocator> {
+  async iFrame(
+    iFrameLocator: Selector,
+    pageInstance: Page = this.page
+  ): Promise<FrameLocator> {
     try {
       // Add the information message.
       this.ts.informLog(
@@ -1378,16 +1363,15 @@ export class Dsl {
       );
 
       // Verify that the iFrame element is present and ready for usage.
-      const element = await this.element(iFrameLocator);
-      if (!element) {
-        throw new Error(`iFrame with locator "${iFrameLocator}" not found.`);
-      }
+      await this.element(iFrameLocator, this.config.elementTimeOut, pageInstance);
 
       // Return the switched focus inside the iFrame.
-      const frame = this.page.frameLocator(iFrameLocator);
+      const frame = pageInstance.frameLocator(iFrameLocator);
+      // If the frame is not present, throw an error.
       if (!frame) {
-        throw new Error(`Failed to switch to iFrame with locator "${iFrameLocator}".`);
+        this.ts.errorLog(`Failed to switch to iFrame with locator "${iFrameLocator}".`);
       }
+      // Return the switched focus inside the iFrame.
       return frame;
     } catch (error) {
       // Create the error log and show it to the UI. Show the function name, the class where the function is located and the cached error.
@@ -1401,54 +1385,52 @@ export class Dsl {
     }
   }
 
-
   /**
-   * @description                   This method focuses on the iFrame inside another iFrame (Nested iFrame).
-   * @param parentIframeLocator     Provide the locator of the parent (first) iFrame element.
-   * @param childIframeLocator      Provide the locator of the child (Nested) iFrame element.
-   * @returns                       Returns the switched nested iFrame element.
-   * @type                          The type of this method is set to "Promise<any>".
-   * @usage                         - Usage: Use the method by providing parent and child iFrame locators.
-   *                                  {constructorKeyword}.iFrameNested({locator}, {locator});
-   * @example                       Example: Provide the locators for parent and child iFrame elements.
-   *                                  let iFrameChild = await dsl.iFrameNested("#id1", "id2");
-   *                                  let iFrameChildElement = dsl.element(await iFrameChild.locator("#id3"));
+   * @description                           This method focuses on the iFrame inside another iFrame (Nested iFrame).
+   * @param parentIframeLocator             Provide the locator of the parent (first) iFrame element.
+   * @param childIframeLocator              Provide the locator of the child (Nested) iFrame element.
+   * @param childIframeVerificationLocator  Optional. Provide the locator of the element inside the child iFrame to verify that the iFrame is ready for interaction. Default value is "body".
+   * @param pageInstance                    Optional. Provide the page instance. The default value is set to the current page. If you want to use this method with a new page, provide the new page instance.
+   * @returns                               Returns the switched nested iFrame element.
+   * @usage                                 - Usage: Use the method by providing parent and child iFrame locators.
+   *                                          {constructorKeyword}.iFrameNested({locator}, {locator});
+   * @example                               Example: Provide the locators for parent and child iFrame elements.
+   *                                          let iFrameChild = await dsl.iFrameNested("#id1", "id2");
+   *                                          let iFrameChildElement = dsl.element(await iFrameChild.locator("#id3"));
    */
   async iFrameNested(
     parentIframeLocator: Selector,
-    childIframeLocator: Selector
+    childIframeLocator: Selector,
+    childIframeVerificationLocator: Selector = "body",
+    pageInstance: Page = this.page
   ): Promise<FrameLocator> {
     try {
+      // Verify that the parent iFrame element is present and ready for usage.
+      await this.element(parentIframeLocator, this.config.elementTimeOut, pageInstance);
 
-      // Verify that the iFrame element is present and ready for usage.
-      const parentIframeElement = await this.element(parentIframeLocator);
-      if (!parentIframeElement) {
-        throw new Error(`iFrame with locator "${parentIframeLocator}" not found.`);
-      }
+      // Obtain the parent iFrame using FrameLocator
+      const parentFrameLocator = pageInstance.frameLocator(parentIframeLocator);
 
-      // Assign the parent iFrame focus to the variable.
-      const iFrameParent = await this.iFrame(parentIframeLocator);
+      // Obtain the child FrameLocator
+      const childFrameLocator = parentFrameLocator.frameLocator(childIframeLocator);
 
-      // Verify that the iFrame element is present and ready for usage.
-      const childIframeElement = await this.element(parentIframeLocator);
-      if (!childIframeElement) {
-        throw new Error(`iFrame with locator "${parentIframeLocator}" not found.`);
-      }
+      // Ensure that the child iFrame is ready for interaction, by checking for any element inside it
+      await childFrameLocator.locator(childIframeVerificationLocator).waitFor({ state: "attached" });
 
-      // Add the information message.
+      // Inform about successful navigation to the nested iFrame
       this.ts.informLog(
         this.config.beginInformMessage +
-        " The automation successfully switched to neasted iFrame."
+        " The automation successfully switched to nested iFrame."
       );
 
-      // Return the switched focus inside the nested iFrame.
-      return iFrameParent.frameLocator(childIframeLocator);
+      // Return the FrameLocator for the nested iFrame
+      return childFrameLocator;
     } catch (error) {
-      // Create the error log and show it to the UI. Show the function name, the class where the function is located and the cached error.
+      // Error handling
       this.ts.errorLog(
         this.iFrameNested.name + " " +
         __filename.split(__dirname + "/").pop() + " " +
-        await error
+        error
       );
       throw error;
     }
@@ -1458,7 +1440,7 @@ export class Dsl {
    * @description                       This method selects a value from the drop-down list by clicking over the drop-down list and the drop-down value.
    * @param locatorDropDownList         Provide a locator (string) of drop-down list.
    * @param locatorDropDownValue        Provide a locator (string) of drop-down value.
-   * @type                              The type of this method is set to "Promise<void>".
+   * @param pageInstance                Optional. Provide the page instance. The default value is set to the current page. If you want to use this method with a new page, provide the new page instance.
    * @usage                             - Usage : Use the method by providing locator parameters.
    *                                      {constructorKeyword}.dropDown_ByDoubleClick({locator}, {locator});
    * @example                           Example : Provide the locators for two elemets.
@@ -1503,7 +1485,7 @@ export class Dsl {
   * @description                       This method selects a value from the drop-down list by providing the value of the attribute "value".
   * @param locatorDropDownList         Provide a locator (string) of drop-down list.
   * @param DropDownAttributeValue      Provide a "value" attribute of the "option" element.
-  * @type                              The type of this method is set to "Promise<void>".
+  * @param pageInstance                Optional. Provide the page instance. The default value is set to the current page. If you want to use this method with a new page, provide the new page instance.
   * @usage                             - Usage : Use the method by providing locator parameters and attribute "value".
   *                                      {constructorKeyword}.dropDown_oldStyle({locator}, {attribute value});
   * @example                           Example : Provide the locators for two elemets.

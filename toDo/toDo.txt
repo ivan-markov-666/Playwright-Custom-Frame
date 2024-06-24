@@ -1,4 +1,4 @@
 Our framework is not perfect. In this file, we will collect everything that we will add in the future.
-1. Fix the "browserWindowAfterClick" function from the dsl.ts file. The function should wait for the new page to load before returning the new page object. Implement a new approach that handle usage of already defined DSL functions inside a new browser page window.
+1. Add more examples in browserWindow.spec.ts file. We need to cover "New Window" and "New Window Message" from "https://demoqa.com/browser-windows".
 2. Add a custom command in the domain-specific language to handle the alert pop-up window that appears after some time. We can use this from the documentation: https://playwright.dev/docs/dialogs
 3. We need to find a way to verify broken images or links. We can use this from the official documentation because we should use vanilla JS for this : https://playwright.dev/docs/evaluating.

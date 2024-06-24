@@ -43,7 +43,7 @@ test.describe("This block contains examples for giving a focus to the Neasted iF
 
   test("Domain-Specific Language Example", async () => {
     // Provide the locators for parent and child iFrame elements.
-    let iFrameChild = await dsl.iFrameNested("#frame1", "//iframe[@srcdoc]");
+    let iFrameChild = await dsl.iFrameNested("#frame1", "//iframe[@srcdoc]", '//body/p');
     // Declare an element. This element is positioned inside the child iFrame.
     let iFrameChildElement = dsl.element(
       iFrameChild.locator('//*[contains(text(),"Child Iframe")]')
