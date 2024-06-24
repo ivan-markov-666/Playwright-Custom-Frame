@@ -1,4 +1,4 @@
-import { Page, FrameLocator, expect, Locator } from "@playwright/test"; // Add this to have suggestions in the spec class.
+import { Page, FrameLocator, expect, Locator, BrowserContext } from "@playwright/test"; // Add this to have suggestions in the spec class.
 import { Configuration } from "../../configs/configuration"; // Add this to have suggestions in the spec class.
 import { TsMethods } from "../other-methods/tsMethods";
 import { PositiveInteger, Url, LocatorOrElement, Selector, Element, CheckOrClickAction, UnCheckOrUnClickAction, KeyboardKeys } from "./dsl.d";
@@ -247,10 +247,11 @@ export class Dsl {
     verifyLocatorOrElement?: LocatorOrElement
   ): Promise<any> {
     try {
+      await this.element(locatorForcesOpeningNewWindow);
       // Get a page after a specific action (e.g. clicking a link).
       let [newPage] = await Promise.all([
         // Wait for a specific event to happen. In this case, we are waiting for the browser to open a new window.
-        await this.context.waitForEvent("page"),
+        await this.context.waitForEvent("page", { timeout: 10000 }),
         // Click over an element to force open the new browser window.
         await this.click(locatorForcesOpeningNewWindow),
       ]);
@@ -275,6 +276,18 @@ export class Dsl {
         await error
       );
     }
+  }
+
+
+  async interactWithNewTab(buttonSelector: string): Promise<Page> {
+    const page = await this.context.newPage();
+    const [newTab] = await Promise.all([
+      this.context.waitForEvent('page'), // Слушане за отваряне на нов таб
+      this.click(buttonSelector)    // Кликване на бутона за отваряне на нов таб
+    ]);
+  
+    await newTab.bringToFront(); // Фокусиране на новия таб
+    return newTab; // Връщане на обекта на новия таб
   }
 
   /**
@@ -670,82 +683,6 @@ export class Dsl {
         __filename.split(__dirname + "/").pop() + " " +
         await error
       )
-    }
-  }
-
-  /**
-   * @description                       This method sends a text to the input text element.
-   * @param locatorOrElement            Provide a locator (string) or element (object). The method uses a mechanism to use a locator (string) and an element (object). That is useful if we want to provide just a locator or give the whole element (in cases when we want to use this method with iFrames or want to use the method with other browser windows).
-   * @param text                        Provide the text that we will send to the input text element.
-   * @param loctorOrElementVerificator  Optional. Provide the verification element. If you don't provide this parameter - the used element will be used for verification.
-   * @type                              The type of this method is set to "Promise<void>".
-   * @usage                             - Usage 1: Use the method by providing a locator parameter.
-   *                                      {constructorKeyword}.sendKeys_MultySelect({locator}, "the text we send", {locator});
-   *                                    - Usage 2: Use the method by providing an element parameter.
-   *                                      {constructorKeyword}.sendKeys_MultySelect({element}, "the text we send", {element});
-   * @example                           Example 1: Provide the locator and the text value.
-   *                                      await dsl.sendKeys_MultySelect("#id", "the text we send", "#verificatorId");
-   *                                    Example 2: Provide the element and the text value.
-   *                                      let elementName: any = dsl.element("#id");
-   *                                      let elementVerificatorName: any = dsl.element("#verificatorId");
-   *                                      await dsl.sendKeys_MultySelect(await elementName, "test", await elementVerificatorName);
-   */
-  async sendKeys_MultySelect(
-    locatorOrElement: LocatorOrElement,
-    text: string,
-    loctorOrElementVerificator?: LocatorOrElement
-  ): Promise<void> {
-    try {
-      // Get the element, no matter if it is a locator or an object (Playwright locator), we will will work with Playwright locator object as a result.
-      const element = await this.element(locatorOrElement);
-
-      // Call this method, to verify that the element is present and it is ready for usage.
-      await this.element(element, this.config.elementTimeOut);
-      // Send Ctrl+A to the element. This will work for Windows and Linux. We are using this to select all containing text inside inspected input text element.
-      await this.page.keyboard.press("Control+A");
-      // Send Meta+A to the element. This will work for macOS. We are using this to select all containing text inside inspected input text element.
-      await this.page.keyboard.press("Meta+A");
-
-      // Fill the element with text.
-      await element.fill(text);
-      // Press the "Enter" key of the keyboard.
-      await this.page.keyboard.press("Enter");
-      // Verify that the input text element contains the sent text data.
-      // If the element we use is the same as the element, that will verify the operation was compleated correctly. Or if we don't provide a verification element - because it is the same as a used element.
-      if (
-        locatorOrElement == loctorOrElementVerificator ||
-        loctorOrElementVerificator == null
-      ) {
-        let verificateValueIsCorrect: string = (
-          await element.allTextContents()
-        )[0];
-        expect(verificateValueIsCorrect).toEqual(text);
-      }
-      // If we provide different element for verificaiton.
-      else {
-        // Declare an internal variable for assigning the element value.
-        const elementVerificator = await this.element(loctorOrElementVerificator);
-        let verificateValueIsCorrect: string = (
-          await elementVerificator.allTextContents()
-        )[0];
-        expect(verificateValueIsCorrect).toEqual(text);
-      }
-
-      // Add the information message.
-      this.ts.informLog(
-        this.config.beginInformMessage +
-        "The automated test fill with text inside the multi-select element with the value: '" +
-        text +
-        "'."
-      );
-    } catch (error) {
-
-      // Create the error log and show it to the UI. Show the function name, the class where the function is located and the cached error.
-      this.ts.errorLog(
-        this.sendKeys_MultySelect.name + " " +
-        __filename.split(__dirname + "/").pop() + " " +
-        await error
-      );
     }
   }
 
@@ -1165,12 +1102,14 @@ export class Dsl {
     try {
       // Call this method, to verify that the element is present and it is ready for usage.
       await this.element(locator);
-      // Initialize the downloading process.
+      // Wait for the download process to complete. Wait for some period of time to download the file.
+      await new Promise(resolve => setTimeout(resolve, this.config.elementTimeOut));
+      // Get the download object and initialize the downloading process.
       let [download] = await Promise.all([
         // Start waiting for the download process.
-        await this.page.waitForEvent("download"),
+        this.page.waitForEvent('download'),
         // Perform the action that initiates the download.
-        await this.page.locator(locator).click(),
+        this.page.locator(locator).click()
       ]);
       // Wait for the download process to complete.
       if (downloadFolderPathWithFileNameAndExtension != null) {
@@ -1196,7 +1135,7 @@ export class Dsl {
         this.ts.informLog(
           this.config.beginInformMessage +
           "The automated test downloads a file in the: '" +
-          downloadFolderPathWithFileNameAndExtension +
+          await download.path() +
           "'."
         );
       }
@@ -1504,29 +1443,16 @@ export class Dsl {
     locatorDropDownValue: Selector
   ): Promise<void> {
     try {
-      // Call this method, to verify that the element is present and it is ready for usage.
-      await this.element(locatorDropDownList, this.config.elementTimeOut);
+      // Click over the drop-down list element to list the drop-down values. In the same function we are verifying that the element is present and ready for usage.
+      await this.click(locatorDropDownList);
 
-      // Click over the drop-down list element to list the drop-down values.
-      await this.page.click(locatorDropDownList, { force: true });
-
-      // Call this method, to verify that the element is present and it is ready for usage. Assign the element to the variable.
-      const elementDropDownValue = await this.element(locatorDropDownList, this.config.elementTimeOut);
-
-      // Get the drop-down list value.
-      let dropDownListValue: string = (
-        await elementDropDownValue.allTextContents()
-      )[0];
-
-      // Click over the drop-down value to choose this value.
-      await this.page.click(locatorDropDownValue, { force: true });
+      // Click over the drop-down value to choose this value. In the same function we are verifying that the element is present and ready for usage.
+      await this.click(locatorDropDownValue);
 
       // Add the information message.
       this.ts.informLog(
         this.config.beginInformMessage +
-        " The automated test selected a value '" +
-        dropDownListValue +
-        "' from the drop-down list."
+        "The automated test selected successfully selected a value from the drop-down list."
       );
 
       // Add the alert message.

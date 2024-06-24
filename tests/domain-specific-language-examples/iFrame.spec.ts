@@ -8,17 +8,17 @@
 // Import Playwright test library.
 import { test, Page } from "@playwright/test";
 // Import the domain-specific language class.
-import domainSpecificLanguage from "../../custom-methods/domain-specific-language/dsl";
+import DomainSpecificLanguage from "../../custom-methods/domain-specific-language/dsl";
 
 //02. Create the "describe" block.
 test.describe("This block contains examples for giving a focus to the iFrame.", async () => {
   let page: Page; // Create a new variable for Page. Add a specific type (of the Page class) to enable the suggestions.
-  let dsl: domainSpecificLanguage; // Create a new variable for a domain-specific language. Add a specific type (of the domainSpecificLanguage class) to enable the suggestions.
+  let dsl: DomainSpecificLanguage; // Create a new variable for a domain-specific language. Add a specific type (of the domainSpecificLanguage class) to enable the suggestions.
 
   //03. Create the "beforeAll" block.
   test.beforeAll(async ({ browser }) => {
     page = await browser.newPage(); // Add value to 'page'.
-    dsl = new domainSpecificLanguage(page); // Create a new 'dsl' and include 'page' inside.
+    dsl = new DomainSpecificLanguage(page); // Create a new 'dsl' and include 'page' inside.
   });
 
   //04. Create the "beforeEach" block.
@@ -41,7 +41,7 @@ test.describe("This block contains examples for giving a focus to the iFrame.", 
     // Provide the locator of an iFrame element.
     let iFrame = await dsl.iFrame("#frame1");
     // Declare an element. This element is positioned inside the iFrame.
-    let iFrameElement = dsl.element(await iFrame.locator("#sampleHeading"));
+    let iFrameElement = dsl.element(iFrame.locator("#sampleHeading"));
     // Assert that the operation was compleated correctly.
     await dsl.getText(await iFrameElement, "This is a sample page");
   });
