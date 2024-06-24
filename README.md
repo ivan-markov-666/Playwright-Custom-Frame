@@ -36,7 +36,7 @@ To develop new tests:
 3. Create a spec class in the "tests/" folder. For more details, you can see comments in the examples. It would be best to create the SPEC classes like in example one.  
 4. Before starting the tests, you must change the 'testDir' value from 'playwright.config.ts' to your test folder. For example, if your tests are inside '{root}/tests/my-tests', you should set the 'testDir' value to this relative location. Example "testDir: './tests/my-tests'".  
 5. You can start the tests by executing the following command in the terminal:  
-> npx playwright test {testName.spec.ts}
+> npx playwright test {testName.spec.ts}  
 For example, if your test class is named "myTestClass.spec.ts", the command will look like "npx playwright test myTestClass.spec.ts".  
 
 Make sure you execute the command at the root of the project folder.  
