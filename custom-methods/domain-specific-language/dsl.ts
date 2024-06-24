@@ -1,14 +1,62 @@
-import { Page, FrameLocator, expect } from "@playwright/test"; // Add this to have suggestions in the spec class.
+import { Page, FrameLocator, expect, Locator } from "@playwright/test"; // Add this to have suggestions in the spec class.
 import { Configuration } from "../../configs/configuration"; // Add this to have suggestions in the spec class.
 import { TsMethods } from "../other-methods/tsMethods";
+import { PositiveInteger, Url, LocatorOrElement, Selector, Element, CheckOrClickAction, UnCheckOrUnClickAction, KeyboardKeys } from "./dsl.d";
+import assert from 'assert';
 
-// Declare a class.
+/**
+ * @description This class contains methods used in Dsl class. Methods defined in that class will be used only in Dsl class.
+ */
+class DslHelper {
+  private page: Page;
+  private tsMethods: TsMethods;
+
+  constructor(page: Page, tsMethods: TsMethods) {
+    this.page = page;
+    this.tsMethods = tsMethods;
+  }
+
+  /**
+   * @description             This method resolves the element.
+   * @param locatorOrElement  Provide a locator (string) or element (object).
+   * @returns                 The method returns the element.
+   * @usage                   await dslHelper.resolveElement(locatorOrElement);
+   */
+  async resolveElement(locatorOrElement: LocatorOrElement): Promise<Element> {
+    // Declare an internal variable for assigning the element value.
+    let element: Element = null;
+    // If the provided value is a string, this is just a selector.
+    if (typeof locatorOrElement === "string") {
+      // We need to transform this selector into an element.
+      element = this.page.locator(locatorOrElement);
+    }
+    // If the provided value is an object containing 'waitFor' property, this is a Playwright locator object.
+    else if (locatorOrElement && 'waitFor' in locatorOrElement) {
+      // So we don't need to do anything else unique.
+      element = locatorOrElement;
+    }
+    // Validate input type: This block handles unexpected input types that do not meet the function's requirements.
+    // If the input is neither a string (selector) nor a Locator object with a 'waitFor' property, throw an error.
+    else {
+      this.tsMethods.errorLog(
+        "You have entered a not supported data type. Please provide a locator (string) or element (object)."
+      );
+    }
+    // Return the element.
+    return element;
+  }
+}
+
+/**
+ * @description This class contains Domain Specific Language methods.
+ */
 export class Dsl {
   // Declare a page varible.
   page: Page;
   context: any;
   config: Configuration;
   ts: TsMethods;
+  dslHelper: DslHelper;
 
   // Declare a constructor.
   constructor(page: Page, context?: any) {
@@ -17,6 +65,7 @@ export class Dsl {
     this.context = context;
     this.ts = new TsMethods(page);
     this.config = new Configuration();
+    this.dslHelper = new DslHelper(page, this.ts);
   }
 
   /**
@@ -29,7 +78,7 @@ export class Dsl {
    * @example                   Example: Provide values for screen width and height.
    *                              await dsl.screenSize(1920, 1080);
    */
-  async screenSize(widthSize: number, heightSize: number): Promise<void> {
+  async screenSize(widthSize: PositiveInteger, heightSize: PositiveInteger): Promise<void> {
     try {
       // If the numbers are positive numbers...
       if (widthSize > 0 || heightSize > 0) {
@@ -73,7 +122,6 @@ export class Dsl {
         );
       }
     } catch (error) {
-      // Unit Test.
       // Create the error log and show it to the UI. Show the function name, the class where the function is located and the cached error.
       this.ts.errorLog(
         this.screenSize.name + " " +
@@ -92,7 +140,7 @@ export class Dsl {
    * @example                   Example: Provide the URL address.
    *                              await dsl.navigateTo("https://domainurladdress/endpoint/");
    */
-  async navigateTo(url: string): Promise<void> {
+  async navigateTo(url: Url): Promise<void> {
     try {
       // Provide the destination URL.
       await this.page.goto(url);
@@ -105,7 +153,6 @@ export class Dsl {
         url
       );
     } catch (error) {
-      // Unit Test.
       // Create the error log and show it to the UI. Show the function name, the class where the function is located and the cached error.
       this.ts.errorLog(
         this.navigateTo.name + " " +
@@ -124,7 +171,7 @@ export class Dsl {
    * @example                   Example: Provide the expected URL address.
    *                              await dsl.goBack("https://domainurladdress/previous/url/");
    */
-  async goBack(verifyUrl: string): Promise<void> {
+  async goBack(verifyUrl: Url): Promise<void> {
     try {
       // Navigate back to the previous URL.
       await this.page.goBack();
@@ -137,7 +184,6 @@ export class Dsl {
         verifyUrl
       );
     } catch (error) {
-      // Unit Test.
       // Create the error log and show it to the UI. Show the function name, the class where the function is located and the cached error.
       this.ts.errorLog(
         this.goBack.name + " " +
@@ -156,20 +202,19 @@ export class Dsl {
    * @example                   Example: Provide the expected URL address.
    *                              await dsl.goForward("https://domainurladdress/forward/url/");
    */
-  async goForward(verifyUrl: string): Promise<void> {
+  async goForward(verifyUrl: Url): Promise<void> {
     try {
       // Navigate to the forward URL.
       await this.page.goForward();
       // Verify that the browser loads the correct URL.
-      await expect(this.page).toHaveURL(verifyUrl);
+      assert.strictEqual(this.page.url(), verifyUrl, 'Current page URL does not match the expected URL.');
       // Add the information message.
       this.ts.informLog(
         this.config.beginInformMessage +
-        "The use was redirected to the forward URL address: " +
+        "The user was redirected to the forward URL address: " +
         verifyUrl
       );
     } catch (error) {
-      // Unit Test.
       // Create the error log and show it to the UI. Show the function name, the class where the function is located and the cached error.
       this.ts.errorLog(
         this.goForward.name + " " +
@@ -198,8 +243,8 @@ export class Dsl {
    *
    */
   async browserWindowAfterClick(
-    locatorForcesOpeningNewWindow: any,
-    verifyLocatorOrElement?: any
+    locatorForcesOpeningNewWindow: Selector,
+    verifyLocatorOrElement?: LocatorOrElement
   ): Promise<any> {
     try {
       // Get a page after a specific action (e.g. clicking a link).
@@ -207,13 +252,13 @@ export class Dsl {
         // Wait for a specific event to happen. In this case, we are waiting for the browser to open a new window.
         await this.context.waitForEvent("page"),
         // Click over an element to force open the new browser window.
-        await this.click(await locatorForcesOpeningNewWindow),
+        await this.click(locatorForcesOpeningNewWindow),
       ]);
       // Wait until the opening of the new browser window happens.
       await newPage.waitForLoadState();
       // If the parameter "verifyLocatorOrElement" is provided - verify if the verification element loads in the new (switched) browser window.
-      if (await verifyLocatorOrElement != null) {
-        await this.element(await newPage.locator(await verifyLocatorOrElement));
+      if (verifyLocatorOrElement != null) {
+        await this.element(await newPage.locator(verifyLocatorOrElement));
       }
       // Add the information message.
       this.ts.informLog(
@@ -223,7 +268,6 @@ export class Dsl {
       // Return the switched browser focus as an object.
       return newPage;
     } catch (error) {
-      // Unit Test.
       // Create the error log and show it to the UI. Show the function name, the class where the function is located and the cached error.
       this.ts.errorLog(
         this.browserWindowAfterClick.name + " " +
@@ -258,77 +302,41 @@ export class Dsl {
    *                            Example 4: Provide the element without timeout.
    *                               await dsl.element("#id");
    */
-  async element(locatorOrElement: any, timeoutPeriod?: number): Promise<any> {
+  async element(locatorOrElement: LocatorOrElement, timeoutPeriod?: PositiveInteger): Promise<Locator> {
     try {
-      let element: any; // Declare an internal variable for assigning the element value.
-      // If the provided value is a string, this is just a selector.
-      if (typeof locatorOrElement === "string") {
-        // We need to transform this selector into an element.
-        element = this.page.locator(locatorOrElement);
+      // Get the element, no matter if it is a locator or an object (Playwright locator), we will will work with Playwright locator object as a result.
+      const element = await this.dslHelper.resolveElement(locatorOrElement);
+
+      // If the element is null, we can continue with the verification.
+      if (!element) {
+        throw new Error("The element value is null. Please provide a valid element.");
       }
-      // If the provided value is an object, this is the whole element.
-      else if (
-        typeof await locatorOrElement === "object" ||
-        await locatorOrElement instanceof Object
-      ) {
-        // So we don't need to do anything else unique.
-        element = await locatorOrElement;
-      }
-      // Unit test.
-      else {
-        this.ts.errorLog(
-          "You have entered a not supported data type. Please provide a locator (string) or element (object)." +
-          this.element.name + " " +
-          __filename.split(__dirname + "/").pop()
-        );
-      }
+
       // Wait for the element to be visible.
       await element.waitFor({ state: "visible", timeout: timeoutPeriod });
       // Verify that the element is visible.
-      await expect(await element).toBeVisible({
-        timeout: timeoutPeriod,
-      });
+      await expect(element).toBeVisible({ timeout: timeoutPeriod });
       // Verify that the element is not hidden.
-      await expect(await element).not.toBeHidden({
-        timeout: timeoutPeriod,
-      });
+      await expect(element).not.toBeHidden({ timeout: timeoutPeriod });
       // Verify that the element is enabled.
-      await expect(await element).toBeEnabled({
-        timeout: timeoutPeriod,
-      });
+      await expect(element).toBeEnabled({ timeout: timeoutPeriod });
       // Verify that the element is not disabled.
-      await expect(await element).not.toBeDisabled({
-        timeout: timeoutPeriod,
-      });
+      await expect(element).not.toBeDisabled({ timeout: timeoutPeriod });
       // Verify that the element is the only one in the DOM tree.
-      await expect(await element).toHaveCount(1, {
-        timeout: timeoutPeriod,
-      });
+      await expect(element).toHaveCount(1, { timeout: timeoutPeriod });
 
       // Add the information message.
       if (timeoutPeriod == null) {
-        this.ts.informLog(
-          this.config.beginInformMessage + "The element was selected."
-        );
+        this.ts.informLog(this.config.beginInformMessage + "The element was selected.");
       } else {
-        this.ts.informLog(
-          this.config.beginInformMessage +
-          "The element was selected. Timeout was set to: " +
-          timeoutPeriod +
-          " milliseconds."
-        );
+        this.ts.informLog(this.config.beginInformMessage + "The element was selected. Timeout was set to: " + timeoutPeriod + " milliseconds.");
       }
-
       // Return the selected element.
-      return await element;
+      return element;
     } catch (error) {
-      // Unit Test.
-      // Create the error log and show it to the UI. Show the function name, the class where the function is located and the cached error.
-      this.ts.errorLog(
-        this.element.name + " " +
-        __filename.split(__dirname + "/").pop() + " " +
-        await error
-      );
+      // Throw an error using the error log method.
+      this.ts.errorLog(this.element.name + " " + __filename.split(__dirname + "/").pop() + " " + await error);
+      throw new Error("Failed to retrieve or interact with the element: " + error);
     }
   }
 
@@ -361,38 +369,41 @@ export class Dsl {
    *                                  await expect(attribute).toEqual("expected-attribute-value");
    */
   async getAttribute(
-    locatorOrElement: string,
+    locatorOrElement: LocatorOrElement,
     attributeName: string,
     expectedAttributeValue?: string
-  ): Promise<any> {
+  ): Promise<string | null> {
     try {
-      // Assign the element to a variable.
-      let element = await this.element(locatorOrElement, this.config.elementTimeOut);
+      // Get the element, no matter if it is a locator or an object (Playwright locator), we will will work with Playwright locator object as a result.
+      const element = await this.element(locatorOrElement);
+
       // Get the attribute value from the element.
       let attributeValue = await element.getAttribute(attributeName);
-      // If the expected attribute value parameter is provided - verify that the inspected attribute value is correct.
-      if (expectedAttributeValue != null) {
-        expect(await attributeValue).toEqual(expectedAttributeValue);
+      // Throw an error if the attribute value is null and the attribute value is not like the expected attribute value.
+      if (expectedAttributeValue != null && attributeValue !== expectedAttributeValue) {
+        throw new Error(`Expected attribute value '${expectedAttributeValue}', but got '${attributeValue}'`);
       }
 
       // Add the information message.
       this.ts.informLog(
         this.config.beginInformMessage +
         "The automated test reads the attribute value from the used element. The attribute value is: '" +
-        (await attributeValue) +
+        attributeValue +
         "'."
       );
 
       // Return the attribute value.
-      return await attributeValue;
+      return attributeValue;
     } catch (error) {
-      // Unit Test.
       // Create the error log and show it to the UI. Show the function name, the class where the function is located and the cached error.
       this.ts.errorLog(
         this.getAttribute.name + " " +
         __filename.split(__dirname + "/").pop() + " " +
         await error
       );
+      // Return null if the attribute value is not found.
+      // This return should never be reached, because the 'errorLog' method will throw an error. We need to return null here because of the TypeScript compiler.
+      return null;
     }
   }
 
@@ -422,59 +433,42 @@ export class Dsl {
    *                              await dsl.getInnerText(elementName);
    */
   async getInnerText(
-    locatorOrElement: any,
+    locatorOrElement: LocatorOrElement,
     expectedTextValue?: string
-  ): Promise<any> {
+  ): Promise<string | null> {
     try {
-      let element: any; // Declare an internal variable for assigning the element value.
-      // If the provided value is a string, this is just a selector.
-      if (typeof await locatorOrElement === "string") {
-        // We need to transform this selector into an element.
-        element = this.page.locator(await locatorOrElement);
-      }
-      // If the provided value is an object, this is the whole element.
-      else if (
-        typeof await locatorOrElement === "object" ||
-        await locatorOrElement instanceof Object
-      ) {
-        // So we don't need to do anything else unique.
-        element = await locatorOrElement;
-      }
-      // Unit test.
-      else {
-        this.ts.errorLog(
-          "You have entered a not supported data type. Please provide a locator (string) or element (object)." +
-          this.getInnerText.name + " " +
-          __filename.split(__dirname + "/").pop()
-        );
-      }
+      // Get the element, no matter if it is a locator or an object (Playwright locator), we will will work with Playwright locator object as a result.
+      const element = await this.element(locatorOrElement);
+
       // Call this method, to verify that the element is present and it is ready for usage.
-      await this.element(await element, this.config.elementTimeOut);
+      await this.element(element, this.config.elementTimeOut);
       // Get the text of an inspected element and assign it to a variable.
       let elementTextValue = await element.innerText();
       // Make a verification. If there is provided string for the expected value parameter - assert to verify that the inspected element contains the exact text.
       if (expectedTextValue != null) {
-        expect(await elementTextValue).toEqual(expectedTextValue);
+        expect(elementTextValue).toEqual(expectedTextValue);
       }
 
       // Add the information message.
       this.ts.informLog(
         this.config.beginInformMessage +
         "The automated test reads the element text value. The element text value is: '" +
-        (await elementTextValue) +
+        (elementTextValue) +
         "'."
       );
 
       // Return the containing element text.
-      return await elementTextValue;
+      return elementTextValue;
     } catch (error) {
-      // Unit Test.
       // Create the error log and show it to the UI. Show the function name, the class where the function is located and the cached error.
       this.ts.errorLog(
         this.getInnerText.name + " " +
         __filename.split(__dirname + "/").pop() + " " +
         await error
       );
+      // Return null if the attribute value is not found.
+      // This return should never be reached, because the 'errorLog' method will throw an error. We need to return null here because of the TypeScript compiler.
+      return null;
     }
   }
 
@@ -504,37 +498,18 @@ export class Dsl {
    *                              await dsl.getText(elementName);
    */
   async getText(
-    locatorOrElement: any,
+    locatorOrElement: LocatorOrElement,
     expectedTextValue?: string
-  ): Promise<any> {
+  ): Promise<string | null> {
     try {
-      let element: any; // Declare an internal variable for assigning the element value.
-      // If the provided value is a string, this is just a selector.
-      if (typeof await locatorOrElement === "string") {
-        // We need to transform this selector into an element.
-        element = this.page.locator(await locatorOrElement);
-      }
-      // If the provided value is an object, this is the whole element.
-      else if (
-        typeof await locatorOrElement === "object" ||
-        await locatorOrElement instanceof Object
-      ) {
-        // So we don't need to do anything else unique.
-        element = await locatorOrElement;
-      }
-      // Unit test.
-      else {
-        this.ts.errorLog(
-          "You have entered a not supported data type. Please provide a locator (string) or element (object)." +
-          this.getText.name + " " +
-          __filename.split(__dirname + "/").pop()
-        );
-      }
+      // Get the element, no matter if it is a locator or an object (Playwright locator), we will will work with Playwright locator object as a result.
+      const element = await this.element(locatorOrElement);
+
       // Call this method, to verify that the element is present and it is ready for usage.
-      await this.element(await element, this.config.elementTimeOut);
+      await this.element(element, this.config.elementTimeOut);
 
       // Get the text of an inspected element and assign it to a variable. As you can see, we are getting the first value from the list because "all text contents" return an array list.
-      let elementTextValue: string = await (await element.allTextContents())[0];
+      let elementTextValue: string = (await element.allTextContents())[0];
 
       // Make a verification. If there is provided string for the expected value parameter - assert to verify that the inspected element contains the exact text.
       if (expectedTextValue != null) {
@@ -552,13 +527,15 @@ export class Dsl {
       // Return the containing element text.
       return elementTextValue;
     } catch (error) {
-      // Unit Test.
       // Create the error log and show it to the UI. Show the function name, the class where the function is located and the cached error.
       this.ts.errorLog(
         this.getText.name + " " +
         __filename.split(__dirname + "/").pop() + " " +
         await error
       );
+      // Return null if the attribute value is not found.
+      // This return should never be reached, because the 'errorLog' method will throw an error. We need to return null here because of the TypeScript compiler.
+      return null;
     }
   }
 
@@ -589,42 +566,21 @@ export class Dsl {
    *                              await dsl.getAllTexts(elementName, 3);
    */
   async getAllTexts(
-    locatorOrElement: any,
-    sequenceNumber: number,
+    locatorOrElement: LocatorOrElement,
+    sequenceNumber: PositiveInteger,
     expectedTextValue?: string
-  ): Promise<any> {
+  ): Promise<string | null> {
     try {
-      let element: any; // Declare an internal variable for assigning the element value.
-      // If the provided value is a string, this is just a selector.
-      if (typeof await locatorOrElement === "string") {
-        // We need to transform this selector into an element.
-        element = this.page.locator(await locatorOrElement);
-      }
-      // If the provided value is an object, this is the whole element.
-      else if (
-        typeof await locatorOrElement === "object" ||
-        await locatorOrElement instanceof Object
-      ) {
-        // So we don't need to do anything else unique.
-        element = await locatorOrElement;
-      }
-      // Unit test.
-      else {
-        this.ts.errorLog(
-          "You have entered a not supported data type. Please provide a locator (string) or element (object)." +
-          this.getAllTexts.name + " " +
-          __filename.split(__dirname + "/").pop()
-        );
-      }
-      // Call this method, to verify that the element is present and it is ready for usage.
-      await this.element(await element, this.config.elementTimeOut);
+      // Get the element, no matter if it is a locator or an object (Playwright locator), we will will work with Playwright locator object as a result.
+      const element = await this.element(locatorOrElement);
 
-      let listLenght = await (await element.allTextContents()).length;
+      // Get the list length.
+      let listLenght = (await element.allTextContents()).length;
 
       // Check if the provided number is contained in the list length.
-      if (sequenceNumber <= (await listLenght)) {
+      if (sequenceNumber <= (listLenght)) {
         // Get the text of an inspected element and assign it to a variable. As you can see, we are getting the first value from the list because "all text contents" return an array list.
-        let elementTextValue: string = await (await element.allTextContents())[sequenceNumber];
+        let elementTextValue: string = (await element.allTextContents())[sequenceNumber];
 
         // Make a verification. If there is provided string for the expected value parameter - assert to verify that the inspected element contains the exact text.
         if (expectedTextValue != null) {
@@ -651,15 +607,20 @@ export class Dsl {
           (await listLenght) +
           "."
         );
+        // Return null if the attribute value is not found.
+        // This return should never be reached, because the 'errorLog' method will throw an error. We need to return null here because of the TypeScript compiler.
+        return null;
       }
     } catch (error) {
-      // Unit Test.
       // Create the error log and show it to the UI. Show the function name, the class where the function is located and the cached error.
       this.ts.errorLog(
         this.getAllTexts.name + " " +
         __filename.split(__dirname + "/").pop() + " " +
         await error
       );
+      // Return null if the attribute value is not found.
+      // This return should never be reached, because the 'errorLog' method will throw an error. We need to return null here because of the TypeScript compiler.
+      return null;
     }
   }
 
@@ -678,32 +639,10 @@ export class Dsl {
    *                              let elementName: any = dsl.element("#userName");
    *                              await dsl.sendKeys(await elementName, "test");
    */
-  async sendKeys(locatorOrElement: any, text: string): Promise<void> {
+  async sendKeys(locatorOrElement: LocatorOrElement, text: string): Promise<void> {
     try {
-      // Create the method steps here. Describe the custom command in this "try" statement (Domain Specific Language).
-
-      let element: any; // Declare an internal variable for assigning the element value.
-      // If the provided value is a string, this is just a selector.
-      if (typeof await locatorOrElement === "string") {
-        // We need to transform this selector into an element.
-        element = this.page.locator(await locatorOrElement);
-      }
-      // If the provided value is an object, this is the whole element.
-      else if (
-        typeof await locatorOrElement === "object" ||
-        await locatorOrElement instanceof Object
-      ) {
-        // So we don't need to do anything else unique.
-        element = await locatorOrElement;
-      }
-      // Unit test.
-      else {
-        this.ts.errorLog(
-          "You have entered a not supported data type. Please provide a locator (string) or element (object)." +
-          this.sendKeys.name + " " +
-          __filename.split(__dirname + "/").pop()
-        );
-      }
+      // Get the element, no matter if it is a locator or an object (Playwright locator), we will will work with Playwright locator object as a result.
+      const element = await this.element(locatorOrElement);
 
       // Call this method, to verify that the element is present and it is ready for usage.
       await this.element(await element, this.config.elementTimeOut);
@@ -725,7 +664,6 @@ export class Dsl {
         "'."
       );
     } catch (error) {
-      // Unit Test.
       // Create the error log and show it to the UI. Show the function name, the class where the function is located and the cached error.
       this.ts.errorLog(
         this.sendKeys.name + " " +
@@ -753,65 +691,16 @@ export class Dsl {
    *                                      await dsl.sendKeys_MultySelect(await elementName, "test", await elementVerificatorName);
    */
   async sendKeys_MultySelect(
-    locatorOrElement: any,
+    locatorOrElement: LocatorOrElement,
     text: string,
-    loctorOrElementVerificator?: any
+    loctorOrElementVerificator?: LocatorOrElement
   ): Promise<void> {
     try {
-      let element: any; // Declare an internal variable for assigning the element value.
-      let elementVerificator: any; // Declare an internal variable for assigning the element value.
-      // If the provided value is a string, this is just a selector.
-      if (typeof await locatorOrElement === "string") {
-        // We need to transform this selector into an element.
-        element = this.page.locator(await locatorOrElement);
-      }
-      // If the provided value is an object, this is the whole element.
-      else if (
-        typeof await locatorOrElement === "object" ||
-        await locatorOrElement instanceof Object
-      ) {
-        // So we don't need to do anything else unique.
-        element = await locatorOrElement;
-      }
-      // Unit test.
-      else {
-        this.ts.errorLog(
-          "You have entered a not supported data type. Please provide a locator (string) or element (object)." +
-          this.sendKeys_MultySelect.name + " " +
-          __filename.split(__dirname + "/").pop()
-        )
-      }
-
-      // If the provided value is a string, this is just a selector.
-      if (
-        typeof await loctorOrElementVerificator === "string" &&
-        await loctorOrElementVerificator != null
-      ) {
-        // We need to transform this selector into an element.
-        elementVerificator = this.page.locator(await loctorOrElementVerificator);
-      }
-      // If the provided value is an object, this is the whole element.
-      else if (
-        typeof await loctorOrElementVerificator === "object" ||
-        (await loctorOrElementVerificator instanceof Object &&
-          await loctorOrElementVerificator != null)
-      ) {
-        // So we don't need to do anything else unique.
-        elementVerificator = await loctorOrElementVerificator;
-      } else if (await loctorOrElementVerificator == null) {
-        // Do nothing, because the parameter is optional.
-      }
-      // Unit test.
-      else {
-        this.ts.errorLog(
-          "You have entered a not supported data type. Please provide a locator (string) or element (object)." +
-          this.sendKeys_MultySelect.name + " " +
-          __filename.split(__dirname + "/").pop()
-        );
-      }
+      // Get the element, no matter if it is a locator or an object (Playwright locator), we will will work with Playwright locator object as a result.
+      const element = await this.element(locatorOrElement);
 
       // Call this method, to verify that the element is present and it is ready for usage.
-      await this.element(await element, this.config.elementTimeOut);
+      await this.element(element, this.config.elementTimeOut);
       // Send Ctrl+A to the element. This will work for Windows and Linux. We are using this to select all containing text inside inspected input text element.
       await this.page.keyboard.press("Control+A");
       // Send Meta+A to the element. This will work for macOS. We are using this to select all containing text inside inspected input text element.
@@ -824,17 +713,19 @@ export class Dsl {
       // Verify that the input text element contains the sent text data.
       // If the element we use is the same as the element, that will verify the operation was compleated correctly. Or if we don't provide a verification element - because it is the same as a used element.
       if (
-        await locatorOrElement == await loctorOrElementVerificator ||
-        await loctorOrElementVerificator == null
+        locatorOrElement == loctorOrElementVerificator ||
+        loctorOrElementVerificator == null
       ) {
-        let verificateValueIsCorrect: string = await (
+        let verificateValueIsCorrect: string = (
           await element.allTextContents()
         )[0];
         expect(verificateValueIsCorrect).toEqual(text);
       }
       // If we provide different element for verificaiton.
       else {
-        let verificateValueIsCorrect: string = await (
+        // Declare an internal variable for assigning the element value.
+        const elementVerificator = await this.element(loctorOrElementVerificator);
+        let verificateValueIsCorrect: string = (
           await elementVerificator.allTextContents()
         )[0];
         expect(verificateValueIsCorrect).toEqual(text);
@@ -848,7 +739,7 @@ export class Dsl {
         "'."
       );
     } catch (error) {
-      // Unit Test.
+
       // Create the error log and show it to the UI. Show the function name, the class where the function is located and the cached error.
       this.ts.errorLog(
         this.sendKeys_MultySelect.name + " " +
@@ -878,50 +769,55 @@ export class Dsl {
 
    */
   async checkRadioButtonCheckBox(
-    locator: string,
-    checkOrClickAction?: string
+    locator: Selector,
+    checkOrClickAction?: CheckOrClickAction
   ): Promise<void> {
     try {
-      // Create the method steps here. Describe the custom command in this "try" statement (Domain Specific Language).
-      // Create an element.
-      let element = await this.element(locator, this.config.elementTimeOut);
-      // Verify the element is not checked.
-      expect(await this.page.isChecked(locator)).toBeFalsy();
-      await expect(await element).not.toBeChecked();
-      // If the checkOrClickAction value is not null.
-      if (checkOrClickAction != null) {
-        // If the provided action is "check".
-        if (checkOrClickAction == "check") {
-          // Check the element using "check" action.
-          await this.page.check(locator, { force: true });
-        }
-        // If the provided action is "click".
-        else if (checkOrClickAction == "click") {
+      // Get the element, no matter if it is a locator or an object (Playwright locator), we will will work with Playwright locator object as a result.
+      const element = await this.element(locator);
+
+      // If the element is not null, we can continue with the verification.
+      if (element) {
+        // Verify the element is not checked.
+        expect(await this.page.isChecked(locator)).toBeFalsy();
+        await expect(element).not.toBeChecked();
+        // If the checkOrClickAction value is not null.
+        if (checkOrClickAction != null) {
+          // If the provided action is "check".
+          if (checkOrClickAction == "check") {
+            // Check the element using "check" action.
+            await this.page.check(locator, { force: true });
+          }
+          // If the provided action is "click".
+          else if (checkOrClickAction == "click") {
+            // Check the element using "click" action.
+            await this.page.click(locator, { force: true });
+          }
+          else {
+            this.ts.errorLog(
+              "You provided the wrong action data. If you want to provide data for this parameter, please provide only the 'check' or 'click' value for the 'checkOrClickAction' parameter." +
+              this.checkRadioButtonCheckBox.name + " " +
+              __filename.split(__dirname + "/").pop()
+            );
+          }
+        } else {
           // Check the element using "click" action.
           await this.page.click(locator, { force: true });
         }
-        // Unit test.
-        else {
-          this.ts.errorLog(
-            "You provided the wrong action data. If you want to provide data for this parameter, please provide only the 'check' or 'click' value for the 'checkOrClickAction' parameter." +
-            this.checkRadioButtonCheckBox.name + " " +
-            __filename.split(__dirname + "/").pop()
-          );
-        }
-      } else {
-        // Check the element using "click" action.
-        await this.page.click(locator, { force: true });
-      }
-      // Verify the element is checked.
-      expect(await this.page.isChecked(locator)).toBeTruthy();
-      await expect(await element).toBeChecked();
+        // Verify the element is checked.
+        expect(await this.page.isChecked(locator)).toBeTruthy();
+        await expect(element).toBeChecked();
 
-      // Add the information message.
-      this.ts.informLog(
-        this.config.beginInformMessage + "The automated test checks the element."
-      );
+        // Add the information message.
+        this.ts.informLog(
+          this.config.beginInformMessage + "The automated test checks the element."
+        );
+      }
+      // If the element is null, we need to throw an error.
+      else {
+        this.ts.errorLog("The element value is null. Please provide a valid element.");
+      }
     } catch (error) {
-      // Unit Test.
       // Create the error log and show it to the UI. Show the function name, the class where the function is located and the cached error.
       this.ts.errorLog(
         this.checkRadioButtonCheckBox.name + " " +
@@ -950,50 +846,56 @@ export class Dsl {
    *                              await dsl.checkRadioButtonCheckBox("#id", "click");
    */
   async unCheckBox(
-    locator: string,
-    checkOrClickAction?: string
+    locator: Selector,
+    checkOrClickAction?: UnCheckOrUnClickAction
   ): Promise<void> {
     try {
-      // Create an element.
-      let element = await this.element(locator, this.config.elementTimeOut);
-      // Verify the element is checked.
-      expect(await this.page.isChecked(locator)).toBeTruthy();
-      await expect(await element).toBeChecked();
-      // If the checkOrClickAction value is not null.
-      if (checkOrClickAction != null) {
-        // If the provided action is "uncheck".
-        if (checkOrClickAction == "uncheck") {
-          // Check the element using "uncheck" action.
-          await this.page.uncheck(locator, { force: true });
-        }
-        // If the provided action is "click".
-        else if (checkOrClickAction == "click") {
+      // Get the element, no matter if it is a locator or an object (Playwright locator), we will will work with Playwright locator object as a result.
+      const element = await this.element(locator);
+
+      // If the element is not null, we can continue with the verification.
+      if (element) {
+        // Verify the element is checked.
+        expect(await this.page.isChecked(locator)).toBeTruthy();
+        await expect(await element).toBeChecked();
+        // If the checkOrClickAction value is not null.
+        if (checkOrClickAction != null) {
+          // If the provided action is "uncheck".
+          if (checkOrClickAction == "uncheck") {
+            // Check the element using "uncheck" action.
+            await this.page.uncheck(locator, { force: true });
+          }
+          // If the provided action is "click".
+          else if (checkOrClickAction == "click") {
+            // Check the element using "click" action.
+            await this.page.click(locator, { force: true });
+          }
+          else {
+            this.ts.errorLog(
+              "You provided the wrong action data. If you want to provide data for this parameter, please provide only the 'uncheck' or 'click' value for the 'checkOrClickAction' parameter." +
+              this.unCheckBox.name + " " +
+              __filename.split(__dirname + "/").pop()
+            );
+          }
+        } else {
           // Check the element using "click" action.
           await this.page.click(locator, { force: true });
         }
-        // Unit test.
-        else {
-          this.ts.errorLog(
-            "You provided the wrong action data. If you want to provide data for this parameter, please provide only the 'uncheck' or 'click' value for the 'checkOrClickAction' parameter." +
-            this.unCheckBox.name + " " +
-            __filename.split(__dirname + "/").pop()
-          );
-        }
-      } else {
-        // Check the element using "click" action.
-        await this.page.click(locator, { force: true });
-      }
-      // Verify the element is not checked.
-      expect(await this.page.isChecked(locator)).toBeFalsy();
-      await expect(await element).not.toBeChecked();
+        // Verify the element is not checked.
+        expect(await this.page.isChecked(locator)).toBeFalsy();
+        await expect(await element).not.toBeChecked();
 
-      // Add the information message.
-      this.ts.informLog(
-        this.config.beginInformMessage +
-        "The automated test unchecks the check box element."
-      );
+        // Add the information message.
+        this.ts.informLog(
+          this.config.beginInformMessage +
+          "The automated test unchecks the check box element."
+        );
+      }
+      // If the element is null, we need to throw an error.
+      else {
+        this.ts.errorLog("The element value is null. Please provide a valid element.");
+      }
     } catch (error) {
-      // Unit Test.
       // Create the error log and show it to the UI. Show the function name, the class where the function is located and the cached error.
       this.ts.errorLog(
         this.unCheckBox.name + " " +
@@ -1012,7 +914,7 @@ export class Dsl {
    * @exaple                    Example: Provide the locator.
    *                              await dsl.doubleClick("#id");
    */
-  async doubleClick(locator: string): Promise<void> {
+  async doubleClick(locator: Selector): Promise<void> {
     try {
       // Call this method, to verify that the element is present and it is ready for usage.
       await this.element(locator, this.config.elementTimeOut);
@@ -1025,7 +927,6 @@ export class Dsl {
         "The automated test makes the double mouse (left) click over the element."
       );
     } catch (error) {
-      // Unit Test.
       // Create the error log and show it to the UI. Show the function name, the class where the function is located and the cached error.
       this.ts.errorLog(
         this.doubleClick.name + " " +
@@ -1044,7 +945,7 @@ export class Dsl {
    * @exaple                    Example: Provide the locator.
    *                              await dsl.rightClick("#id");
    */
-  async rightClick(locator: string): Promise<void> {
+  async rightClick(locator: Selector): Promise<void> {
     try {
       // Call this method, to verify that the element is present and it is ready for usage.
       await this.element(locator, this.config.elementTimeOut);
@@ -1060,7 +961,6 @@ export class Dsl {
         "The automated test makes the right click with the mouse over the element."
       );
     } catch (error) {
-      // Unit Test.
       // Create the error log and show it to the UI. Show the function name, the class where the function is located and the cached error.
       this.ts.errorLog(
         this.rightClick.name + " " +
@@ -1079,7 +979,7 @@ export class Dsl {
    * @example                   Example: Provide the locator.
    *                              await dsl.click("#id");
    */
-  async click(locator: string): Promise<void> {
+  async click(locator: Selector): Promise<void> {
     try {
       // Call this method, to verify that the element is present and it is ready for usage.
       await this.element(locator, this.config.elementTimeOut);
@@ -1093,7 +993,6 @@ export class Dsl {
         "The automated test makes the left click with the mouse over the element."
       );
     } catch (error) {
-      // Unit Test.
       // Create the error log and show it to the UI. Show the function name, the class where the function is located and the cached error.
       this.ts.errorLog(
         this.click.name + " " +
@@ -1112,7 +1011,7 @@ export class Dsl {
    * @example                   Example: Provide the locator.
    *                              await dsl.hover("#id");
    */
-  async hover(locator: string): Promise<void> {
+  async hover(locator: Selector): Promise<void> {
     try {
       // Call this method, to verify that the element is present and it is ready for usage.
       await this.element(locator, this.config.elementTimeOut);
@@ -1124,7 +1023,6 @@ export class Dsl {
         this.config.beginInformMessage + "The automated test hovers the element."
       );
     } catch (error) {
-      // Unit Test.
       // Create the error log and show it to the UI. Show the function name, the class where the function is located and the cached error.
       this.ts.errorLog(
         this.hover.name + " " +
@@ -1146,9 +1044,9 @@ export class Dsl {
    *                              await dsl.clickPosition("#id", 12, 22);
    */
   async clickPosition(
-    locator: string,
-    xValue: number,
-    yValue: number
+    locator: Selector,
+    xValue: PositiveInteger,
+    yValue: PositiveInteger
   ): Promise<void> {
     try {
       // Call this method, to verify that the element is present and it is ready for usage.
@@ -1196,7 +1094,6 @@ export class Dsl {
         "."
       );
     } catch (error) {
-      // Unit Test.
       // Create the error log and show it to the UI. Show the function name, the class where the function is located and the cached error.
       this.ts.errorLog(
         this.clickPosition.name + " " +
@@ -1218,8 +1115,8 @@ export class Dsl {
    *                              await dsl.clickWithHoldingKeyboardKey("#id", "Shift+A");
    */
   async clickWithHoldingKeyboardKey(
-    locator: string,
-    keyboardKey: "Alt" | "Control" | "Meta" | "Shift"
+    locator: Selector,
+    keyboardKey: KeyboardKeys
   ): Promise<void> {
     try {
       // Call this method, to verify that the element is present and it is ready for usage.
@@ -1238,7 +1135,6 @@ export class Dsl {
         "'."
       );
     } catch (error) {
-      // Unit Test.
       // Create the error log and show it to the UI. Show the function name, the class where the function is located and the cached error.
       this.ts.errorLog(
         this.clickWithHoldingKeyboardKey.name + " " +
@@ -1263,7 +1159,7 @@ export class Dsl {
    *                                                      await dsl.downloadFile("#id");
    */
   async downloadFile(
-    locator: string,
+    locator: Selector,
     downloadFolderPathWithFileNameAndExtension?: string
   ): Promise<void> {
     try {
@@ -1305,7 +1201,6 @@ export class Dsl {
         );
       }
     } catch (error) {
-      // Unit Test.
       // Create the error log and show it to the UI. Show the function name, the class where the function is located and the cached error.
       this.ts.errorLog(
         this.downloadFile.name + " " +
@@ -1326,7 +1221,7 @@ export class Dsl {
    *                                                      await dsl.uploadFile("#id", "C:/upload-folder/file.jpg");
    */
   async uploadFile(
-    locator: string,
+    locator: Selector,
     uploadFilePathWithFileNameAndExtension: string
   ): Promise<void> {
     try {
@@ -1344,7 +1239,6 @@ export class Dsl {
         " The automated test uploads a file successfully."
       );
     } catch (error) {
-      // Unit Test.
       // Create the error log and show it to the UI. Show the function name, the class where the function is located and the cached error.
       this.ts.errorLog(
         this.uploadFile.name + " " +
@@ -1368,8 +1262,10 @@ export class Dsl {
    *                          Example 2: Provide the locator of a button that triggers the alert pop-up window.
    *                            dsl.alertAccept("#id");
    */
-  async alertAccept(locator: string, alertMessage?: string): Promise<void> {
+  async alertAccept(locator: Selector, alertMessage?: string): Promise<void> {
     try {
+      // Call this method, to verify that the element is present and it is ready for usage.
+      await this.element(locator);
       // Handle the alert pop-up window.
       this.page.once("dialog", async (dialog) => {
         // If we provide the alertMessage parameter...
@@ -1389,7 +1285,6 @@ export class Dsl {
         " The automation accepted the Alert pop-up window."
       );
     } catch (error) {
-      // Unit Test.
       // Create the error log and show it to the UI. Show the function name, the class where the function is located and the cached error.
       this.ts.errorLog(
         this.alertAccept.name + " " +
@@ -1413,8 +1308,10 @@ export class Dsl {
    *                          Example 2: Provide the locator of a button that triggers the alert pop-up window.
    *                            dsl.alertCancel("#id");
    */
-  async alertCancel(locator: string, alertMessage?: string): Promise<void> {
+  async alertCancel(locator: Selector, alertMessage?: string): Promise<void> {
     try {
+      // Call this method, to verify that the element is present and it is ready for usage.
+      await this.element(locator);
       // Handle the alert pop-up window.
       this.page.once("dialog", async (dialog) => {
         // If we provide the alertMessage parameter...
@@ -1434,7 +1331,6 @@ export class Dsl {
         " The automation dismissed the Alert pop-up window."
       );
     } catch (error) {
-      // Unit Test.
       // Create the error log and show it to the UI. Show the function name, the class where the function is located and the cached error.
       this.ts.errorLog(
         this.alertCancel.name + " " +
@@ -1460,11 +1356,13 @@ export class Dsl {
    *                            dsl.alertTypeValueAndAccept("#id", "fill with this text");
    */
   async alertTypeValueAndAccept(
-    locator: string,
+    locator: Selector,
     textValue: string,
     alertMessage?: string
   ): Promise<void> {
     try {
+      // Call this method, to verify that the element is present and it is ready for usage.
+      await this.element(locator);
       // Handle the alert pop-up window.
       this.page.once("dialog", async (dialog) => {
         // If we provide the alertMessage parameter...
@@ -1486,7 +1384,6 @@ export class Dsl {
         "' in the Alert pop-up window."
       );
     } catch (error) {
-      // Unit Test.
       // Create the error log and show it to the UI. Show the function name, the class where the function is located and the cached error.
       this.ts.errorLog(
         this.alertTypeValueAndAccept.name + " " +
@@ -1507,7 +1404,7 @@ export class Dsl {
    *                            let iFrame = await dsl.iFrame("#id1");
    *                            let iFrameElement = dsl.element(await iFrame.locator('#id2'));
    */
-  async iFrame(iFrameLocator: string): Promise<any> {
+  async iFrame(iFrameLocator: Selector): Promise<FrameLocator> {
     try {
       // Add the information message.
       this.ts.informLog(
@@ -1515,18 +1412,30 @@ export class Dsl {
         " The automation successfully switched to iFrame."
       );
 
+      // Verify that the iFrame element is present and ready for usage.
+      const element = await this.element(iFrameLocator);
+      if (!element) {
+        throw new Error(`iFrame with locator "${iFrameLocator}" not found.`);
+      }
+
       // Return the switched focus inside the iFrame.
-      return this.page.frameLocator(iFrameLocator);
+      const frame = this.page.frameLocator(iFrameLocator);
+      if (!frame) {
+        throw new Error(`Failed to switch to iFrame with locator "${iFrameLocator}".`);
+      }
+      return frame;
     } catch (error) {
-      // Unit Test.
       // Create the error log and show it to the UI. Show the function name, the class where the function is located and the cached error.
       this.ts.errorLog(
         this.iFrame.name + " " +
         __filename.split(__dirname + "/").pop() + " " +
         await error
       );
+      // This return should never be reached, because the 'errorLog' method will throw an error. We need to return null here because of the TypeScript compiler.
+      throw error;
     }
   }
+
 
   /**
    * @description                   This method focuses on the iFrame inside another iFrame (Nested iFrame).
@@ -1541,12 +1450,25 @@ export class Dsl {
    *                                  let iFrameChildElement = dsl.element(await iFrameChild.locator("#id3"));
    */
   async iFrameNested(
-    parentIframeLocator: string,
-    childIframeLocator: string
-  ): Promise<any> {
+    parentIframeLocator: Selector,
+    childIframeLocator: Selector
+  ): Promise<FrameLocator> {
     try {
+
+      // Verify that the iFrame element is present and ready for usage.
+      const parentIframeElement = await this.element(parentIframeLocator);
+      if (!parentIframeElement) {
+        throw new Error(`iFrame with locator "${parentIframeLocator}" not found.`);
+      }
+
       // Assign the parent iFrame focus to the variable.
-      let iFrameParent = await this.iFrame(parentIframeLocator);
+      const iFrameParent = await this.iFrame(parentIframeLocator);
+
+      // Verify that the iFrame element is present and ready for usage.
+      const childIframeElement = await this.element(parentIframeLocator);
+      if (!childIframeElement) {
+        throw new Error(`iFrame with locator "${parentIframeLocator}" not found.`);
+      }
 
       // Add the information message.
       this.ts.informLog(
@@ -1555,15 +1477,15 @@ export class Dsl {
       );
 
       // Return the switched focus inside the nested iFrame.
-      return await iFrameParent.frameLocator(childIframeLocator);
+      return iFrameParent.frameLocator(childIframeLocator);
     } catch (error) {
-      // Unit Test.
       // Create the error log and show it to the UI. Show the function name, the class where the function is located and the cached error.
       this.ts.errorLog(
         this.iFrameNested.name + " " +
         __filename.split(__dirname + "/").pop() + " " +
         await error
       );
+      throw error;
     }
   }
 
@@ -1578,8 +1500,8 @@ export class Dsl {
    *                                      await dsl.dropDown_ByDoubleClick("#drop-down-list-id", "#drop-down-value-id");
    */
   async dropDown_ByDoubleClick(
-    locatorDropDownList: string,
-    locatorDropDownValue: string
+    locatorDropDownList: Selector,
+    locatorDropDownValue: Selector
   ): Promise<void> {
     try {
       // Call this method, to verify that the element is present and it is ready for usage.
@@ -1588,49 +1510,11 @@ export class Dsl {
       // Click over the drop-down list element to list the drop-down values.
       await this.page.click(locatorDropDownList, { force: true });
 
-      // Because we are not able to use the "focus()" function over the listed drop-down list value, we can't use "dsl.element()" method from this class. That's why we will add the following few lines of code for verification that the drop-down value is ready for usage.
-      let elementDropDownValue: any; // Declare an internal variable for assigning the element value.
-      // If the provided value is a string, this is just a selector.
-      if (typeof await locatorDropDownValue === "string") {
-        // We need to transform this selector into an element.
-        elementDropDownValue = this.page.locator(locatorDropDownValue);
-      }
-      // Unit test.
-      else {
-        this.ts.errorLog(
-          "You have entered a not supported data type. Please provide a locator (string). " +
-          this.dropDown_ByDoubleClick.name + " " +
-          __filename.split(__dirname + "/").pop()
-        );
-      }
-      // Wait for the element to be visible.
-      await elementDropDownValue.waitFor({
-        state: "visible",
-        timeout: this.config.elementTimeOut,
-      });
-      // Verify that the element is visible.
-      await expect(await elementDropDownValue).toBeVisible({
-        timeout: this.config.elementTimeOut,
-      });
-      // Verify that the element is not hidden.
-      await expect(await elementDropDownValue).not.toBeHidden({
-        timeout: this.config.elementTimeOut,
-      });
-      // Verify that the element is enabled.
-      await expect(await elementDropDownValue).toBeEnabled({
-        timeout: this.config.elementTimeOut,
-      });
-      // Verify that the element is not disabled.
-      await expect(await elementDropDownValue).not.toBeDisabled({
-        timeout: this.config.elementTimeOut,
-      });
-      // Verify that the element is the only one in the DOM tree.
-      await expect(await elementDropDownValue).toHaveCount(1, {
-        timeout: this.config.elementTimeOut,
-      });
+      // Call this method, to verify that the element is present and it is ready for usage. Assign the element to the variable.
+      const elementDropDownValue = await this.element(locatorDropDownList, this.config.elementTimeOut);
 
       // Get the drop-down list value.
-      let dropDownListValue: string = await (
+      let dropDownListValue: string = (
         await elementDropDownValue.allTextContents()
       )[0];
 
@@ -1654,7 +1538,6 @@ export class Dsl {
         "'"
       );
     } catch (error) {
-      // Unit Test.
       // Create the error log and show it to the UI. Show the function name, the class where the function is located and the cached error.
       this.ts.errorLog(
         this.dropDown_ByDoubleClick.name + " " +
@@ -1663,7 +1546,6 @@ export class Dsl {
       );
     }
   }
-
 
   /**
   * @description                       This method selects a value from the drop-down list by providing the value of the attribute "value".
@@ -1676,8 +1558,8 @@ export class Dsl {
   *                                      await dsl.dropDown_oldStyle("#drop-down-list-id", "2");
   */
   async dropDown_oldStyle(
-    locatorDropDownList: string,
-    DropDownAttributeValue: string
+    locatorDropDownList: Selector,
+    DropDownAttributeValue: Selector
   ): Promise<void> {
     try {
       // Call this method, to verify that the element is present and it is ready for usage.
@@ -1698,7 +1580,6 @@ export class Dsl {
         "' from the drop-down list."
       );
     } catch (error) {
-      // Unit Test.
       // Create the error log and show it to the UI. Show the function name, the class where the function is located and the cached error.
       this.ts.errorLog(
         this.dropDown_ByDoubleClick.name + " " +
@@ -1727,5 +1608,3 @@ export class Dsl {
 
 // Export the current class.
 export default Dsl;
-
-

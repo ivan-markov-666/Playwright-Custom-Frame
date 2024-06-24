@@ -39,7 +39,7 @@ test.describe("This block contains examples for downloading a file.", async () =
       page.locator("#downloadButton").click(),
     ]);
     // Save downloaded file in specific path direcotry.
-    await download.saveAs("uploads/file.jpg");
+    await download.saveAs("download/file.jpg");
   });
 
   test("Playwright Example 2", async () => {
@@ -60,7 +60,7 @@ test.describe("This block contains examples for downloading a file.", async () =
 
   test("Domain-Specific Language Example 1", async () => {
     // Provide the locator of a button that triggers the downloading process and the destination folder path where the automation will download the file. Alert, ensure that you add the file name and extension to the destination folder path.
-    await dsl.downloadFile("#downloadButton", "uploads/file.jpg");
+    await dsl.downloadFile("#downloadButton", "download/file.jpg");
   });
 
   test("Domain-Specific Language Example 2", async () => {

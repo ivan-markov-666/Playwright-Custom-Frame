@@ -133,6 +133,9 @@ Playwright Runner: https://marketplace.visualstudio.com/items?itemName=ortoni.or
 Playwright Trace Viewer for VScode: https://marketplace.visualstudio.com/items?itemName=ryanrosello-og.playwright-vscode-trace-viewer  
 PlayWright/Cypress Step Definition Generator: https://marketplace.visualstudio.com/items?itemName=RajUppadhyay.playwritecypress-steps-definition-generator  
 
+### Debugging:
+If you are using VSCode, you can debug the tests using the mechanism from the plugin 'Playwright Test for VScode'. Just check the plugin documentation.
+
 ### Software dependencies
 The dependencies will be downloaded automatically by NodeJS.  
 Faker-js is added to generate dynamic data for testing purposes.  
@@ -145,6 +148,7 @@ Official repository: https://www.npmjs.com/package/dotenv
 
 ### To Do:
 The frame is not perfect. That's why there is a to-do list located in "{root}/toDo/toDo.txt".  
+Inside the file, you can see what we need to add or what issues we need to fix.
 
 # Contribute
 You can use the framework for free and make changes to it. I hope the frame will save configuration time and develop the custom commands.

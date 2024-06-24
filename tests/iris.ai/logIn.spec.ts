@@ -5,8 +5,6 @@ import { test } from "@playwright/test";
 import { BaseClass } from "../../baseClass/baseClass";
 // Import the PO class.
 import Pom from "../../pom/iris.ai/logIn.po";
-// Import the TS class.
-import Ts from "../../custom-methods/other-methods/tsMethods";
 
 //02. Create the "describe" block.
 test.describe("Log in with already registered user.", () => {
