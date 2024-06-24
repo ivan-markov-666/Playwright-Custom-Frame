@@ -27,7 +27,7 @@ class Pom extends BaseClass {
     this.password_InputTextElement = "#password";
     this.signIn_Button = "//form/button";
     //08. Add assertion selectors.
-    this.verifyUserIsLoggedIn = "//*[contains(text(),'My Content')]/parent::*//div/div/div";
+    this.verifyUserIsLoggedIn = "//*[contains(text(),'Subscription')]/parent::*//div/div/div";
   }
 
   /**

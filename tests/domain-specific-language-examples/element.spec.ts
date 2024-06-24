@@ -10,6 +10,8 @@ import { test, expect, Page } from "@playwright/test";
 // Import the domain-specific language class.
 import domainSpecificLanguage from "../../custom-methods/domain-specific-language/dsl";
 
+import { Element } from "../../custom-methods/domain-specific-language/dsl.d";
+
 //02. Create the "describe" block.
 test.describe("This block contains examples for selecting an element and verifying that the element is ready to be used.", async () => {
   let page: Page; // Create a new variable for Page. Add a specific type (of the Page class) to enable the suggestions.
@@ -53,7 +55,7 @@ test.describe("This block contains examples for selecting an element and verifyi
 
   test("Domain-Specific Language Example 1", async () => {
     // Declare an element.
-    let fullName_InputTextElement: any = page.locator(
+    let fullName_InputTextElement: Element = page.locator(
       "//input[@id='userName']"
     );
     // Provide the element and timeout.
@@ -62,7 +64,7 @@ test.describe("This block contains examples for selecting an element and verifyi
 
   test("Domain-Specific Language Example 2", async () => {
     // Declare an element.
-    let fullName_InputTextElement: any = page.locator(
+    let fullName_InputTextElement: Element = page.locator(
       "//input[@id='userName']"
     );
     // Provide the element.

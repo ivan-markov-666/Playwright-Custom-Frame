@@ -1,5 +1,5 @@
 /**
- * @description     This class shows the solution for getting all text from an element that contains the text.
+ * @description     This class shows the solution for getting text from an element that contains the text.
  *                  The class contains examples of Playwright commands and domain-specific language (custom methods).
  *                  As you can see in the Playwright example/s, we use both domain-specific language methods and Playwright functions. The example related to this class is shown in Playwright functions, and the other part of the code is shown (most probably) in domain-specific language methods.
  */
@@ -11,7 +11,7 @@ import { test, expect, Page } from "@playwright/test";
 import domainSpecificLanguage from "../../custom-methods/domain-specific-language/dsl";
 
 //02. Create the "describe" block.
-test.describe("This block contains examples for getting all text from an element that contains the text.", async () => {
+test.describe("This block contains examples for getting text from an element that contains the text.", async () => {
   let page: Page; // Create a new variable for Page. Add a specific type (of the Page class) to enable the suggestions.
   let dsl: domainSpecificLanguage; // Create a new variable for a domain-specific language. Add a specific type (of the domainSpecificLanguage class) to enable the suggestions.
 
