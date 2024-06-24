@@ -1,21 +1,41 @@
+/**
+ * @description     This file contains the Domain Specific Language (DSL) methods.
+ *                  The methods are used to create a higher level of abstraction and readability in the test scripts.
+ *                  The methods are used to interact with the browser and the web application.
+ *                  The methods are used in the test scripts to perform actions like clicking, typing, reading text, etc.
+ */
+
+//01. Import libraries and classes.
+// Import the Playwright locator.
 import { Page, FrameLocator, expect, Locator, BrowserContext } from "@playwright/test"; // Add this to have suggestions in the spec class.
 import { Configuration } from "../../configs/configuration"; // Add this to have suggestions in the spec class.
 import { TsMethods } from "../other-methods/tsMethods";
 import { PositiveInteger, Url, LocatorOrElement, Selector, Element, CheckOrClickAction, UnCheckOrUnClickAction, KeyboardKeys } from "./dsl.d";
 import assert from 'assert';
 
+//02. Create the DslHelper class.
 /**
  * @description This class contains methods used in Dsl class. Methods defined in that class will be used only in Dsl class.
  */
 class DslHelper {
+  //02.1. Declare variables.
+  // Declare the page variables.
   private page: Page;
+  // Declare the tsMethods variable.
   private tsMethods: TsMethods;
 
+  //02.2. Create the constructor.
+  /**
+   * @description             The constructor method is used to create a new instance of the DslHelper class.
+   * @param page              The page object is used to interact with a single tab, frame, or iframe in the browser.
+   * @param tsMethods         The tsMethods object is used to call the methods from the TsMethods class.
+   */
   constructor(page: Page, tsMethods: TsMethods) {
     this.page = page;
     this.tsMethods = tsMethods;
   }
 
+  //02.3. Define methods.
   /**
    * @description             This method resolves the element.
    * @param locatorOrElement  Provide a locator (string) or element (object).
@@ -47,20 +67,25 @@ class DslHelper {
   }
 }
 
+//03. Create the Dsl class.
 /**
  * @description This class contains Domain Specific Language methods.
  */
 export class Dsl {
-  // Declare a page varible.
+  //03.1. Declare variables.
   page: Page;
   context: any;
   config: Configuration;
   ts: TsMethods;
   dslHelper: DslHelper;
 
-  // Declare a constructor.
+  //03.2. Create the constructor.
+  /**
+   * @description   This constructor method is used to create a new instance of the Dsl class.
+   * @param page    The page object is used to interact with a single tab, frame, or iframe in the browser.
+   * @param context The context object is used to interact with the browser context.
+   */
   constructor(page: Page, context?: any) {
-    // Get access to the page property.
     this.page = page;
     this.context = context;
     this.ts = new TsMethods(page);
@@ -68,6 +93,7 @@ export class Dsl {
     this.dslHelper = new DslHelper(page, this.ts);
   }
 
+  //03.3. Define methods.
   /**
    * @description               This function changes the screen size.
    * @param widthSize           Provide the number for the width screen size.

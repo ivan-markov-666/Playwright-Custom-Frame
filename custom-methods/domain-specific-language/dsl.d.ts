@@ -1,5 +1,12 @@
-import { Locator } from "@playwright/test";  // Приемаме, че Locator е правилният тип от @playwright/test
+/**
+ * @description   This class contains the custom types and interfaces used for the domain-specific language.
+ */
 
+//01. Import libraries and classes.
+// Import the Playwright locator.
+import { Locator } from "@playwright/test";
+
+//02. Create and export the custom types.
 /**
  * @description Type representing positive integers used for screen sizes.
  */
@@ -39,11 +46,3 @@ export type UnCheckOrUnClickAction = 'uncheck' | 'click';
  * @description Type representing valid actions for the keyboard.
  */
 export type KeyboardKeys = "Alt" | "Control" | "Meta" | "Shift";
-
-/**
- * Интерфейс, дефиниращ структурата на параметрите за задаване на размер на екрана.
- */
-export interface interfaceExampleParam {
-  propertyOne: PositiveInteger;
-  properyTwo: PositiveInteger;
-}
