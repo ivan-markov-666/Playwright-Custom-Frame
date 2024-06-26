@@ -21,6 +21,7 @@
   "dependencies": {
     "@faker-js/faker": "^8.4.1",
     "dotenv": "^16.4.5",
-    "grep": "^0.1.0"
+    "grep": "^0.1.0",
+    "xlsx": "^0.18.5"
   }
 }
