@@ -11,10 +11,10 @@ import { readExcelAsObject } from '../../custom-methods/other-methods/excelFixtu
 import path from 'path';
 
 //02. Create the "describe" block.
-test.describe("Read data from excel file.", () => {
+test.describe("Read data from Excel file.", () => {
 
     //03. Create the "test" block.
-    test("Read data from excel file.", async () => {
+    test("Read data from Excel file.", async () => {
         // Excel file path.
         const filePath = path.resolve('fixtures/excel/test-data.xlsx');
         // Read data from the Excel file.
