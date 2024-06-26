@@ -268,6 +268,8 @@ class Pom extends BaseClass {
    * @description     This method clicks over the button.
    */
   async submitPress_Button() {
+    // We need to wait some time, because the button is enabled before the drop down list is selected.
+    await this.ts.staticWait(5000);
     // Press the "Submit" button.
     await this.dsl.click(this.submit_Button);
   }

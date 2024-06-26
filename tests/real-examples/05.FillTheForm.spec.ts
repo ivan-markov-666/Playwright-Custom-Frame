@@ -1,7 +1,8 @@
 /**
  * @description       That is a spec (test) class. This class executes the test/s.
  *                    We can use that great practice for the spec (test) class.
- *                      - As you can see - we are using 'beforeAll' hook.
+ *                      - As you can see - we are using 'beforeEach' hook.
+ *                      - As you can see - we are using 'afterEach' hook.
  *                      - As you can see - we are using page object model optimisation.
  *                      - We confirm (verify) that the test steps are performed correctly.
  *                      - The tested data is not hardcoded directly in the test. The data is declared outside of the test.
@@ -36,7 +37,7 @@ test.describe("Fill the form.", () => {
     lastName: lastNameValue,
     provider: "fake.email.com",
     allowSpecialCharacters: false
-});
+  });
   let gender: string = data.testData.gender;
   let mobile: string = faker.number.int({
     min: 1000000000,
@@ -62,7 +63,7 @@ test.describe("Fill the form.", () => {
   test.beforeEach(async ({ page }) => {
     // Create a new PomExample and include page.
     pom = new PomExample(page);
-    // Precondition Steps.
+    //05. Precondition Steps.
     // 0. Set the screen size to 1920-1080.
     await page.setViewportSize({
       width: 1920,
@@ -74,7 +75,13 @@ test.describe("Fill the form.", () => {
     );
   });
 
-  //05. Create the "test" block.
+  //06. Create the "afterEach" block.
+  test.afterEach(async ({ page }) => {
+    // Close the page (browser tab).
+    await page.close();
+  });
+
+  //06. Create the "test" block.
   test("Fill the form with valid data.", async ({ page }) => {
     // 2. Fill with correct data into the "First Name" input text element.
     await pom.firstName_InputTextElement.fill(firstNameValue);

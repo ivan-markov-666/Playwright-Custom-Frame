@@ -1,7 +1,8 @@
 /**
  * @description       That is a spec (test) class. This class executes the test/s.
  *                    The better practice we can use for the spec (test) class.
- *                      - As you can see - we are using 'beforeAll' hook.
+ *                      - As you can see - we are using 'beforeEach' hook.
+ *                      - As you can see - we are using 'afterEach' hook.
  *                      - As you can see - we are using page object model optimisation.
  *                      - We confirm (verify) that the test steps are performed correctly.
  *                      - The tested data is hardcoded directly in the test. The data is not declared outside of the test. No dynamic data - only static data.
@@ -23,9 +24,9 @@ test.describe("Fill the form.", () => {
 
   //03. Create the "beforeEach" block.
   test.beforeEach(async ({ page }) => {
-    //04. Create a new PomExample and include page.
+    // Create a new PomExample and include page.
     pom = new PomExample(page);
-    // Precondition Steps.
+    //04. Precondition Steps.
     // 0. Set the screen size to 1920-1080.
     await page.setViewportSize({
       width: 1920,
@@ -33,6 +34,12 @@ test.describe("Fill the form.", () => {
     });
     // 1. Navigate to: https://demoqa.com/automation-practice-form .
     await page.goto("https://demoqa.com/automation-practice-form/");
+  });
+
+  //05. Create the "afterEach" block.
+  test.afterEach(async ({ page }) => {
+    // Close the page (browser tab).
+    await page.close();
   });
 
   //05. Create the "test" block.

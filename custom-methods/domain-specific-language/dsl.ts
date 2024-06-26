@@ -329,6 +329,38 @@ export class Dsl {
     } catch (error) {
       // Throw an error using the error log method.
       this.ts.errorLog(this.element.name + " " + __filename.split(__dirname + "/").pop() + " " + await error);
+      throw new Error("Failed to retrieve or interact with the element: " + await error);
+    }
+  }
+
+  async elementLightAssertion(
+    locatorOrElement: LocatorOrElement,
+    timeoutPeriod?: PositiveInteger,
+    pageInstance: Page = this.page
+  ): Promise<Locator> {
+    try {
+      // Get the element, no matter if it is a locator or an object (Playwright locator), we will will work with Playwright locator object as a result.
+      const element = await this.dslHelper.resolveElement(locatorOrElement, pageInstance);
+
+      // If the element is null, we can continue with the verification.
+      if (!element) {
+        throw new Error("The element value is null. Please provide a valid element.");
+      }
+
+      // Verify that the element is the only one in the DOM tree.
+      await expect(element).toHaveCount(1, { timeout: timeoutPeriod });
+
+      // Add the information message.
+      if (timeoutPeriod == null) {
+        this.ts.informLog(this.config.beginInformMessage + "The element was selected.");
+      } else {
+        this.ts.informLog(this.config.beginInformMessage + "The element was selected. Timeout was set to: " + timeoutPeriod + " milliseconds.");
+      }
+      // Return the selected element.
+      return element;
+    } catch (error) {
+      // Throw an error using the error log method.
+      this.ts.errorLog(this.element.name + " " + __filename.split(__dirname + "/").pop() + " " + await error);
       throw new Error("Failed to retrieve or interact with the element: " + error);
     }
   }
@@ -664,6 +696,131 @@ export class Dsl {
         __filename.split(__dirname + "/").pop() + " " +
         await error
       )
+    }
+  }
+
+  /**
+ * @description                       This method sends a text to the input text element.
+ * @param locatorOrElement            Provide a locator (string) or element (object). The method uses a mechanism to use a locator (string) and an element (object). That is useful if we want to provide just a locator or give the whole element (in cases when we want to use this method with iFrames or want to use the method with other browser windows).
+ * @param text                        Provide the text that we will send to the input text element.
+ * @param loctorOrElementVerificator  Optional. Provide the verification element. If you don't provide this parameter - the used element will be used for verification.
+ * @type                              The type of this method is set to "Promise<void>".
+ * @usage                             - Usage 1: Use the method by providing a locator parameter.
+ *                                      {constructorKeyword}.sendKeys_MultySelect({locator}, "the text we send", {locator});
+ *                                    - Usage 2: Use the method by providing an element parameter.
+ *                                      {constructorKeyword}.sendKeys_MultySelect({element}, "the text we send", {element});
+ * @example                           Example 1: Provide the locator and the text value.
+ *                                      await dsl.sendKeys_MultySelect("#id", "the text we send", "#verificatorId");
+ *                                    Example 2: Provide the element and the text value.
+ *                                      let elementName: any = dsl.element("#id");
+ *                                      let elementVerificatorName: any = dsl.element("#verificatorId");
+ *                                      await dsl.sendKeys_MultySelect(await elementName, "test", await elementVerificatorName);
+ */
+  async sendKeys_MultySelect(
+    locatorOrElement: any,
+    text: string,
+    loctorOrElementVerificator?: any
+  ): Promise<void> {
+    try {
+      // Create the method steps here. Describe the custom command in this "try" statement (Domain Specific Language).
+
+      let element: any; // Declare an internal variable for assigning the element value.
+      let elementVerificator: any; // Declare an internal variable for assigning the element value.
+      // If the provided value is a string, this is just a selector.
+      if (typeof locatorOrElement === "string") {
+        // We need to transform this selector into an element.
+        element = this.page.locator(locatorOrElement);
+      }
+      // If the provided value is an object, this is the whole element.
+      else if (
+        typeof locatorOrElement === "object" ||
+        locatorOrElement instanceof Object
+      ) {
+        // So we don't need to do anything else unique.
+        element = locatorOrElement;
+      }
+      // Unit test.
+      else {
+        this.ts.errorLog(
+          "You have entered a not supported data type. Please provide a locator (string) or element (object)." + " " +
+            this.sendKeys_MultySelect.name + " " +
+            __filename.split(__dirname + "/").pop()
+        );
+      }
+
+      // If the provided value is a string, this is just a selector.
+      if (
+        typeof loctorOrElementVerificator === "string" &&
+        loctorOrElementVerificator != null
+      ) {
+        // We need to transform this selector into an element.
+        elementVerificator = this.page.locator(loctorOrElementVerificator);
+      }
+      // If the provided value is an object, this is the whole element.
+      else if (
+        typeof loctorOrElementVerificator === "object" ||
+        (loctorOrElementVerificator instanceof Object &&
+          loctorOrElementVerificator != null)
+      ) {
+        // So we don't need to do anything else unique.
+        elementVerificator = loctorOrElementVerificator;
+      } else if (loctorOrElementVerificator == null) {
+        // Do nothing, because the parameter is optional.
+      }
+      // Unit test.
+      else {
+        this.ts.errorLog(
+          "You have entered a not supported data type. Please provide a locator (string) or element (object)." + " " +
+            this.sendKeys_MultySelect.name + " " +
+            __filename.split(__dirname + "/").pop()
+        );
+      }
+
+      // Call this method, to verify that the element is present and it is ready for usage.
+      await this.element(element, this.config.elementTimeOut);
+      // Send Ctrl+A to the element. This will work for Windows and Linux. We are using this to select all containing text inside inspected input text element.
+      await this.page.keyboard.press("Control+A");
+      // Send Meta+A to the element. This will work for macOS. We are using this to select all containing text inside inspected input text element.
+      await this.page.keyboard.press("Meta+A");
+
+      // Fill the element with text.
+      await element.fill(text);
+      // Press the "Enter" key of the keyboard.
+      await this.page.keyboard.press("Enter");
+      // Verify that the input text element contains the sent text data.
+      // If the element we use is the same as the element, that will verify the operation was compleated correctly. Or if we don't provide a verification element - because it is the same as a used element.
+      if (
+        locatorOrElement == loctorOrElementVerificator ||
+        loctorOrElementVerificator == null
+      ) {
+        let verificateValueIsCorrect: string = await (
+          await element.allTextContents()
+        )[0];
+        expect(verificateValueIsCorrect).toEqual(text);
+      }
+      // If we provide different element for verificaiton.
+      else {
+        let verificateValueIsCorrect: string = await (
+          await elementVerificator.allTextContents()
+        )[0];
+        expect(verificateValueIsCorrect).toEqual(text);
+      }
+
+      // Add the information message.
+      this.ts.informLog(
+          this.config.beginInformMessage +
+          "The automated test fill with text inside the multi-select element with the value: '" +
+          text +
+          "'."
+      );
+    } catch (error) {
+      // Unit Test.
+      // Create the error log and show it to the UI. Show the function name, the class where the function is located and the cached error.
+      this.ts.errorLog(
+        this.sendKeys_MultySelect.name + " " +
+        __filename.split(__dirname + "/").pop() + " " +
+        error
+      );
     }
   }
 
@@ -1504,7 +1661,8 @@ export class Dsl {
       // Select by value.
       await oldStyleDropDownList.selectOption(DropDownAttributeValue);
       // Verify that automation selected the value correctly.
-      await expect(oldStyleDropDownList).toHaveValue(DropDownAttributeValue);
+      const selectedValue = await this.page.$eval(locatorDropDownList, (select) => (select as HTMLSelectElement).value);
+      expect(selectedValue).toContain(DropDownAttributeValue);
 
       // Add the information message.
       this.ts.informLog(

@@ -53,7 +53,7 @@ const config: PlaywrightTestConfig = {
       use: {
         ...devices['Desktop Chrome'],
         /** Change the value from "false" to "true" if we want to use a headless browser version. */
-        headless: false
+        headless: true
       },
     },
   ],

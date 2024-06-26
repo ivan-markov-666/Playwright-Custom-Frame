@@ -17,12 +17,15 @@ import { test, Page, expect } from "@playwright/test";
 
 //02. Create the "describe" block.
 test.describe("Fill the form.", async () => {
+  // Define the 'page' variable.
   let page: Page;
+  //03. Create the "beforeAll" block.
   test.beforeAll(async ({ browser }) => {
+    // Create a new page.
     page = await browser.newPage();
   });
 
-  //03. Create the "test" block/s.
+  //04. Create the "test" block/s.
   test("Fill the form with valid data.", async () => {
     // 0. Set the screen size to 1920-1080.
     await page.setViewportSize({
@@ -149,5 +152,8 @@ test.describe("Fill the form.", async () => {
       await stateAndCity_actualResultElement.innerText()
     ).valueOf();
     expect(stateAndCity_actualResult_value).toEqual("Uttar Pradesh Agra");
+
+    // Close the page (browser tab).
+    await page.close();
   });
 });

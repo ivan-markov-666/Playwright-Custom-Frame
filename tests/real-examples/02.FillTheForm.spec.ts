@@ -1,7 +1,8 @@
 /**
  * @description       That is a spec (test) class. This class executes the test/s.
  *                     That is a nice practice we can use for the spec (test) class.
- *                      - As you can see - we are using 'beforeAll' hook.
+ *                      - As you can see - we are using 'beforeEach' hook.
+ *                      - As you can see - we are using 'afterEach' hook.
  *                      - As you can see - we are using page object model optimisation.
  *                      - We do not confirm (verify) that the test steps are performed correctly.
  *                      - The tested data is hardcoded directly in the test. The data is not declared outside of the test. No dynamic data - only static data.
@@ -33,6 +34,12 @@ test.describe("Fill the form.", () => {
     });
     // 1. Navigate to: https://demoqa.com/automation-practice-form .
     await page.goto("https://demoqa.com/automation-practice-form/");
+  });
+
+  //05. Create the "afterEach" block.
+  test.afterEach(async ({ page }) => {
+    // Close the page (browser tab).
+    await page.close();
   });
 
   //05. Create the "test" block.
