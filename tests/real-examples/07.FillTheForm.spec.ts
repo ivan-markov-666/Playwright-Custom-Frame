@@ -1,7 +1,8 @@
 /**
  * @description       That is a spec (test) class. This class executes the test/s.
  *                    We can use that great practice for the spec (test) class.
- *                      - As you can see - we are using 'beforeAll' hook.
+ *                      - As you can see - we are using 'beforeEach' hook.
+ *                      - As you can see - we are using 'afterEach' hook.
  *                      - As you can see - we are using page object model optimisation.
  *                      - We confirm (verify) that the test steps are performed correctly.
  *                      - The tested data is not hardcoded directly in the test. The data is declared outside of the test.
@@ -77,7 +78,13 @@ test.describe("Fill the form.", () => {
     await pom.navigate(url);
   });
 
-  //07. Create the "test" block.
+  //07. Create the "afterEach" block.
+  test.afterEach(async ({ page }) => {
+    // Close the page (browser tab).
+    await page.close();
+  });
+
+  //08. Create the "test" block.
   test("Fill the form with valid data.", async () => {
     // 2. Fill with correct data into the "First Name" input text element.
     await pom.firstNameFill_InputTextElement(firstNameValue);

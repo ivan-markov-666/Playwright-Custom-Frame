@@ -12,13 +12,13 @@ const config: PlaywrightTestConfig = {
   /* Set up the test folder. That's the place where we put the tests. If we want to add another folder containing tests, we need to add the path to this folder here. */
   testDir: './tests/real-examples',
   /* Maximum time one test can run for. */
-  timeout: 60 * 1000,
+  timeout: 240 * 1000,
   expect: {
     /**
      * Maximum time expect() should wait for the condition to be met.
      * For example in `await expect(locator).toHaveText();`
      */
-    timeout: 5000
+    timeout: 60000
   },
   /* Run tests in files in parallel */
   fullyParallel: true,
@@ -28,7 +28,7 @@ const config: PlaywrightTestConfig = {
   /* This configuration re-runs the tests if they fail. We have two values - one for CI and one for local execution. */
   retries: process.env.CI ? 2 : 0,
   /* Opt out of parallel tests on CI. */
-  workers: process.env.CI ? 2 : (process.env.NUM_WORKERS || 2),
+  workers: process.env.CI ? 1 : (process.env.NUM_WORKERS || 1),
   /* Reporter to use. See https://playwright.dev/docs/test-reporters */
   reporter: 'html',
   /* Shared settings for all the projects below. See https://playwright.dev/docs/api/class-testoptions. */
@@ -37,7 +37,7 @@ const config: PlaywrightTestConfig = {
     actionTimeout: 20000,
     trace: 'on',
   },
-
+  outputDir: './test-results/', // Тук се задава директорията за артефакти
   /* Configure projects for major browsers */
   projects: [
     {
@@ -45,7 +45,7 @@ const config: PlaywrightTestConfig = {
       use: {
         ...devices['Desktop Chrome'],
         /** Change the value from "false" to "true" if we want to use a headless browser version. */
-        headless: false
+        headless: true
       },
     },
   ],

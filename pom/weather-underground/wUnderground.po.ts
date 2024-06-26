@@ -1,13 +1,16 @@
 //01. Import classes.
 import { Page, Locator, FrameLocator } from "@playwright/test"; // Add this to have suggestions in the spec class.
 import { Dsl } from "../../custom-methods/domain-specific-language/dsl";
+import { TsMethods } from "../../custom-methods/other-methods/tsMethods";
 
 //02. Declare a class.
 class HomePage_WU {
   //03. Declare a page varible.
   page: Page;
   dsl: Dsl;
+  ts: TsMethods;
 
+  iFrameLocator: string;
   accpetCookies_Button: string;
   searchLocations_InputTextElement: Locator;
   stationLocation_WebElement: string;
@@ -19,6 +22,7 @@ class HomePage_WU {
   precipitation_TextContent: string;
   windSpeed_TextContent: string;
   windGust_TextContent: string;
+  stationInfo_Button: string;
   stationName_TextContent: string;
   stationCoordinates_TextContent: string;
 
@@ -28,7 +32,8 @@ class HomePage_WU {
     this.page = page;
 
     //05. Add locators.
-    this.accpetCookies_Button = `//*[contains(text(),'Accept all')]`;
+    this.iFrameLocator = `//*[@id='sp_message_iframe_1100082']`;
+    this.accpetCookies_Button = `//*[@*='Accept all']`;
     this.searchLocations_InputTextElement = page.locator(`(//*[@id='wuSearch'])[2]`);
     this.stationLocation_WebElement = `(//li[contains(text(),'city')]/following::a)[1]`;
     this.stationPageHyperlink_WebElement = (`//*[@class="station-nav"]/*[@href]`);
@@ -39,11 +44,14 @@ class HomePage_WU {
     this.precipitation_TextContent = `(//*[contains(text(),'Precipitation')]/following-sibling::*//span)[2]`;
     this.windSpeed_TextContent = `(//*[contains(text(),'Wind Speed')]/following-sibling::*//span)[2]`;
     this.windGust_TextContent = `(//*[contains(text(),'Wind Gust')]/following-sibling::*//span)[2]`;
+    this.stationInfo_Button = `//*[@class='icons']/lib-pws-info-icon`;
     this.stationName_TextContent = `//*[contains(text(),'Weather Station ID:')]/span`;
     this.stationCoordinates_TextContent = `(//*[contains(text(),'Latitude / Longitude:')]/following-sibling::span)[1]`;
 
     // Create a new instance of the Dsl class.
     this.dsl = new Dsl(this.page);
+    // Create a new instance of the Ts class.
+    this.ts = new TsMethods(this.page);
   }
 
   //06. Add custom methods.
@@ -56,10 +64,13 @@ class HomePage_WU {
    */
   async findStationByLocation(url: string, location: string, month: string, year: string) {
     await this.dsl.navigateTo(url);
-    await this.clickAcceptCookies('iframe[title="SP Consent Message"]', this.accpetCookies_Button);
+
+    await this.clickAcceptCookies(this.iFrameLocator, this.accpetCookies_Button);
+    await this.ts.staticWait(5000);
     await this.dsl.sendKeys(this.searchLocations_InputTextElement, location);
     await this.dsl.click(this.stationLocation_WebElement);
     await this.dsl.click(this.stationPageHyperlink_WebElement);
+    await this.ts.staticWait(5000);
     await this.dsl.dropDown_oldStyle(this.monthly_DropDownList, "monthly");
     await this.dsl.dropDown_oldStyle(this.month_DropDownList, month);
     await this.dsl.dropDown_oldStyle(this.year_DropDownList, year);
@@ -70,6 +81,7 @@ class HomePage_WU {
     console.log('-------------------------' + windSpeed);
     const windGust = await this.dsl.getInnerText(this.windGust_TextContent);
     console.log('-------------------------' + windGust);
+    await this.dsl.click(this.stationInfo_Button);
     const stationName = await this.dsl.getInnerText(this.stationName_TextContent);
     console.log('-------------------------' + stationName);
     const stationCoordinates = await this.dsl.getInnerText(this.stationCoordinates_TextContent);
@@ -77,16 +89,12 @@ class HomePage_WU {
   }
 
   async clickAcceptCookies(frameSelector: string, elementSelector: string): Promise<void> {
-    // Намира iFrame чрез селектор и създава FrameLocator
-    const frame: FrameLocator = this.page.frameLocator(frameSelector);
-
-    // Достъпва елемент вътре в iFrame и изпълнява действие (например клик)
-    await frame.locator(elementSelector).click();
-
-    // Допълнително, можеш да използваш други методи като getText(), fill(), etc.
-    // Например, ако искаш да вземеш текста на елемента
-    const text = await frame.locator(elementSelector).textContent();
-    console.log("Text of the element:", text);
+    // Provide the locator of an iFrame element.
+    let iFrame = await this.dsl.iFrame(frameSelector);
+    // Declare an element. This element is positioned inside the iFrame.
+    const acceptCookiesBotton = await (this.dsl.element(iFrame.locator(elementSelector)));
+    await this.ts.staticWait(5000);
+    await acceptCookiesBotton.click();
   }
 }
 

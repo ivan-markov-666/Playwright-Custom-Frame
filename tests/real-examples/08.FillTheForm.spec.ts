@@ -1,7 +1,8 @@
 /**
  * @description       That is a spec (test) class. This class executes the test/s.
  *                    The best of the best practice we can use for the spec (test) class. This class is the same as the previous example (07.FillTheForm.spec.ts). The difference is in the "PO" class.
- *                      - As you can see - we are using 'beforeAll' hook.
+ *                      - As you can see - we are using 'beforeEach' hook.
+ *                      - As you can see - we are using 'afterEach' hook.
  *                      - As you can see - we are using page object model optimisation.
  *                      - We confirm (verify) that the test steps are performed correctly.
  *                      - The tested data is not hardcoded directly in the test. The data is declared outside of the test.
@@ -23,6 +24,7 @@ import { BaseClass } from "../../baseClass/baseClass";
 import PomExample from "../../pom/real-example/08.FillTheForm.po";
 // Import data from JSON file.
 import data from "../../fixtures/testing-data/test-data.json";
+
 
 //02. Create the "describe" block.
 test.describe("Fill the form.", () => {
@@ -77,35 +79,41 @@ test.describe("Fill the form.", () => {
     await pom.navigate(url);
   });
 
-  //07. Create the "test" block.
+  //07. Create the "afterEach" block.
+  test.afterEach(async ({ page }) => {
+    // Close the page (browser tab).
+    await page.close();
+  });
+
+  //08. Create the "test" block.
   test("Fill the form with valid data.", async () => {
     // 2. Fill with correct data into the "First Name" input text element.
     await pom.firstNameFill_InputTextElement(firstNameValue);
-    // 3. Fill with valid data into the "Last Name" input text element.
+    // // 3. Fill with valid data into the "Last Name" input text element.
     await pom.lastNameFill_InputTextElement(lastNameValue);
-    // 4. Fill with accurate data into the "Email" input text element.
+    // // 4. Fill with accurate data into the "Email" input text element.
     await pom.emailFill_InputTextElement(email);
-    // 5. Select the correct random option from the "Gender" section.
+    // // 5. Select the correct random option from the "Gender" section.
     await pom.genderCheck_radopButton();
-    // 6. Fill with valid data into the "Mobile Number" input text element.
+    // // 6. Fill with valid data into the "Mobile Number" input text element.
     await pom.mobileNumberFill_InputTextElement(mobile);
-    // 7. Fill with accurate data into the "Date of Birth" input text element.
+    // // 7. Fill with accurate data into the "Date of Birth" input text element.
     await pom.birthDaySelect_DropDownCalendar(dateOfBirth);
-    // 8. The select random correct date for "Subjects".
+    // // 8. The select random correct date for "Subjects".
     await pom.subjectNumberFill_MultySelect(subject);
-    // 9. Check random correct value/s from the "Hobbies" section.
+    // // 9. Check random correct value/s from the "Hobbies" section.
     await pom.hobbiesSelect_CheckBoxes();
-    // 10. Upload a random correct picture file.
+    // // 10. Upload a random correct picture file.
     await pom.uploadFile(uploadFilePath);
-    // 11. Fill with correct data into the "Current Address" input text element.
+    // // 11. Fill with correct data into the "Current Address" input text element.
     await pom.currentAddressFill_InputTextElement(currentAddress);
-    // 12. Select the random correct date for the "State" drop-down list.
+    // // 12. Select the random correct date for the "State" drop-down list.
     await pom.stateSelect_DropDownList(verifySelectedStateDropDownList);
-    // 13. Select an arbitrary valid date for the "City" drop-down list.
+    // // 13. Select an arbitrary valid date for the "City" drop-down list.
     await pom.citySelect_DropDownList(verifySelectedCityDropDownList);
-    // 14. Press the "Submit" button.
+    // // 14. Press the "Submit" button.
     await pom.submitPress_Button();
-    // 15. Verify that the test case ware executed everything correctly.
+    // // 15. Verify that the test case ware executed everything correctly.
     await pom.assert_All(
       firstNameValue,
       lastNameValue,
