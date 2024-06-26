@@ -23,7 +23,7 @@ import { BaseClass } from "../../baseClass/baseClass";
 // Import the PO class.
 import PomExample from "../../pom/real-example/04.FillTheForm.po";
 // Import data from JSON file.
-import data from "../../fixtures/testing-data/test-data.json";
+import data from "../../fixtures/json/test-data.json";
 
 //02. Create the "describe" block.
 test.describe("Fill the form.", () => {

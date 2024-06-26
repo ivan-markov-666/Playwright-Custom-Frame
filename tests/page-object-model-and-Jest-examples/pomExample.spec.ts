@@ -1,3 +1,7 @@
+/**
+ * @description    This class shows an example how to use the Page Object Model (POM) pattern.
+ */
+
 //01. Import libraries and classes.
 // Import Playwright test library.
 import { test, expect } from "@playwright/test";

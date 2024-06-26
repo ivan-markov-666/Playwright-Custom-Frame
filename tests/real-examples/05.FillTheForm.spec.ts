@@ -20,7 +20,7 @@ import { faker } from "@faker-js/faker"; // Data-Driven Testing with dynamically
 // Import the PO class.
 import PomExample from "../../pom/real-example/04.FillTheForm.po";
 // Import data from JSON file.
-import data from "../../fixtures/testing-data/test-data.json";
+import data from "../../fixtures/json/test-data.json";
 import * as dotenv from 'dotenv';
 dotenv.config();
 

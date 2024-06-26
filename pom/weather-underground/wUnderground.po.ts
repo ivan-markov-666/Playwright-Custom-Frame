@@ -72,8 +72,8 @@ class HomePage_WU {
     await this.dsl.click(this.stationPageHyperlink_WebElement);
     await this.ts.staticWait(5000);
     await this.dsl.dropDown_oldStyle(this.monthly_DropDownList, "monthly");
-    await this.dsl.dropDown_oldStyle(this.month_DropDownList, month);
     await this.dsl.dropDown_oldStyle(this.year_DropDownList, year);
+    await this.dsl.dropDown_oldStyle(this.month_DropDownList, month);
     await this.dsl.click(this.view_Button);
     const percipitation = await this.dsl.getInnerText(this.precipitation_TextContent);
     console.log('-------------------------' + percipitation);
