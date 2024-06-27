@@ -9,7 +9,7 @@ export class Configuration {
    * @param           enable - to activate.
    * @param           disable - to disable.
    */
-  public methodMessages_informationMessage: string = "enable";
+  public errorMessagesToggle: "enable" | "disable" = "disable";
 
   /**
    * @description     This config is used to begin the information messages in the custom methods.

@@ -61,9 +61,11 @@ class DslHelper {
     // Validate input type: This block handles unexpected input types that do not meet the function's requirements.
     // If the input is neither a string (selector) nor a Locator object with a 'waitFor' property, throw an error.
     else {
+      // Record the error if needed.
       this.tsMethods.errorLog(
         "You have entered a not supported data type. Please provide a locator (string) or element (object)."
       );
+      throw new Error(`You have entered a not supported data type. Please provide a locator (string) or element (object).`);
     }
     // Return the element.
     return element;
@@ -137,6 +139,7 @@ export class Dsl {
           this.screenSize.name + " " +
           __filename.split(__dirname + "/").pop()
         );
+        throw new Error(`You entered a negative value. Please enter a positive integer value.`);
       }
       // If the numbers are not an integer.
       else if (!Number.isInteger(widthSize) || !Number.isInteger(heightSize)) {
@@ -145,6 +148,7 @@ export class Dsl {
           this.screenSize.name + " " +
           __filename.split(__dirname + "/").pop()
         );
+        throw new Error(`You need to enter an integer value.`);
       }
       // Everything else...
       else {
@@ -153,14 +157,17 @@ export class Dsl {
           this.screenSize.name + " " +
           __filename.split(__dirname + "/").pop()
         );
+        throw new Error(`You entered an invalid value. Please provide a positive integer number for two parameters.`);
       }
     } catch (error) {
       // Create the error log and show it to the UI. Show the function name, the class where the function is located and the cached error.
       this.ts.errorLog(
+        "Failed to set the screen size. " +
         this.screenSize.name + " " +
         __filename.split(__dirname + "/").pop() + " " +
         await error
       );
+      throw new Error(`Failed to set the screen size: ${await error}`);
     }
   }
 
@@ -191,10 +198,12 @@ export class Dsl {
     } catch (error) {
       // Create the error log and show it to the UI. Show the function name, the class where the function is located and the cached error.
       this.ts.errorLog(
+        "Failed to navigate to the URL. " +
         this.navigateTo.name + " " +
         __filename.split(__dirname + "/").pop() + " " +
         await error
       );
+      throw new Error(`Failed to navigate to the URL: ${await error}`);
     }
   }
 
@@ -225,10 +234,12 @@ export class Dsl {
     } catch (error) {
       // Create the error log and show it to the UI. Show the function name, the class where the function is located and the cached error.
       this.ts.errorLog(
+        "Failed to navigate back to the previous URL. " +
         this.goBack.name + " " +
         __filename.split(__dirname + "/").pop() + " " +
         await error
       );
+      throw new Error(`Failed to navigate back to the previous URL: ${await error}`);
     }
   }
 
@@ -259,10 +270,12 @@ export class Dsl {
     } catch (error) {
       // Create the error log and show it to the UI. Show the function name, the class where the function is located and the cached error.
       this.ts.errorLog(
+        "Failed to navigate forward to the URL. " + 
         this.goForward.name + " " +
         __filename.split(__dirname + "/").pop() + " " +
         await error
       );
+      throw new Error(`Failed to navigate forward to the URL: ${await error}`);
     }
   }
 
@@ -328,7 +341,12 @@ export class Dsl {
       return element;
     } catch (error) {
       // Throw an error using the error log method.
-      this.ts.errorLog(this.element.name + " " + __filename.split(__dirname + "/").pop() + " " + await error);
+      this.ts.errorLog(
+        "Failed to retrieve or interact with the element. " + 
+        this.element.name + " " + 
+        __filename.split(__dirname + "/").pop() + " " + 
+        await error
+      );
       throw new Error("Failed to retrieve or interact with the element: " + await error);
     }
   }
@@ -360,8 +378,54 @@ export class Dsl {
       return element;
     } catch (error) {
       // Throw an error using the error log method.
-      this.ts.errorLog(this.element.name + " " + __filename.split(__dirname + "/").pop() + " " + await error);
+      this.ts.errorLog(
+        "Failed to retrieve or interact with the element. " +
+        this.element.name + " " +
+        __filename.split(__dirname + "/").pop() + " " +
+        await error
+      ); 
       throw new Error("Failed to retrieve or interact with the element: " + error);
+    }
+  }
+
+  /**
+ * @description               This function takes a locator and returns an array of elements found by that locator.
+ * @param locatorStr          The locator string to find the elements.
+ * @param pageInstance        Optional. Provide the page instance. The default value is set to the current page. If you want to use this method with a new page, provide the new page instance.
+ * @returns                   A promise that resolves to an array of elements found by the locator.
+ */
+  async getElementsByLocator(
+    locatorStr: Selector,
+    pageInstance: Page = this.page
+  ): Promise<Locator[]> {
+    try {
+      // Find the locator
+      const locator = pageInstance.locator(locatorStr);
+
+      // Get the count of elements matching the locator
+      const count = await locator.count();
+
+      // Create an array to hold the locators
+      const elements: Locator[] = [];
+
+      // Loop through each element and add to the array
+      for (let i = 0; i < count; i++) {
+        elements.push(locator.nth(i));
+      }
+
+      this.ts.informLog(`Found ${count} elements matching the locator: ${locatorStr}`);
+
+      // Return the array of locators
+      return elements;
+    } catch (error) {
+      // Throw an error using the error log method.
+      this.ts.errorLog(
+        "Failed to retrieve or interact with the elements. " +
+        this.getElementsByLocator.name + " " +
+        __filename.split(__dirname + "/").pop() + " " +
+        await error
+      );
+      throw new Error("Failed to retrieve or interact with the elements: " + error);
     }
   }
 
@@ -423,13 +487,12 @@ export class Dsl {
     } catch (error) {
       // Create the error log and show it to the UI. Show the function name, the class where the function is located and the cached error.
       this.ts.errorLog(
+        "Failed to check the radio button or checkbox. " +
         this.getAttribute.name + " " +
         __filename.split(__dirname + "/").pop() + " " +
         await error
       );
-      // Return null if the attribute value is not found.
-      // This return should never be reached, because the 'errorLog' method will throw an error. We need to return null here because of the TypeScript compiler.
-      return null;
+      throw new Error(`Failed to get the attribute value: ${await error}`);
     }
   }
 
@@ -462,7 +525,7 @@ export class Dsl {
     locatorOrElement: LocatorOrElement,
     expectedTextValue?: string,
     pageInstance: Page = this.page
-  ): Promise<string | null> {
+  ): Promise<string> {
     try {
       // Get the element, no matter if it is a locator or an object (Playwright locator), we will will work with Playwright locator object as a result.
       const element = await this.element(locatorOrElement, this.config.elementTimeOut, pageInstance);
@@ -487,13 +550,12 @@ export class Dsl {
     } catch (error) {
       // Create the error log and show it to the UI. Show the function name, the class where the function is located and the cached error.
       this.ts.errorLog(
+        "Failed to check the radio button or checkbox. " +
         this.getInnerText.name + " " +
         __filename.split(__dirname + "/").pop() + " " +
         await error
       );
-      // Return null if the attribute value is not found.
-      // This return should never be reached, because the 'errorLog' method will throw an error. We need to return null here because of the TypeScript compiler.
-      return null;
+      throw new Error(`Failed to get the inner text: ${await error}`);
     }
   }
 
@@ -526,7 +588,7 @@ export class Dsl {
     locatorOrElement: LocatorOrElement,
     expectedTextValue?: string,
     pageInstance: Page = this.page
-  ): Promise<string | null> {
+  ): Promise<string> {
     try {
       // Get the element, no matter if it is a locator or an object (Playwright locator), we will will work with Playwright locator object as a result.
       const element = await this.element(locatorOrElement, this.config.elementTimeOut, pageInstance);
@@ -552,13 +614,12 @@ export class Dsl {
     } catch (error) {
       // Create the error log and show it to the UI. Show the function name, the class where the function is located and the cached error.
       this.ts.errorLog(
+        "Failed to check the radio button or checkbox. " +
         this.getText.name + " " +
         __filename.split(__dirname + "/").pop() + " " +
         await error
       );
-      // Return null if the attribute value is not found.
-      // This return should never be reached, because the 'errorLog' method will throw an error. We need to return null here because of the TypeScript compiler.
-      return null;
+      throw new Error(`Failed to get the text: ${await error}`);
     }
   }
 
@@ -593,7 +654,7 @@ export class Dsl {
     sequenceNumber: PositiveInteger,
     expectedTextValue?: string,
     pageInstance: Page = this.page
-  ): Promise<string | null> {
+  ): Promise<string> {
     try {
       // Get the element, no matter if it is a locator or an object (Playwright locator), we will will work with Playwright locator object as a result.
       const element = await this.element(locatorOrElement, this.config.elementTimeOut, pageInstance);
@@ -631,20 +692,17 @@ export class Dsl {
           (await listLenght) +
           "."
         );
-        // Return null if the attribute value is not found.
-        // This return should never be reached, because the 'errorLog' method will throw an error. We need to return null here because of the TypeScript compiler.
-        return null;
+        throw new Error(`It seems that you call value that doesn't exist. The list size is '${listLenght}'. Please provide number between 0 and ${listLenght}.`);
       }
     } catch (error) {
       // Create the error log and show it to the UI. Show the function name, the class where the function is located and the cached error.
       this.ts.errorLog(
+        "Failed to check the radio button or checkbox. " +
         this.getAllTexts.name + " " +
         __filename.split(__dirname + "/").pop() + " " +
         await error
       );
-      // Return null if the attribute value is not found.
-      // This return should never be reached, because the 'errorLog' method will throw an error. We need to return null here because of the TypeScript compiler.
-      return null;
+      throw new Error(`Failed to get the text: ${await error}`);
     }
   }
 
@@ -692,10 +750,12 @@ export class Dsl {
     } catch (error) {
       // Create the error log and show it to the UI. Show the function name, the class where the function is located and the cached error.
       this.ts.errorLog(
+        "Failed to check the radio button or checkbox. " +
         this.sendKeys.name + " " +
         __filename.split(__dirname + "/").pop() + " " +
         await error
       )
+      throw new Error(`Failed to send the keys: ${await error}`);
     }
   }
 
@@ -743,9 +803,10 @@ export class Dsl {
       else {
         this.ts.errorLog(
           "You have entered a not supported data type. Please provide a locator (string) or element (object)." + " " +
-            this.sendKeys_MultySelect.name + " " +
-            __filename.split(__dirname + "/").pop()
+          this.sendKeys_MultySelect.name + " " +
+          __filename.split(__dirname + "/").pop()
         );
+        throw new Error(`You have entered a not supported data type. Please provide a locator (string) or element (object).`);
       }
 
       // If the provided value is a string, this is just a selector.
@@ -771,9 +832,10 @@ export class Dsl {
       else {
         this.ts.errorLog(
           "You have entered a not supported data type. Please provide a locator (string) or element (object)." + " " +
-            this.sendKeys_MultySelect.name + " " +
-            __filename.split(__dirname + "/").pop()
+          this.sendKeys_MultySelect.name + " " +
+          __filename.split(__dirname + "/").pop()
         );
+        throw new Error(`You have entered a not supported data type. Please provide a locator (string) or element (object).`);
       }
 
       // Call this method, to verify that the element is present and it is ready for usage.
@@ -808,19 +870,21 @@ export class Dsl {
 
       // Add the information message.
       this.ts.informLog(
-          this.config.beginInformMessage +
-          "The automated test fill with text inside the multi-select element with the value: '" +
-          text +
-          "'."
+        this.config.beginInformMessage +
+        "The automated test fill with text inside the multi-select element with the value: '" +
+        text +
+        "'."
       );
     } catch (error) {
       // Unit Test.
       // Create the error log and show it to the UI. Show the function name, the class where the function is located and the cached error.
       this.ts.errorLog(
+        "Failed to check the radio button or checkbox. " +
         this.sendKeys_MultySelect.name + " " +
         __filename.split(__dirname + "/").pop() + " " +
         error
       );
+      throw new Error(`Failed to send the keys: ${error}`);
     }
   }
 
@@ -875,6 +939,7 @@ export class Dsl {
               this.checkRadioButtonCheckBox.name + " " +
               __filename.split(__dirname + "/").pop()
             );
+            throw new Error(`You provided the wrong action data. If you want to provide data for this parameter, please provide only the 'check' or 'click' value for the 'checkOrClickAction' parameter.`);
           }
         } else {
           // Check the element using "click" action.
@@ -896,10 +961,12 @@ export class Dsl {
     } catch (error) {
       // Create the error log and show it to the UI. Show the function name, the class where the function is located and the cached error.
       this.ts.errorLog(
+        "Failed to check the radio button or checkbox. " +
         this.checkRadioButtonCheckBox.name + " " +
         __filename.split(__dirname + "/").pop() + " " +
         await error
       );
+      throw new Error(`Failed to check the radio button or checkbox: ${await error}`);
     }
   }
 
@@ -953,6 +1020,7 @@ export class Dsl {
               this.unCheckBox.name + " " +
               __filename.split(__dirname + "/").pop()
             );
+            throw new Error(`You provided the wrong action data. If you want to provide data for this parameter, please provide only the 'uncheck' or 'click' value for the 'checkOrClickAction' parameter.`);
           }
         } else {
           // Check the element using "click" action.
@@ -971,14 +1039,17 @@ export class Dsl {
       // If the element is null, we need to throw an error.
       else {
         this.ts.errorLog("The element value is null. Please provide a valid element.");
+        throw new Error(`The element value is null. Please provide a valid element.`);
       }
     } catch (error) {
       // Create the error log and show it to the UI. Show the function name, the class where the function is located and the cached error.
       this.ts.errorLog(
+        "Failed to uncheck the checkbox. " +
         this.unCheckBox.name + " " +
         __filename.split(__dirname + "/").pop() + " " +
         await error
       );
+      throw new Error(`Failed to uncheck the checkbox: ${await error}`);
     }
   }
 
@@ -1009,10 +1080,12 @@ export class Dsl {
     } catch (error) {
       // Create the error log and show it to the UI. Show the function name, the class where the function is located and the cached error.
       this.ts.errorLog(
+        "Failed to make the double-click. " +
         this.doubleClick.name + " " +
         __filename.split(__dirname + "/").pop() + " " +
         await error
       );
+      throw new Error(`Failed to make the double-click: ${await error}`);
     }
   }
 
@@ -1046,10 +1119,12 @@ export class Dsl {
     } catch (error) {
       // Create the error log and show it to the UI. Show the function name, the class where the function is located and the cached error.
       this.ts.errorLog(
+        "Failed to make the right-click. " +
         this.rightClick.name + " " +
         __filename.split(__dirname + "/").pop() + " " +
         await error
       );
+      throw new Error(`Failed to make the right-click: ${await error}`);
     }
   }
 
@@ -1081,10 +1156,12 @@ export class Dsl {
     } catch (error) {
       // Create the error log and show it to the UI. Show the function name, the class where the function is located and the cached error.
       this.ts.errorLog(
+        "Failed to click the element. " +
         this.click.name + " " +
         __filename.split(__dirname + "/").pop() + " " +
         await error
       );
+      throw new Error(`Failed to click the element: ${await error}`);
     }
   }
 
@@ -1114,10 +1191,12 @@ export class Dsl {
     } catch (error) {
       // Create the error log and show it to the UI. Show the function name, the class where the function is located and the cached error.
       this.ts.errorLog(
+        "Failed to hover the element. " +
         this.hover.name + " " +
         __filename.split(__dirname + "/").pop() + " " +
         await error
       );
+      throw new Error(`Failed to hover the element: ${await error}`);
     }
   }
 
@@ -1156,6 +1235,7 @@ export class Dsl {
           this.clickPosition.name + " " +
           __filename.split(__dirname + "/").pop()
         );
+        throw new Error(`You entered a negative value. Please enter a positive integer value.`);
       }
       // If the numbers are not an integer.
       else if (!Number.isInteger(xValue) || !Number.isInteger(yValue)) {
@@ -1164,6 +1244,7 @@ export class Dsl {
           this.clickPosition.name + " " +
           __filename.split(__dirname + "/").pop()
         );
+        throw new Error(`You need to enter an integer value.`);
       }
       // Everything else...
       else {
@@ -1172,6 +1253,7 @@ export class Dsl {
           this.clickPosition.name + " " +
           __filename.split(__dirname + "/").pop()
         );
+        throw new Error(`You entered an invalid value. Please provide a positive integer number for two parameters.`);
       }
 
       // Add the information message.
@@ -1186,10 +1268,12 @@ export class Dsl {
     } catch (error) {
       // Create the error log and show it to the UI. Show the function name, the class where the function is located and the cached error.
       this.ts.errorLog(
+        "Failed to click on the exact position. " +
         this.clickPosition.name + " " +
         __filename.split(__dirname + "/").pop() + " " +
         await error
       );
+      throw new Error(`Failed to click on the exact position: ${await error}`);
     }
   }
 
@@ -1228,10 +1312,12 @@ export class Dsl {
     } catch (error) {
       // Create the error log and show it to the UI. Show the function name, the class where the function is located and the cached error.
       this.ts.errorLog(
+        "Failed to click with holding the keyboard key. " +
         this.clickWithHoldingKeyboardKey.name + " " +
         __filename.split(__dirname + "/").pop() + " " +
         await error
       );
+      throw new Error(`Failed to click with holding the keyboard key: ${await error}`);
     }
   }
 
@@ -1279,6 +1365,7 @@ export class Dsl {
           this.downloadFile.name + " " +
           __filename.split(__dirname + "/").pop()
         );
+        throw new Error(`This error should never happen.`);
       }
 
       // Add the information message.
@@ -1297,10 +1384,12 @@ export class Dsl {
     } catch (error) {
       // Create the error log and show it to the UI. Show the function name, the class where the function is located and the cached error.
       this.ts.errorLog(
+        "Failed to download the file. " +
         this.downloadFile.name + " " +
         __filename.split(__dirname + "/").pop() + " " +
         await error
       );
+      throw new Error(`Failed to download the file: ${await error}`);
     }
   }
 
@@ -1336,10 +1425,12 @@ export class Dsl {
     } catch (error) {
       // Create the error log and show it to the UI. Show the function name, the class where the function is located and the cached error.
       this.ts.errorLog(
+        "Failed to upload the file. " +
         this.uploadFile.name + " " +
         __filename.split(__dirname + "/").pop() + " " +
         await error
       );
+      throw new Error(`Failed to upload the file: ${await error}`);
     }
   }
 
@@ -1386,10 +1477,12 @@ export class Dsl {
     } catch (error) {
       // Create the error log and show it to the UI. Show the function name, the class where the function is located and the cached error.
       this.ts.errorLog(
+        "Failed to accept the alert. " +
         this.alertAccept.name + " " +
         __filename.split(__dirname + "/").pop() + " " +
         await error
       );
+      throw new Error(`Failed to accept the alert: ${await error}`);
     }
   }
 
@@ -1436,10 +1529,12 @@ export class Dsl {
     } catch (error) {
       // Create the error log and show it to the UI. Show the function name, the class where the function is located and the cached error.
       this.ts.errorLog(
+        "Failed to dismiss the alert. " +
         this.alertCancel.name + " " +
         __filename.split(__dirname + "/").pop() + " " +
         await error
       );
+      throw new Error(`Failed to dismiss the alert: ${await error}`);
     }
   }
 
@@ -1490,10 +1585,12 @@ export class Dsl {
     } catch (error) {
       // Create the error log and show it to the UI. Show the function name, the class where the function is located and the cached error.
       this.ts.errorLog(
+        "Failed to accept and fill the alert. " +
         this.alertTypeValueAndAccept.name + " " +
         __filename.split(__dirname + "/").pop() + " " +
         await error
       );
+      throw new Error(`Failed to accept and fill the alert: ${await error}`);
     }
   }
 
@@ -1527,16 +1624,19 @@ export class Dsl {
       // If the frame is not present, throw an error.
       if (!frame) {
         this.ts.errorLog(`Failed to switch to iFrame with locator "${iFrameLocator}".`);
+        throw new Error(`Failed to switch to iFrame with locator "${iFrameLocator}".`);
       }
       // Return the switched focus inside the iFrame.
       return frame;
     } catch (error) {
       // Create the error log and show it to the UI. Show the function name, the class where the function is located and the cached error.
       this.ts.errorLog(
+        "Failed to switch to iFrame. " +
         this.iFrame.name + " " +
         __filename.split(__dirname + "/").pop() + " " +
         await error
       );
+      throw new Error(`Failed to switch to iFrame: ${await error}`);
       // This return should never be reached, because the 'errorLog' method will throw an error. We need to return null here because of the TypeScript compiler.
       throw error;
     }
@@ -1585,11 +1685,12 @@ export class Dsl {
     } catch (error) {
       // Error handling
       this.ts.errorLog(
+        "Failed to switch to nested iFrame. " +
         this.iFrameNested.name + " " +
         __filename.split(__dirname + "/").pop() + " " +
         error
       );
-      throw error;
+      throw new Error(`Failed to switch to nested iFrame: ${error}`);
     }
   }
 
@@ -1610,7 +1711,8 @@ export class Dsl {
     try {
       // Click over the drop-down list element to list the drop-down values. In the same function we are verifying that the element is present and ready for usage.
       await this.click(locatorDropDownList);
-
+      // Add a static wait, just to be sure that the drop-down list is opened.
+      await this.ts.staticWait(3000);
       // Click over the drop-down value to choose this value. In the same function we are verifying that the element is present and ready for usage.
       await this.click(locatorDropDownValue);
 
@@ -1631,10 +1733,12 @@ export class Dsl {
     } catch (error) {
       // Create the error log and show it to the UI. Show the function name, the class where the function is located and the cached error.
       this.ts.errorLog(
+        "Failed to select the drop-down value. " +
         this.dropDown_ByDoubleClick.name + " " +
         __filename.split(__dirname + "/").pop() + " " +
         await error
       );
+      throw new Error(`Failed to select the drop-down value: ${await error}`);
     }
   }
 
@@ -1674,10 +1778,12 @@ export class Dsl {
     } catch (error) {
       // Create the error log and show it to the UI. Show the function name, the class where the function is located and the cached error.
       this.ts.errorLog(
+        "Failed to select the drop-down value. " +
         this.dropDown_ByDoubleClick.name + " " +
         __filename.split(__dirname + "/").pop() + " " +
         await error
       );
+      throw new Error(`Failed to select the drop-down value: ${await error}`);
     }
   }
 
@@ -1690,10 +1796,12 @@ export class Dsl {
       // Create the method steps here. Describe the custom command in this "try" statement (Domain Specific Language).
     } catch (error) {
       this.ts.errorLog(
+        "Failed to create the custom DSL function. " +
         this.templateDslFunction.name + " " +
         __filename.split(__dirname + "/").pop() + " " +
         await error
       );
+      throw new Error(`Failed to create the custom DSL function: ${await error}`);
     }
   }
 }

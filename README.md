@@ -90,8 +90,8 @@ There is a configuration class. You can find it in the "{root}/configs/configura
 Use Playwright default report: https://playwright.dev/docs/test-reporters  
 
 ### Data-Driven Testing:
-For now, we can read data from JSON files. Please take a look at the examples for more details. You can add the JSON files to the "{root}/fixtures" folder.  
-We will add a mechanism for reading testing data from the EXCEL file in the future.
+Added mechanism fore reading data from Json and Excel files.
+Please take a look at the examples realted with 'npm run test:fixtures" command for more details.  
 
 ### Uploads:
 Sometimes, we will need to upload files, and there is a folder where we can put those files. The folder is located in "{root}/uploads". Of course, you can use any other folder inside your storage.  

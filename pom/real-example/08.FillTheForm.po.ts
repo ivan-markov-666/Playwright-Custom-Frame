@@ -272,6 +272,8 @@ class Pom extends BaseClass {
     await this.ts.staticWait(5000);
     // Press the "Submit" button.
     await this.dsl.click(this.submit_Button);
+    // We need to wait some time, because there is a delay in the response.
+    await this.ts.staticWait(5000);
   }
 
   /**
@@ -322,6 +324,8 @@ class Pom extends BaseClass {
       this.stateAndCity_actualResultElement,
       verifySelectedStateDropDownList + " " + verifySelectedCityDropDownList
     );
+    // We need to wait some time, because there is a delay in the response.
+    await this.ts.staticWait(3000);
   }
 }
 

@@ -27,10 +27,10 @@ export class TsMethods {
     // Static wait.
     await this.page.waitForTimeout(periodTime);
     this.informLog(
-        this.conf.beginInformMessage +
-          " The automation test paused the execution of the code for '" +
-          periodTime +
-          "' milliseconds."
+      this.conf.beginInformMessage +
+      " The automation test paused the execution of the code for '" +
+      periodTime +
+      "' milliseconds."
     );
   }
 
@@ -59,8 +59,15 @@ export class TsMethods {
    *                        await dsl.errorLog("ERROR MESSAGE!");
    */
   errorLog(errorMessage: string): void {
-    // Print the error message.
-    throw new Error(this.conf.beginErrorMessage + " " + errorMessage);
+    // Check if the error message toggle is enabled.
+    if (this.conf.errorMessagesToggle === "enable") {
+      // Print the error message in red.
+      console.log(
+        "\x1b[41m\x1b[1m",
+        this.conf.beginErrorMessage + " " + errorMessage,
+        "\x1b[0m"
+      );
+    }
   }
 
   /**
@@ -99,7 +106,7 @@ export class TsMethods {
    * @description     This method returns the current time in Unix format.
    * @returns         Return the current time in Unix format.
    */
-  public currentTimeUnixFormat():number {
+  public currentTimeUnixFormat(): number {
     return Date.now() / 1000;
   }
 
