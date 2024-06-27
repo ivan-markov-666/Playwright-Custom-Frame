@@ -38,6 +38,7 @@ test.describe("This block contains examples for printing messages inside the ter
 
   test("Example using Type Script custom method for Error messages.", async () => {
     // Print the error message by providing a string text.
+    // This method will be executed if the 'errorMessagesToggle' from 'configs\configuration.ts' is set to "enable".
     ts.errorLog("Error Message Inside");
   });
 

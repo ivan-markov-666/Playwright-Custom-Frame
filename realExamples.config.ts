@@ -35,7 +35,7 @@ const config: PlaywrightTestConfig = {
   use: {
     /* Maximum time each action such as `click()` can take. Defaults to 0 (no limit). */
     actionTimeout: 20000,
-    trace: 'on',
+    trace: 'off',
   },
   outputDir: './test-results/', // Тук се задава директорията за артефакти
   /* Configure projects for major browsers */

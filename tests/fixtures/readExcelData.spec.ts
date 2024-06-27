@@ -18,7 +18,7 @@ test.describe("Read data from Excel file.", () => {
         // Excel file path.
         const filePath = path.resolve('fixtures/excel/test-data.xlsx');
         // Read data from the Excel file.
-        const excelData = await readExcelAsObject(filePath, 'sheet name');
+        const excelData = await readExcelAsObject(filePath, 'sheet name', 0);
         // Accessing all values of a specific key, e.g., "gender"
         const departmentValue = excelData.map(entry => entry["gender"]);
         // Print the first value.
