@@ -25,7 +25,6 @@ import PomExample from "../../pom/real-example/08.FillTheForm.po";
 // Import data from JSON file.
 import data from "../../fixtures/json/test-data.json";
 
-
 //02. Create the "describe" block.
 test.describe("Fill the form.", () => {
   let baseClass: BaseClass; // Create a new variable for baseClass. Add specific type (of the BaseClass class) to enable the suggestions.
